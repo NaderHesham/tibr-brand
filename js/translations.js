@@ -1,0 +1,262 @@
+/* -------------------------------------------------------------
+ * TRANSLATIONS.JS — Bilingual Interface Dictionary (AR / EN)
+ * ------------------------------------------------------------- */
+
+const translations = {
+  ar: {
+    // Meta / Document Title
+    "doc-title": "روبابيكيا للعطور والملابس 🌸 Robabikia — تراث فاخر بلمسة عصرية",
+    "meta-desc": "روبابيكيا للعطور والملابس - عطور مصرية وأزياء كلاسيكية معاصرة تجمع تراث الماضي وفخامة الحاضر.",
+    "meta-keys": "عطور, ملابس, أحذية, أزياء كلاسيكية, أزياء معاصرة, الكتان, عطور فاخرة",
+
+    // Intro curtain
+    "intro-skip": "تخطي ←",
+    "intro-tagline": "\"روائح نايمة في الذاكرة، صحيت في قارورة.\"",
+
+    // Navigation
+    "nav-logo-ar": "روبابيكيا",
+    "nav-home": "الرئيسية",
+    "nav-perfumes": "العطور",
+    "nav-clothes": "الملابس",
+    "nav-shoes": "الأحذية",
+    "nav-story": "حكايتنا",
+    "nav-order": "طريقة الطلب",
+    "nav-nostalgia": "النوستالجيا",
+    "nav-cta": "اطلب الآن",
+
+    // Hero Section
+    "hero-subtitle": "🌿 بيت العطور والأزياء الراقية 🌿",
+    "hero-title": "روبـابـيـكـيـا",
+    "hero-tagline": "\"أصالة الماضي، بفخامة معاصرة.\"",
+    "hero-desc": "توليفة ساحرة تجمع عبق التراث والأناقة الكلاسيكية مع خطوط الموضة المعاصرة والفخامة الحديثة.",
+    "hero-cta-discover": "اكتشف مجموعتنا",
+    "hero-cta-story": "حكايتنا",
+    "hero-scroll": "اسحب لأسفل",
+
+    // Featured Collections / Catalog Section
+    "scents-subtitle": "إصداراتنا الراقية",
+    "scents-title": "مجموعاتنا الخاصة",
+    "scents-discover-btn": "اكتشف المنتج",
+    "view-all": "شوف الكل ←",
+
+    // Headers per Category
+    "perfumes-header-subtitle": "إبداعات شمّية ساحرة",
+    "perfumes-header-title": "عطور الذاكرة",
+    "clothes-header-subtitle": "تصاميم بخطوط كلاسيكية معاصرة",
+    "clothes-header-title": "الأزياء الفاخرة",
+    "shoes-header-subtitle": "خطوات تجمع الراحة والأناقة",
+    "shoes-header-title": "الأحذية الجلدية",
+
+    // Sub-Categories under Fragrances
+    "sub-all": "الكل",
+    "sub-original": "أصلي",
+    "sub-inspired": "مستوحى",
+    "sub-recreated": "محاكاة",
+    "sub-custom": "تصميمك الخاص",
+
+    // Custom Scent Builder
+    "builder-title": "صمم عِطرك الخاص",
+    "builder-desc": "اختر النوتات المفضلة لديك وحجم العبوة لتصميم توليفة حصرية خاصة بك.",
+    "builder-top-note": "🌸 النوتة العليا (الانطباع الأول)",
+    "builder-heart-note": "🌿 النوتة الوسطى (قلب العطر)",
+    "builder-base-note": "🪵 النوتة الأساسية (القاعدة المستقرة)",
+    "builder-size": "🧴 حجم الزجاجة",
+    "builder-order-btn": "اطلب تركيبتك الخاصة الآن",
+
+    // Brand Story Section
+    "story-mini-title": "🌿 حكاية قارورة ونسيج 🌿",
+    "story-title": "من قلب القاهرة العريقة...",
+    "story-p1": "كلمة <strong>\"روبابيكيا\"</strong> بتصحّي جوانا دايماً طاقة حنين غريبة. بتفكرنا بصوت البياع وهو بينادي في الشوارع الهادية يوم الجمعة الصبح، بتفكرنا بصندوق قديم مخفي فوق الدولاب، وصور أبيض وأسود فيها ضحكات ناس عاشوا بالحب والجمال البسيط.",
+    "story-p2": "من هنا لمعت الفكرة: ليه مانجمعش ذكرياتنا دي ونعيد صياغتها بروح العصر؟ ليه مانحولش نوستالجيا الشوارع القديمة لعطور فاخرة، وتصاميم أزياء كلاسيكية معاصرة تمنحك الأناقة والثقة كل يوم؟",
+    "story-p3-highlight": "\"كل منتج في روبابيكيا هو قصة مكتوبة بأدق التفاصيل، مصنوعة من مواد فاخرة وخامات طبيعية خُلقت لتدوم.\"",
+
+    // How to order Section
+    "order-subtitle": "بخطوات بسيطة وسريعة",
+    "order-title": "كيفية اقتناء طلبك",
+    "step1-num": "1",
+    "step1-title": "تصفّح واختَر منتجَك",
+    "step1-desc": "اقرأ تفاصيل ومكونات كل منتج، واكتشف الخامات وتفاصيل المقاسات والموديل الذي يناسب شخصيتك.",
+    "step2-num": "2",
+    "step2-title": "تواصل معنا وتساب",
+    "step2-desc": "اضغط على \"اطلب الآن\" لتفتح محادثة مباشرة معنا، وسيقوم ممثلنا بتأكيد المقاسات وتفاصيل الشحن فوراً.",
+    "step3-num": "3",
+    "step3-title": "استلم في باب بيتك",
+    "step3-desc": "نوفر شحن سريع لجميع محافظات مصر. تدفع عند الاستلام بعد معاينة المنتج والتأكد من فخامته وجدية جودته.",
+
+    // Gallery Section
+    "gallery-subtitle": "شريط الذاكرة",
+    "gallery-title": "أجواء روبابيكيا",
+    "gallery-desc": "اسحب الشريط أفقياً لاستكشاف أجواء وعوالم مجموعاتنا",
+    "gallery-item-1-title": "ذاكرة الفل",
+    "gallery-item-1-desc": "رقة ياسمين بيوت القاهرة",
+    "gallery-item-2-title": "سر العود",
+    "gallery-item-2-desc": "بخور الحسين المعتق",
+    "gallery-item-3-title": "عبير النوستالجيا",
+    "gallery-item-3-desc": "ورد أحمر مخملي دافئ",
+    "gallery-item-4-title": "أناقة معاصرة",
+    "gallery-item-4-desc": "تصاميم كلاسيكية حديثة",
+    "gallery-item-5-title": "فن التفاصيل والجمال",
+    "gallery-item-5-desc": "أصالة التراث في قالب فاخر",
+
+    // Footer
+    "footer-about-logo": "روبابيكيا",
+    "footer-about-tagline": "\"أصالة الماضي، بفخامة معاصرة.\"",
+    "footer-cta-title": "هل وجدت منتجك الفريد؟",
+    "footer-cta-desc": "تواصل معنا فوراً على الواتساب واطلب قطعتك الخاصة بخصم 15% للإصدارات الأولى!",
+    "footer-cta-btn": "ابعت طلبك على الواتساب",
+    "footer-info-headquarters": "📍 المقر الرئيسي",
+    "footer-info-hq-desc": "القاهرة، جمهورية مصر العربية",
+    "footer-info-delivery": "🚚 خدمات التوصيل",
+    "footer-info-del-desc": "شحن آمن وسريع لكل محافظات مصر",
+    "footer-info-email": "✉️ البريد الإلكتروني",
+    "footer-copyright": "روبابيكيا © 2026. جميع الحقوق محفوظة.",
+
+    // Modal Generic Labels
+    "modal-close-label": "إغلاق النافذة",
+    "modal-col-default": "المجموعة الفاخرة",
+    "modal-name-default": "اسم المنتج",
+    "modal-price-default": "السعر",
+    "modal-desc-default": "وصف كامل للمنتج...",
+    "modal-top-notes-title": "🌸 النوتات العليا",
+    "modal-base-notes-title": "🪵 النوتات الأساسية",
+    "modal-mood-label": "المود العام:",
+    "modal-mood-default": "رومانسية دافئة",
+    "modal-order-btn": "اطلب هذا المنتج الآن",
+    "modal-size-title": "📏 اختر المقاس",
+    "modal-spec-left": "الخامة الأساسية",
+    "modal-spec-right": "التفاصيل والقصّة",
+
+    // WhatsApp Messages
+    "wa-msg-prefix": "أهلاً روبابيكيا 🌸\n\nأود طلب عطر \"{name}\" الفاخر ({collection}).\nالسعر: {price}\n\nيرجى تأكيد الطلب وتحديد تفاصيل الشحن.",
+    "wa-msg-apparel": "أهلاً روبابيكيا 🌸\n\nأود طلب قطعتي الفاخرة \"{name}\" من مجموعة ({collection}).\nالمقاس المحدد: {size}\nالسعر: {price}\n\nيرجى تأكيد الطلب وتفاصيل الشحن.",
+    "wa-msg-custom": "أهلاً روبابيكيا 🌸\n\nأود طلب عطر تركيب من تصميمي الخاص.\n\nالمكونات المحددة:\n- النوتة العليا: {top}\n- النوتة الوسطى: {heart}\n- النوتة الأساسية: {base}\n- حجم العبوة: {size}\n\nيرجى تأكيد الطلب وتحديد تفاصيل الشحن."
+  },
+  en: {
+    // Meta / Document Title
+    "doc-title": "Robabikia Luxury Collection 🌸 Fragrances & Classic Apparel",
+    "meta-desc": "Robabikia Fragrances & Apparel - Contemporary Egyptian scents and classic-modern fashion merging heritage with luxury.",
+    "meta-keys": "perfumes, apparel, shoes, classic fashion, modern classic, linen shirts, luxury collections",
+
+    // Intro curtain
+    "intro-skip": "Skip →",
+    "intro-tagline": "\"Scents asleep in memory, awakened in a bottle.\"",
+
+    // Navigation
+    "nav-logo-ar": "ROBABIKIA",
+    "nav-home": "Home",
+    "nav-perfumes": "Fragrances",
+    "nav-clothes": "Apparel",
+    "nav-shoes": "Footwear",
+    "nav-story": "Our Story",
+    "nav-order": "How to Order",
+    "nav-nostalgia": "Nostalgia",
+    "nav-cta": "Order Now",
+
+    // Hero Section
+    "hero-subtitle": "🌿 House of Fine Scents & Premium Garments 🌿",
+    "hero-title": "ROBABIKIA",
+    "hero-tagline": "\"Authentic heritage, modern luxury.\"",
+    "hero-desc": "A magical blend that combines the elegance of classic heritage with contemporary silhouettes and modern sophistication.",
+    "hero-cta-discover": "Discover Our Collection",
+    "hero-cta-story": "Our Story",
+    "hero-scroll": "Scroll Down",
+
+    // Featured Collections / Catalog Section
+    "scents-subtitle": "Our Premium Collections",
+    "scents-title": "Featured Collections",
+    "scents-discover-btn": "Discover Product",
+    "view-all": "View All →",
+
+    // Headers per Category
+    "perfumes-header-subtitle": "Enchanting Olfactory Creations",
+    "perfumes-header-title": "Fragrances of Memory",
+    "clothes-header-subtitle": "Classic Cuts, Contemporary Silhouettes",
+    "clothes-header-title": "Premium Apparel",
+    "shoes-header-subtitle": "Crafted Footwear for Comfort & Elegance",
+    "shoes-header-title": "Fine Leatherwear",
+
+    // Sub-Categories under Fragrances
+    "sub-all": "All",
+    "sub-original": "Original",
+    "sub-inspired": "Inspired",
+    "sub-recreated": "Recreated",
+    "sub-custom": "Custom Blend",
+
+    // Custom Scent Builder
+    "builder-title": "Design Your Custom Scent",
+    "builder-desc": "Select your favorite notes and bottle size to create an exclusive signature blend.",
+    "builder-top-note": "🌸 Top Note (First Impression)",
+    "builder-heart-note": "🌿 Heart Note (Heart of Scent)",
+    "builder-base-note": "🪵 Base Note (Stable Base)",
+    "builder-size": "🧴 Bottle Volume",
+    "builder-order-btn": "Order Your Custom Blend Now",
+
+    // Brand Story Section
+    "story-mini-title": "🌿 Story of Scents & Weaves 🌿",
+    "story-title": "From the Heart of Cairo...",
+    "story-p1": "The word <strong>\"Robabikia\"</strong> always awakens a strange energy of nostalgia inside us. It reminds us of the vendor's voice calling out in quiet streets on Friday mornings, of an old box hidden atop the wardrobe, and black-and-white photos capturing the smiles of people who lived with love and simple beauty.",
+    "story-p2": "From here, the idea shone: Why not gather these memories and recreate them with the spirit of today? Why not transform the nostalgia of ancient streets into luxurious perfumes and classic-modern fashion lines that give you daily elegance and confidence?",
+    "story-p3-highlight": "\"Each product in Robabikia is a story written in fine details, made of premium materials and natural fabrics designed to last.\"",
+
+    // How to order Section
+    "order-subtitle": "In Simple & Fast Steps",
+    "order-title": "How to Acquire Your Item",
+    "step1-num": "1",
+    "step1-title": "Browse & Select",
+    "step1-desc": "Read details and specs of each product, and discover materials, size charts, and the fit that suits your personality.",
+    "step2-num": "2",
+    "step2-title": "Contact on WhatsApp",
+    "step2-desc": "Click \"Order Now\" to open a direct chat with us, and our representative will confirm your sizes and shipping details immediately.",
+    "step3-num": "3",
+    "step3-title": "Receive at Doorstep",
+    "step3-desc": "We provide fast shipping to all Egyptian governorates. Pay upon delivery after inspecting the product and ensuring its premium quality and craftsmanship.",
+
+    // Gallery Section
+    "gallery-subtitle": "Memory Lane",
+    "gallery-title": "Robabikia Atmosphere",
+    "gallery-desc": "Drag the track horizontally to explore the atmosphere and worlds of our collections",
+    "gallery-item-1-title": "Jasmine Memory",
+    "gallery-item-1-desc": "Delicacy of jasmine in Cairo's old homes",
+    "gallery-item-2-title": "Oud Secret",
+    "gallery-item-2-desc": "Vintage incense from historical El Hussein",
+    "gallery-item-3-title": "Nostalgia Breeze",
+    "gallery-item-3-desc": "Warm velvety red roses",
+    "gallery-item-4-title": "Modern Elegance",
+    "gallery-item-4-desc": "Clean classic-modern designs",
+    "gallery-item-5-title": "Craft of Detail & Beauty",
+    "gallery-item-5-desc": "Authentic heritage in a luxury layout",
+
+    // Footer
+    "footer-about-logo": "ROBABIKIA",
+    "footer-about-tagline": "\"Authentic heritage, modern luxury.\"",
+    "footer-cta-title": "Have you found your unique item?",
+    "footer-cta-desc": "Contact us immediately on WhatsApp and order your special piece with a 15% discount for the first editions!",
+    "footer-cta-btn": "Send your order on WhatsApp",
+    "footer-info-headquarters": "📍 Headquarters",
+    "footer-info-hq-desc": "Cairo, Arab Republic of Egypt",
+    "footer-info-delivery": "🚚 Delivery Services",
+    "footer-info-del-desc": "Safe and fast shipping to all Egyptian governorates",
+    "footer-info-email": "✉️ Email Address",
+    "footer-copyright": "Robabikia © 2026. All rights reserved.",
+
+    // Modal Generic Labels
+    "modal-close-label": "Close Window",
+    "modal-col-default": "Luxury Collection",
+    "modal-name-default": "Product Name",
+    "modal-price-default": "Price",
+    "modal-desc-default": "Full product description...",
+    "modal-top-notes-title": "🌸 Top Notes",
+    "modal-base-notes-title": "🪵 Base Notes",
+    "modal-mood-label": "General Mood:",
+    "modal-mood-default": "Warm Romance",
+    "modal-order-btn": "Order this item now",
+    "modal-size-title": "📏 Select Size",
+    "modal-spec-left": "Primary Material",
+    "modal-spec-right": "Details & Cut",
+
+    // WhatsApp Messages
+    "wa-msg-prefix": "Hello Robabikia 🌸\n\nI would like to order the luxury perfume \"{name}\" ({collection}).\nPrice: {price}\n\nPlease confirm my order and specify delivery details.",
+    "wa-msg-apparel": "Hello Robabikia 🌸\n\nI would like to order the premium \"{name}\" from the ({collection}) collection.\nSelected Size: {size}\nPrice: {price}\n\nPlease confirm my order and specify delivery details.",
+    "wa-msg-custom": "Hello Robabikia 🌸\n\nI would like to order a Custom Blend perfume designed by me.\n\nSelected Notes:\n- Top Note: {top}\n- Heart Note: {heart}\n- Base Note: {base}\n- Bottle Size: {size}\n\nPlease confirm my custom order and specify shipping details."
+  }
+};
