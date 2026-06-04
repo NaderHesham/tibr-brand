@@ -121,30 +121,40 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Staggered order steps reveal
-    gsap.from(".step-card", {
-      opacity: 0,
-      y: 40,
+    gsap.fromTo(".step-card", {
+      autoAlpha: 1,
+      y: 24
+    }, {
+      autoAlpha: 1,
+      y: 0,
       duration: 1,
       stagger: 0.25,
       ease: "power2.out",
+      clearProps: "opacity,visibility,transform",
       scrollTrigger: {
         trigger: ".order-section",
         start: "top 75%",
+        once: true,
         toggleActions: "play none none none"
       }
     });
     
     // Staggered chevron arrows reveal
-    gsap.from(".step-connector", {
-      opacity: 0,
-      scale: 0.5,
+    gsap.fromTo(".step-connector", {
+      autoAlpha: 1,
+      scale: 0.85,
+    }, {
+      autoAlpha: 1,
+      scale: 1,
       duration: 0.8,
       stagger: 0.25,
       ease: "back.out(2)",
       delay: 0.4,
+      clearProps: "opacity,visibility,transform",
       scrollTrigger: {
         trigger: ".order-section",
         start: "top 75%",
+        once: true,
         toggleActions: "play none none none"
       }
     });

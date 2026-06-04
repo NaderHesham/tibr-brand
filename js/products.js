@@ -4,320 +4,57 @@
 
 document.addEventListener("DOMContentLoaded", () => {
   // 1. Core Catalog Dataset (Bilingual Classic-Modern Products with Sub-Categories)
-  const products = [
-    // --- Perfumes ---
-    {
-      id: "jasmine",
-      category: "perfumes",
-      subCategory: "original",
-      gender: "women",
-      ar: {
-        name: "ذاكرة الفل",
-        collection: "مجموعة الماضي الجميل",
-        shortDesc: "رقة الفل والياسمين البلدي في بيوت القاهرة القديمة بمشربياتها العتيقة.",
-        desc: "نفحات عطرية تصحبك لبيوت القاهرة القديمة بمشربياتها الخشبية العتيقة وحدائقها المليئة بالفل والياسمين البري مع نسيم الليل الهادئ. عطر يحاكي براءة ونقاء أيام الطفولة.",
-        specLeftVal: "فل بلدي، ياسمين جبلي، زنبق الوادي",
-        specRightVal: "خشب الصندل الدافئ، مسك أبيض ناعم",
-        price: "٤٥٠ جنيه",
-        mood: "دافئ، رومانسي، ناعم"
-      },
-      en: {
-        name: "Jasmine Memory",
-        collection: "Vintage Past Collection",
-        shortDesc: "The delicacy of local jasmine in ancient Cairo houses with antique mashrabiyas.",
-        desc: "Aromatic notes accompanying you to Cairo's old houses with vintage wooden mashrabiyas and gardens blooming with local jasmine in the quiet night breeze. A scent mimicking childhood innocence.",
-        specLeftVal: "Local Jasmine, Mountain Jasmine, Lily of the Valley",
-        specRightVal: "Warm Sandalwood, Soft White Musk",
-        price: "450 EGP",
-        mood: "Warm, Romantic, Soft"
-      },
-      image: "assets/images/product_jasmine.png",
-      accentGlow: "rgba(237, 224, 200, 0.15)",
-      accentColor: "#EDE0C8"
-    },
-    {
-      id: "oud",
-      category: "perfumes",
-      subCategory: "inspired",
-      gender: "unisex",
-      ar: {
-        name: "سر العود",
-        collection: "مجموعة التراث المعتق",
-        shortDesc: "بخور العود الفخم مع توابل وبزارات الحسين التاريخية المعتقة.",
-        desc: "عطر مهيب مستوحى من أبخرة النحاس المشتعل بالعود الفاخر في بازارات الحسين التاريخية. مزيج ساحر يمنحك حضوراً واثقاً وغامضاً يعود بك لقرون مضت.",
-        specLeftVal: "زعفران ناري، دارسين (قرفة)، هيل بري",
-        specRightVal: "عود ملكي معتق، خشب الأرز، لبان مسك",
-        price: "٥٥٠ جنيه",
-        mood: "غامض، فخم، مهيب"
-      },
-      en: {
-        name: "Oud Secret",
-        collection: "Aged Heritage Collection",
-        shortDesc: "Premium oud incense blended with historical Hussein aged spices and bazaars.",
-        desc: "A majestic fragrance inspired by copper burner vapors of luxurious oud in the historical bazaars of El Hussein. A magical blend giving you a confident, mysterious presence going back centuries.",
-        specLeftVal: "Fiery Saffron, Cinnamon, Wild Cardamom",
-        specRightVal: "Royal Aged Oud, Cedarwood, Musk Frankincense",
-        price: "550 EGP",
-        mood: "Mysterious, Luxurious, Majestic"
-      },
-      image: "assets/images/product_oud.png",
-      accentGlow: "rgba(201, 168, 76, 0.2)",
-      accentColor: "#C9A84C"
-    },
-    {
-      id: "khedive",
-      category: "perfumes",
-      subCategory: "original",
-      gender: "men",
-      ar: {
-        name: "الخديوي",
-        collection: "مجموعة العظمة والتفرد",
-        shortDesc: "وقار الجلود مع حدة التبغ والقهوة العربية الفاخرة.",
-        desc: "عطر رجالي مهيب يعبر عن الهيبة والوقار، يفتتح بلمسة برغموت دافئة تليها نبضات الجلود والتوابل الحارة، وتستقر قاعدته على سحر التبغ والقهوة والمسك المعتق.",
-        specLeftVal: "برغموت إيطالي، قهوة عربية، هيل",
-        specRightVal: "جلود فاخرة، تبغ خام، خشب الصندل",
-        price: "٥٩٠ جنيه",
-        mood: "رجولي، مهيب، حاد"
-      },
-      en: {
-        name: "The Khedive",
-        collection: "Grandeur & Distinction Collection",
-        shortDesc: "The prestige of leather with the boldness of raw tobacco and fine Arabic coffee.",
-        desc: "A majestic masculine scent expressing authority and stature, opening with warm bergamot and dry cardamom, leading to a heart of leather, settling on raw tobacco, coffee, and aged musk.",
-        specLeftVal: "Italian Bergamot, Arabic Coffee, Cardamom",
-        specRightVal: "Premium Leather, Raw Tobacco, Sandalwood",
-        price: "590 EGP",
-        mood: "Masculine, Majestic, Bold"
-      },
-      image: "assets/images/product_oud.png",
-      accentGlow: "rgba(201, 168, 76, 0.2)",
-      accentColor: "#C9A84C"
-    },
-    {
-      id: "cairo-rose",
-      category: "perfumes",
-      subCategory: "inspired",
-      gender: "women",
-      ar: {
-        name: "وردة القاهرة",
-        collection: "مجموعة رقة المساء",
-        shortDesc: "نعومة الورد الطائفي الممزوج مع المسك الأبيض وخشب الكشمير.",
-        desc: "توليفة رقيقة وجذابة تحتفي بالأنوثة الكلاسيكية والجمال الهادئ. نفحات الورد الطائفي الطبيعي الممتزج مع المسك السكري الفاخر ونعومة خشب الكشمير.",
-        specLeftVal: "ورد طائفي، توت العليق، ياسمين ناعم",
-        specRightVal: "مسك سكري، خشب الكشمير، فانيليا دافئة",
-        price: "٤٨٠ جنيه",
-        mood: "أنثوي، رقيق، جذاب"
-      },
-      en: {
-        name: "Cairo Rose",
-        collection: "Evening Delicacy Collection",
-        shortDesc: "The softness of Taif rose blended with premium white musk and cashmere wood.",
-        desc: "A delicate and attractive blend celebrating classic femininity and serene beauty. Fresh notes of natural Taif rose mixed with luxurious sweet musk and cashmere wood.",
-        specLeftVal: "Taif Rose, Raspberry, Soft Jasmine",
-        specRightVal: "Sweet Musk, Cashmere Wood, Warm Vanilla",
-        price: "480 EGP",
-        mood: "Feminine, Delicate, Attractive"
-      },
-      image: "assets/images/product_nostalgia.png",
-      accentGlow: "rgba(123, 45, 62, 0.25)",
-      accentColor: "#7B2D3E"
-    },
-    {
-      id: "nostalgia",
-      category: "perfumes",
-      subCategory: "recreated",
-      gender: "women",
-      ar: {
-        name: "عبير النوستالجيا",
-        collection: "مجموعة الحنين الفاخرة",
-        shortDesc: "ورد مجفف وعنبر دافئ يجسدان صندوق ذكريات الحب الرائعة.",
-        desc: "توليفة مخملية تجسد ذكريات الحب الرائعة المكتوبة برائحة الورد المجفف وأحجار العنبر الدافئة المنسكبة في صندوق خشبي قديم. يمنحك طاقة دفء تدوم طويلاً.",
-        specLeftVal: "ورد جوري أحمر، زهر البرتقال، توت بري",
-        specRightVal: "عنبر خام، باتشولي دافئ، فانيليا معتقة",
-        price: "٤٩٠ جنيه",
-        mood: "مخملي، جذاب، عميق"
-      },
-      en: {
-        name: "Nostalgia Breeze",
-        collection: "Luxury Nostalgia Collection",
-        shortDesc: "Dried roses and warm amber embodying a box of wonderful love memories.",
-        desc: "A velvety blend embodying wonderful love memories written in the scent of dried roses and warm amber stones stored in an old wooden box. Gives you a long-lasting warm energy.",
-        specLeftVal: "Red Damask Rose, Orange Blossom, Wild Berries",
-        specRightVal: "Raw Amber, Warm Patchouli, Vintage Vanilla",
-        price: "490 EGP",
-        mood: "Velvety, Attractive, Deep"
-      },
-      image: "assets/images/product_nostalgia.png",
-      accentGlow: "rgba(123, 45, 62, 0.25)",
-      accentColor: "#7B2D3E"
-    },
+  // 1. Core Catalog Dataset (Will be populated from Supabase)
+  let products = [];
 
-    // --- Clothes ---
-    {
-      id: "linen-shirt",
-      category: "clothes",
-      gender: "men",
-      sizes: ["S", "M", "L", "XL", "XXL"],
-      ar: {
-        name: "قميص كتان راقي",
-        collection: "مجموعة الصيف الفاخرة",
-        shortDesc: "قميص كتان إيطالي ناعم وبارد بتفاصيل خياطة يدوية راقية.",
-        desc: "قميص صيفي كلاسيكي عصري مصنوع من خامة الكتان الطبيعي الفاخر بنسبة 100%. يتميز بقصة مريحة وأنيقة تناسب الإطلالات اليومية الذكية في الطقس الدافئ.",
-        specLeftVal: "كتان إيطالي نقي 100% فائق النعومة",
-        specRightVal: "قصة مريحة (Slim/Regular) خياطة وتطريز يدوي دقيق",
-        price: "٨٥٠ جنيه"
-      },
-      en: {
-        name: "Premium Linen Shirt",
-        collection: "Luxury Summer Collection",
-        shortDesc: "Breathable and soft Italian linen shirt with minimalist stitching.",
-        desc: "A classic-modern summer shirt tailored from 100% pure premium natural linen. Features a relaxed yet structured fit perfect for smart casual outings.",
-        specLeftVal: "100% Pure Ultra-Soft Italian Linen",
-        specRightVal: "Comfortable Slim/Regular Cut, fine manual tailoring",
-        price: "850 EGP"
-      },
-      image: "assets/images/product_jasmine.png",
-      accentGlow: "rgba(237, 224, 200, 0.15)",
-      accentColor: "#EDE0C8"
-    },
-    {
-      id: "linen-dress",
-      category: "clothes",
-      gender: "women",
-      sizes: ["XS", "S", "M", "L", "XL"],
-      ar: {
-        name: "فستان كتان راقي",
-        collection: "مجموعة الصيف الفاخرة",
-        shortDesc: "فستان صيفي رقيق مصنوع من ألياف الكتان الطبيعية لتمنحك الأناقة والانتعاش.",
-        desc: "فستان نسائي صيفي كلاسيكي رقيق مصنوع من خامة الكتان الطبيعي الفاخر بنسبة 100%. تصميم مريح وأنيق يجمع البساطة الراقية ومناسب لإطلالة مسائية مميزة.",
-        specLeftVal: "كتان نقي 100% طبيعي وناعم",
-        specRightVal: "قصة مريحة كلاسيكية، تطريز يدوي على الأكمام والياقة",
-        price: "١٤٠٠ جنيه"
-      },
-      en: {
-        name: "Premium Linen Dress",
-        collection: "Luxury Summer Collection",
-        shortDesc: "Delicate summer dress crafted from premium natural linen for style and freshness.",
-        desc: "A classic-modern summer dress tailored from 100% pure premium natural linen. Features a relaxed yet elegant silhouette for outstanding summer evenings.",
-        specLeftVal: "100% Pure Breathable Natural Linen",
-        specRightVal: "Classic relaxed fit, fine handmade embroidery on sleeves",
-        price: "1,400 EGP"
-      },
-      image: "assets/images/story_bg.png",
-      accentGlow: "rgba(237, 224, 200, 0.15)",
-      accentColor: "#EDE0C8"
-    },
-    {
-      id: "tailored-trousers",
-      category: "clothes",
-      gender: "men",
-      sizes: ["30", "32", "34", "36", "38"],
-      ar: {
-        name: "بنطال كلاسيكي أنيق",
-        collection: "مجموعة الأناقة العصرية",
-        shortDesc: "بنطال صوف خفيف وقصة ممتازة تمنحك إطلالة رسمية ومريحة.",
-        desc: "بنطال مصمم بعناية فائقة من أقمشة مخلوطة خفيفة الوزن توفر سهولة الحركة مع الحفاظ على الشكل الكلاسيكي المرتب والمثالي للمناسبات الرسمية والعملية.",
-        specLeftVal: "صوف خفيف مخلوط بالقطن العضوي الممتاز",
-        specRightVal: "قصة مستقيمة كلاسيكية (Straight Fit)، تفاصيل حزام مدمج",
-        price: "١٢٠٠ جنيه"
-      },
-      en: {
-        name: "Classic Tailored Trousers",
-        collection: "Modern Elegance Collection",
-        shortDesc: "Light wool-blend trousers with a refined fit for structured daily style.",
-        desc: "Meticulously designed pants tailored from light breathable wool and cotton blend. Offers outstanding flexibility while keeping a clean classic outline.",
-        specLeftVal: "Light Wool and Organic Cotton Blend",
-        specRightVal: "Straight Classic Fit, build-in waist adjusters",
-        price: "1,200 EGP"
-      },
-      image: "assets/images/story_bg.png",
-      accentGlow: "rgba(201, 168, 76, 0.15)",
-      accentColor: "#C9A84C"
-    },
+  // Function to load products from Supabase
+  const loadProducts = async () => {
+    try {
+      const { data, error } = await window.supabaseClient
+        .from('products')
+        .select('*');
 
-    // --- Shoes ---
-    {
-      id: "minimalist-sneakers",
-      category: "shoes",
-      gender: "unisex",
-      sizes: ["40", "41", "42", "43", "44", "45"],
-      ar: {
-        name: "حذاء جلدي عصري",
-        collection: "مجموعة الخطوات المريحة",
-        shortDesc: "حذاء رياضي جلدي بسيط ومريح يناسب جميع المناسبات الكاجوال.",
-        desc: "حذاء رياضي كاجوال مصنع بالكامل من الجلد الطبيعي الممتاز. تصميم بسيط بخطوط نظيفة ونعل مطاطي مريح يناسب الاستخدام اليومي والأناقة العصرية الكاجوال.",
-        specLeftVal: "جلد طبيعي 100% مدبوغ بعناية",
-        specRightVal: "نعل مطاطي مرن ومبطن، بطانة طبية مريحة",
-        price: "١٤٥٠ جنيه"
-      },
-      en: {
-        name: "Minimalist Leather Sneakers",
-        collection: "Comfort Steps Collection",
-        shortDesc: "Clean and minimalist leather sneakers for smart casual everyday comfort.",
-        desc: "Sleek low-top sneakers crafted entirely from high-grade natural leather. Minimalist design featuring flexible support ideal for dynamic modern life.",
-        specLeftVal: "100% Hand-finished Genuine Leather",
-        specRightVal: "Flexible rubber sole, orthotic padded inner lining",
-        price: "1,450 EGP"
-      },
-      image: "assets/images/product_nostalgia.png",
-      accentGlow: "rgba(123, 45, 62, 0.15)",
-      accentColor: "#7B2D3E"
-    },
-    {
-      id: "classic-flats",
-      category: "shoes",
-      gender: "women",
-      sizes: ["36", "37", "38", "39", "40", "41"],
-      ar: {
-        name: "حذاء فلات كلاسيكي",
-        collection: "مجموعة الخطوات المريحة",
-        shortDesc: "حذاء نسائي فلات مصنوع يدوياً من الجلد الطبيعي الناعم والمريح.",
-        desc: "حذاء نسائي لوفر/فلات كلاسيكي مصنوع يدوياً بالكامل من أجود أنواع الجلود الطبيعية. تصميم أنيق وبسيط يوفر راحة فائقة ومظهر لائق للاستخدام اليومي الممتد.",
-        specLeftVal: "جلد طبيعي ناعم مدبوغ ومطرز يدوياً",
-        specRightVal: "نعل مطاطي مريح ومرن مع بطانة طبية داخلية مضاعفة",
-        price: "١٢٥٠ جنيه"
-      },
-      en: {
-        name: "Classic Leather Flats",
-        collection: "Comfort Steps Collection",
-        shortDesc: "Handcrafted women's flats made from soft genuine leather for ultimate comfort.",
-        desc: "Artisanal women's flats handcrafted from ultra-soft genuine leather. Stylish minimalist design that ensures cozy support for extended active wear.",
-        specLeftVal: "100% Soft Tanned Hand-stitched Leather",
-        specRightVal: "Flexible rubber outsole, padded orthopedic double-cushioned lining",
-        price: "1,250 EGP"
-      },
-      image: "assets/images/product_jasmine.png",
-      accentGlow: "rgba(237, 224, 200, 0.15)",
-      accentColor: "#EDE0C8"
-    },
-    {
-      id: "leather-loafers",
-      category: "shoes",
-      gender: "men",
-      sizes: ["40", "41", "42", "43", "44", "45"],
-      ar: {
-        name: "حذاء لوفر كلاسيكي",
-        collection: "مجموعة المناسبات الراقية",
-        shortDesc: "لوفر جلدي فاخر مصنوع يدوياً ليناسب الإطلالات الكلاسيكية والأنيقة.",
-        desc: "حذاء لوفر كلاسيكي أنيق مصنع يدوياً من أفخر أنواع الجلود الطبيعية. يوفر راحة تامة للقدمين ومظهرًا فخمًا يليق بالمناسبات والبدل الرسمية والأطقم الكلاسيكية.",
-        specLeftVal: "جلد ماعز طبيعي مدبوغ ومطرز يدوياً بالكامل",
-        specRightVal: "نعل جلدي معزز بطبقة مطاطية مدمجة لمنع الانزلاق",
-        price: "١٦٥٠ جنيه"
-      },
-      en: {
-        name: "Classic Leather Loafers",
-        collection: "Premium Occasions Collection",
-        shortDesc: "Handcrafted luxury leather loafers for tailored formal and semi-formal looks.",
-        desc: "Timeless classic leather loafers, handcrafted by skilled artisan shoemakers. Made with soft leather for a custom-fit feel and clean luxurious look.",
-        specLeftVal: "Artisan Tanned Premium Goatskin Leather",
-        specRightVal: "Stacked premium leather sole with anti-slip grip insert",
-        price: "1,650 EGP"
-      },
-      image: "assets/images/product_oud.png",
-      accentGlow: "rgba(201, 168, 76, 0.2)",
-      accentColor: "#C9A84C"
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        products = data.map(item => ({
+          id: item.id,
+          category: item.category,
+          subCategory: item.sub_category,
+          gender: item.gender,
+          sizes: item.sizes ? JSON.parse(item.sizes) : null,
+          image: item.image,
+          accentGlow: item.accent_glow,
+          accentColor: item.accent_color,
+          ar: {
+            name: item.ar_name,
+            collection: item.ar_collection,
+            shortDesc: item.ar_short_desc,
+            desc: item.ar_desc,
+            specLeftVal: item.ar_spec_left,
+            specRightVal: item.ar_spec_right,
+            price: item.ar_price,
+            mood: item.ar_mood
+          },
+          en: {
+            name: item.en_name,
+            collection: item.en_collection,
+            shortDesc: item.en_short_desc,
+            desc: item.en_desc,
+            specLeftVal: item.en_spec_left,
+            specRightVal: item.en_spec_right,
+            price: item.en_price,
+            mood: item.en_mood
+          }
+        }));
+      }
+      
+      // Initial render after loading
+      renderCatalog(activeLang);
+    } catch (error) {
+      console.error('Error loading products from Supabase:', error);
     }
-  ];
+  };
 
   // DOM Layout Grid references
   const gridPerfumes = document.getElementById("perfumes-scent-grid");
@@ -694,6 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const openProductModal = (id) => {
     activeProductId = id;
+    window.activeProductId = id; // Exposed for orders.js
     populateModal(id, activeLang);
     modal.classList.add("active");
     document.body.style.overflow = "hidden";
@@ -896,6 +634,76 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Admin form submission
+  const adminForm = document.getElementById("admin-form");
+  const adminModal = document.getElementById("admin-modal");
+  
+  if (adminForm) {
+    adminForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById("admin-submit-btn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "جاري الحفظ... (Saving...)";
+      
+      const sizesInput = document.getElementById("admin-prod-sizes").value;
+      const sizesArray = sizesInput.split(",").map(s => s.trim()).filter(s => s);
+
+      const newProduct = {
+        id: document.getElementById("admin-prod-id").value,
+        category: document.getElementById("admin-prod-category").value,
+        sub_category: document.getElementById("admin-prod-subcategory").value || null,
+        gender: document.getElementById("admin-prod-gender").value,
+        sizes: JSON.stringify(sizesArray),
+        image: document.getElementById("admin-prod-image").value,
+        accent_glow: document.getElementById("admin-prod-glow").value || null,
+        accent_color: document.getElementById("admin-prod-color").value || null,
+        
+        ar_name: document.getElementById("admin-prod-name-ar").value,
+        ar_collection: document.getElementById("admin-prod-collection-ar").value || null,
+        ar_short_desc: document.getElementById("admin-prod-short-ar").value || null,
+        ar_desc: document.getElementById("admin-prod-desc-ar").value || null,
+        ar_spec_left: document.getElementById("admin-prod-spec-l-ar").value || null,
+        ar_spec_right: document.getElementById("admin-prod-spec-r-ar").value || null,
+        ar_price: document.getElementById("admin-prod-price-ar").value,
+        ar_mood: document.getElementById("admin-prod-mood-ar").value || null,
+        
+        en_name: document.getElementById("admin-prod-name-en").value,
+        en_collection: document.getElementById("admin-prod-collection-en").value || null,
+        en_short_desc: document.getElementById("admin-prod-short-en").value || null,
+        en_desc: document.getElementById("admin-prod-desc-en").value || null,
+        en_spec_left: document.getElementById("admin-prod-spec-l-en").value || null,
+        en_spec_right: document.getElementById("admin-prod-spec-r-en").value || null,
+        en_price: document.getElementById("admin-prod-price-en").value,
+        en_mood: document.getElementById("admin-prod-mood-en").value || null
+      };
+
+      try {
+        const { error } = await window.supabaseClient
+          .from("products")
+          .insert([newProduct]);
+          
+        if (error) throw error;
+        
+        alert("تم حفظ وإضافة المنتج بنجاح!");
+        adminForm.reset();
+        if (adminModal) {
+          adminModal.classList.remove("active");
+          document.body.style.overflow = "";
+        }
+        
+        // Reload products dynamically
+        await loadProducts();
+        
+      } catch (err) {
+        alert("حدث خطأ أثناء حفظ المنتج: " + (err.message || err));
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "حفظ وإضافة المنتج (Save Product)";
+      }
+    });
+  }
+
   // Initial render
-  renderCatalog(activeLang);
+  loadProducts();
 });

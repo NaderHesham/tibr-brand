@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
@@ -19,8 +19,8 @@
   <link rel="stylesheet" href="css/variables.css?v=1.2">
   <link rel="stylesheet" href="css/animations.css?v=1.2">
   <link rel="stylesheet" href="css/hero.css?v=1.2">
-  <link rel="stylesheet" href="css/products.css?v=1.2">
-  <link rel="stylesheet" href="css/story.css?v=1.2">
+  <link rel="stylesheet" href="css/products.css?v=1.4">
+  <link rel="stylesheet" href="css/story.css?v=1.3">
   <link rel="stylesheet" href="css/footer.css?v=1.2">
 </head>
 <body>
@@ -89,6 +89,16 @@
           <!-- Language Toggle Button -->
           <button id="lang-switch" class="lang-switch-btn hover-vibrate" aria-label="Change Language">
             <span class="lang-text">EN</span>
+          </button>
+
+          <!-- Admin Panel Button (Hidden by default) -->
+          <button id="admin-panel-btn" class="btn btn-gold" style="display: none; padding: 6px 12px; margin-left: 10px; font-size: 0.9rem;">
+            لوحة التحكم
+          </button>
+
+          <!-- Login / Account Button -->
+          <button id="auth-btn" class="btn btn-outline" style="padding: 6px 12px; margin-left: 10px;">
+            تسجيل الدخول
           </button>
 
           <a href="https://wa.me/201000000000?text=أهلاً%20روبابيكيا،%20أريد%20الاستفسار%20عن%20العطور" target="_blank" class="nav-whatsapp-btn hover-vibrate">
@@ -523,14 +533,208 @@
             <strong id="modal-perfume-mood" data-i18n="modal-mood-default">رومانسية دافئة</strong>
           </div>
 
-          <a href="" id="modal-whatsapp-link" target="_blank" class="btn btn-gold modal-order-btn hover-vibrate">
+          <a href="" id="modal-whatsapp-link" target="_blank" class="btn btn-gold modal-order-btn hover-vibrate" style="display: none;">
             <span data-i18n="modal-order-btn">اطلب هذا المنتج الآن</span>
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
               <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.963C16.63 2.019 14.155 1 11.53 1c-5.448 0-9.873 4.372-9.877 9.802-.001 1.77.472 3.498 1.371 5.042l-.994 3.635 3.731-.967zm12.338-7.79c-.316-.157-1.872-.911-2.16-.1.017-.288-.288-.73-.85-.1.018-.088-.58-.58-.88-.135-.297-.478-.172-.888-.347-.37-.156-.818-.286-.96-.407-.468-.396-.714-.848-.714-1.3l.002-.152c.007-.417.158-.622.308-.77.15-.15.316-.21.417-.306.1-.096.133-.162.2-.3.066-.138.033-.26-.017-.367-.05-.107-.417-1.002-.57-1.37-.15-.36-.3-.314-.418-.32h-.357c-.122 0-.32.046-.488.228-.168.183-.642.618-.642 1.51 0 .89.658 1.75.75 1.87.092.12 1.272 1.91 3.08 2.67.43.18.766.29 1.028.374.433.136.827.117 1.138.07.348-.052 1.872-.752 2.135-1.446.262-.693.262-1.29.183-1.414-.078-.124-.288-.22-.604-.378z"/>
             </svg>
           </a>
+
+          <!-- Native DB Order Button -->
+          <button id="modal-db-order-btn" class="btn btn-gold modal-order-btn hover-vibrate">
+            <span>تأكيد الطلب المباشر</span>
+          </button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       AUTH MODAL — Unified Design (Sign In / Sign Up)
+       ========================================== -->
+  <div class="product-modal-overlay" id="auth-modal" style="z-index: 9999; padding: 1.5rem;">
+    <div class="auth-modal-inner">
+      <button class="modal-close-btn" id="auth-close-btn" aria-label="إغلاق">✕</button>
+
+      <div class="auth-shell">
+        <div class="auth-shell-header">
+          <div class="auth-brand">
+            <span class="auth-logo-ar">روبابيكيا</span>
+            <span class="auth-logo-en">ROBABIKIA</span>
+          </div>
+          <p class="auth-shell-note">نفس التجربة الراقية، سواء كنت تسجل دخولك أو تنشئ حسابًا جديدًا.</p>
+        </div>
+
+        <div class="auth-form-panel">
+          <div class="auth-form-header">
+            <h2 id="auth-modal-title">تسجيل الدخول</h2>
+            <p id="auth-modal-subtitle">أهلاً بعودتك في روبابيكيا 🌿</p>
+          </div>
+
+          <button id="auth-google-btn" class="auth-google-btn">
+            <svg style="width:18px;height:18px;flex-shrink:0" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            <span>الدخول بواسطة Google</span>
+          </button>
+
+          <div class="auth-divider"><span>أو</span></div>
+
+          <form id="auth-form">
+            <div id="auth-signup-fields" style="display:none; flex-direction:column; gap:1rem;">
+              <div class="auth-field">
+                <label for="auth-name">الاسم بالكامل <span class="auth-req">*</span></label>
+                <input type="text" id="auth-name" placeholder="أدخل اسمك بالكامل">
+              </div>
+              <div class="auth-field">
+                <label for="auth-gender">الجنس <span class="auth-req">*</span></label>
+                <select id="auth-gender">
+                  <option value="" disabled selected>اختر</option>
+                  <option value="male">ذكر</option>
+                  <option value="female">أنثى</option>
+                </select>
+              </div>
+              <div class="auth-field">
+                <label for="auth-dob">تاريخ الميلاد</label>
+                <input type="date" id="auth-dob">
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label for="auth-email">البريد الإلكتروني <span class="auth-req">*</span></label>
+              <input type="email" id="auth-email" required placeholder="example@domain.com">
+            </div>
+            <div class="auth-field">
+              <label for="auth-password">كلمة المرور <span class="auth-req">*</span></label>
+              <input type="password" id="auth-password" required placeholder="•••••••••">
+            </div>
+
+            <button type="submit" class="btn btn-gold auth-submit-btn" id="auth-submit-btn">دخول</button>
+          </form>
+
+          <div class="auth-toggle-wrap">
+            <button id="auth-toggle-mode" class="auth-toggle-btn">
+              ليس لديك حساب؟ إنشاء حساب جديد
+            </button>
+          </div>
+        </div><!-- /auth-form-panel -->
+      </div><!-- /auth-shell -->
+    </div><!-- /auth-modal-inner -->
+  </div>
+
+  <!-- ==========================================
+       ORDER MODAL
+       ========================================== -->
+  <div class="product-modal-overlay" id="order-modal" style="z-index: 9998;">
+    <div class="product-modal glass-panel" style="max-width: 500px; margin: auto; padding: 2rem;">
+      <button class="modal-close-btn" id="order-close-btn" aria-label="Close">✕</button>
+      <h2 style="margin-bottom: 1rem; color: var(--color-gold);">إتمام الطلب</h2>
+      <form id="order-form" style="display: flex; flex-direction: column; gap: 1rem;">
+        <input type="text" id="order-name" placeholder="الاسم بالكامل" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        <input type="tel" id="order-phone" placeholder="رقم الهاتف" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        <textarea id="order-address" placeholder="العنوان بالتفصيل" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff; min-height: 80px;"></textarea>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       ADMIN PANEL MODAL
+       ========================================== -->
+  <div class="product-modal-overlay" id="admin-modal" style="z-index: 9997;">
+    <div class="product-modal glass-panel" style="max-width: 600px; margin: auto; padding: 2rem; max-height: 85vh; overflow-y: auto;">
+      <button class="modal-close-btn" id="admin-close-btn" aria-label="Close">✕</button>
+      <h2 style="margin-bottom: 1.5rem; color: var(--color-gold); text-align: center;">إضافة منتج جديد (Add Product)</h2>
+      <form id="admin-form" style="display: flex; flex-direction: column; gap: 1rem; text-align: right;">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">معرف المنتج الفريد (slug/ID)</label>
+            <input type="text" id="admin-prod-id" placeholder="e.g. signature-oud" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          </div>
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">الفئة (Category)</label>
+            <select id="admin-prod-category" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: #111; color: #fff;">
+              <option value="perfumes">عطور (Perfumes)</option>
+              <option value="clothes">ملابس (Clothes)</option>
+              <option value="accessories">إكسسوارات (Accessories)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">الفئة الفرعية (Sub-category)</label>
+            <input type="text" id="admin-prod-subcategory" placeholder="e.g. classic" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          </div>
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">الجنس (Gender)</label>
+            <select id="admin-prod-gender" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: #111; color: #fff;">
+              <option value="unisex">للجنسين (Unisex)</option>
+              <option value="men">رجال (Men)</option>
+              <option value="women">نساء (Women)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">الأحجام المتاحة (Sizes - comma separated)</label>
+            <input type="text" id="admin-prod-sizes" placeholder="e.g. 50ml, 100ml" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          </div>
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">رابط الصورة (Image URL)</label>
+            <input type="text" id="admin-prod-image" placeholder="e.g. assets/oud.png" required style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">توهج الخلفية (Accent Glow shadow)</label>
+            <input type="text" id="admin-prod-glow" placeholder="e.g. rgba(212, 175, 55, 0.15)" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          </div>
+          <div>
+            <label style="color: #aaa; font-size: 0.85rem;">لون التوهج (Accent Color)</label>
+            <input type="text" id="admin-prod-color" placeholder="e.g. #d4af37" style="width: 100%; padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          </div>
+        </div>
+
+        <h3 style="color: var(--color-gold); margin-top: 1rem; border-top: 1px solid #333; padding-top: 1rem;">التفاصيل بالعربية (Arabic details)</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="admin-prod-name-ar" placeholder="الاسم بالعربية" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          <input type="text" id="admin-prod-collection-ar" placeholder="المجموعة (e.g. مجموعة النخبة)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="admin-prod-short-ar" placeholder="وصف قصير" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          <input type="text" id="admin-prod-price-ar" placeholder="السعر (e.g. ٣٥٠ ج.م)" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        </div>
+        <textarea id="admin-prod-desc-ar" placeholder="الوصف الكامل للمنتج" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff; min-height: 60px;"></textarea>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="admin-prod-spec-l-ar" placeholder="المواصفات اليسرى (e.g. التركيز: عالي)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          <input type="text" id="admin-prod-spec-r-ar" placeholder="المواصفات اليمنى (e.g. الثبات: ٢٤ ساعة)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        </div>
+        <input type="text" id="admin-prod-mood-ar" placeholder="المزاج العطري (e.g. دافئ وخشبي)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+
+        <h3 style="color: var(--color-gold); margin-top: 1rem; border-top: 1px solid #333; padding-top: 1rem;">Details in English</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="admin-prod-name-en" placeholder="Name in English" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          <input type="text" id="admin-prod-collection-en" placeholder="Collection (e.g. Elite Collection)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="admin-prod-short-en" placeholder="Short description" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          <input type="text" id="admin-prod-price-en" placeholder="Price (e.g. 350 EGP)" required style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        </div>
+        <textarea id="admin-prod-desc-en" placeholder="Full Detailed Description" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff; min-height: 60px;"></textarea>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <input type="text" id="admin-prod-spec-l-en" placeholder="Left specification (e.g. Concentration: High)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+          <input type="text" id="admin-prod-spec-r-en" placeholder="Right specification (e.g. Longevity: 24h)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+        </div>
+        <input type="text" id="admin-prod-mood-en" placeholder="Olfactive Mood (e.g. Warm & Woody)" style="padding: 10px; border-radius: 4px; border: 1px solid var(--color-gold); background: transparent; color: #fff;">
+
+        <button type="submit" class="btn btn-gold" id="admin-submit-btn" style="margin-top: 1rem; width: 100%;">حفظ وإضافة المنتج (Save Product)</button>
+      </form>
     </div>
   </div>
 
@@ -541,13 +745,20 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   
+  <!-- Supabase Library -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <!-- Modular Scripts -->
-  <script src="js/translations.js?v=1.2"></script>
+  <script src="js/supabase-client.js?v=1.2"></script>
+  <script src="js/auth.js?v=1.3"></script>
+  <script src="js/orders.js?v=1.2"></script>
+  <script src="js/translations.js?v=1.3"></script>
   <script src="js/lang.js?v=1.2"></script>
   <script src="js/router.js?v=1.2"></script>
   <script src="js/intro.js?v=1.2"></script>
   <script src="js/products.js?v=1.2"></script>
-  <script src="js/scroll.js?v=1.2"></script>
+  <script src="js/scroll.js?v=1.3"></script>
   <script src="js/gallery.js?v=1.2"></script>
 </body>
 </html>
+
