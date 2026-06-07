@@ -177,6 +177,20 @@
   align-items: center;
   overflow: hidden;
   background-color: var(--bg-dark);
+  clip-path: circle(150% at 50% 50%);
+}
+
+/* Atmospheric radial glow that pulses behind the logo */
+.intro-bg-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 55% 45% at 50% 50%,
+    rgba(201, 168, 76, 0.09) 0%,
+    rgba(201, 168, 76, 0.04) 40%,
+    transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .intro-content {
@@ -185,72 +199,96 @@
   text-align: center;
   padding: 2rem;
   max-width: 600px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1.2rem;
 }
 
 .intro-logo-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
-.intro-logo-ornament {
-  font-size: 2rem;
-  color: var(--gold);
-  opacity: 0;
-  margin: 0.5rem 0;
+/* Clip container for the curtain-lift reveal */
+.intro-logo-clip {
+  overflow: hidden;
+  padding-bottom: 0.12em;
 }
-
 
 .intro-logo-ar {
   font-family: var(--font-arabic);
-  font-size: 4.5rem;
+  font-size: clamp(3rem, 10vw, 5rem);
   color: var(--gold);
   letter-spacing: 2px;
-  text-shadow: 0 4px 15px rgba(201, 168, 76, 0.3);
+  text-shadow:
+    0 4px 20px rgba(201, 168, 76, 0.35),
+    0 0 60px rgba(201, 168, 76, 0.12);
   margin: 0;
-  opacity: 0;
-  transform: translateY(20px);
+  display: block;
+  transform: translateY(110%);
 }
 
 .intro-logo-en {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: clamp(0.75rem, 2vw, 1.1rem);
   color: var(--beige);
-  letter-spacing: 8px;
-  margin-top: -5px;
+  letter-spacing: 24px;
+  margin-top: 2px;
   opacity: 0;
-  transform: translateY(20px);
+  white-space: nowrap;
+}
+
+/* SVG ornament lines */
+.intro-ornament {
+  width: min(380px, 80vw);
+  overflow: visible;
+  display: block;
+}
+
+.orn-path-left,
+.orn-path-right {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  stroke-dasharray: 175;
+  stroke-dashoffset: 175;
+  opacity: 0.7;
+}
+
+.orn-diamond {
+  fill: var(--gold);
+  opacity: 0;
 }
 
 .intro-tagline {
   font-family: var(--font-body);
   font-style: italic;
-  font-size: 1.4rem;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
   color: var(--beige-dim);
   opacity: 0;
-  transform: translateY(20px);
+  filter: blur(14px);
+  text-wrap: balance;
 }
 
 .skip-btn {
   position: fixed;
   bottom: 40px;
-  left: 40px; /* Left side because page is RTL, bottom-left is classic for skip */
+  left: 40px;
   z-index: 10000;
   font-family: var(--font-body);
   font-size: 1rem;
   color: var(--gold);
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  background: rgba(21, 17, 14, 0.5);
-  backdrop-filter: blur(5px);
-  padding: 0.6rem 1.5rem;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: rgba(13, 10, 7, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 0.55rem 1.4rem;
   border-radius: var(--radius-full);
-  transition: var(--transition-smooth);
+  transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
   opacity: 0;
 }
 
@@ -258,11 +296,64 @@
   background: var(--gold);
   color: var(--bg-dark);
   border-color: var(--gold);
-  box-shadow: var(--shadow-gold);
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.3);
 }
 
 /* Lock scroll on body during intro */
 body.intro-active {
   overflow: hidden;
   height: 100vh;
+}
+
+/* ==========================================
+   REDUCED MOTION
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Ensure initially-hidden elements become visible without animation */
+  .intro-logo-ar,
+  .intro-logo-en,
+  .intro-tagline,
+  .hero-content,
+  .story-card,
+  .animate-fade-up {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    letter-spacing: inherit !important;
+  }
+
+  .orn-path-left,
+  .orn-path-right {
+    stroke-dashoffset: 0 !important;
+  }
+
+  .orn-diamond,
+  .intro-bg-glow {
+    opacity: 1 !important;
+  }
+
+  .intro-curtain {
+    clip-path: none !important;
+  }
+
+  /* Remove infinite glow/pulse from buttons — keep visual weight */
+  .animate-pulse-gold,
+  .animate-pulse-burgundy {
+    animation: none !important;
+    box-shadow: var(--shadow-gold) !important;
+  }
+
+  /* Remove vibrate hover — keep hover color change */
+  .hover-vibrate:hover {
+    animation: none !important;
+  }
 }

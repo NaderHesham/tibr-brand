@@ -60,19 +60,34 @@
        1. INTRO ANIMATION CURTAIN
        ========================================== -->
   <div class="intro-curtain" id="intro-curtain">
-    <!-- Skip Intro Button -->
     <button class="skip-btn" id="skip-btn" data-i18n="intro-skip">تخطي ←</button>
 
+    <div class="intro-bg-glow" aria-hidden="true"></div>
+
     <div class="intro-content">
+
+      <svg class="intro-ornament intro-ornament-top" viewBox="0 0 400 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path class="orn-path-left" d="M 193,10 L 20,10"/>
+        <polygon class="orn-diamond" points="200,4 207,10 200,16 193,10"/>
+        <path class="orn-path-right" d="M 207,10 L 380,10"/>
+      </svg>
+
       <div class="intro-logo-wrapper">
-        <span class="intro-logo-ornament">🌿</span>
-        <h1 class="intro-logo-ar" data-i18n="nav-logo-ar">روبابيكيا</h1>
+        <div class="intro-logo-clip">
+          <h1 class="intro-logo-ar" data-i18n="nav-logo-ar">روبابيكيا</h1>
+        </div>
         <h2 class="intro-logo-en">ROBABIKIA</h2>
-        <span class="intro-logo-ornament">🌿</span>
       </div>
+
+      <svg class="intro-ornament intro-ornament-bottom" viewBox="0 0 400 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path class="orn-path-left" d="M 193,10 L 20,10"/>
+        <polygon class="orn-diamond" points="200,4 207,10 200,16 193,10"/>
+        <path class="orn-path-right" d="M 207,10 L 380,10"/>
+      </svg>
+
       <p class="intro-tagline" data-i18n="intro-tagline">"روائح نايمة في الذاكرة، صحيت في قارورة."</p>
     </div>
-    
+
     <div class="intro-smoke-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></div>
   </div>
 
@@ -305,10 +320,10 @@
       <!-- HOW TO ORDER -->
       <section class="order-section" id="order">
         <div class="section-container">
-          <div class="section-header">
-            <span class="section-subtitle" data-i18n="order-subtitle">بخطوات بسيطة وسريعة</span>
+          <div class="order-heading-block">
             <h2 class="section-title" data-i18n="order-title">كيفية اقتناء طلبك</h2>
             <div class="section-divider"></div>
+            <p class="order-subtitle-text" data-i18n="order-subtitle">بخطوات بسيطة وسريعة</p>
           </div>
 
           <div class="steps-grid">
@@ -363,13 +378,9 @@
 
       <!-- NOSTALGIA MOOD GALLERY -->
       <section class="gallery-section" id="gallery">
-        <div class="section-container">
-          <div class="section-header">
-            <span class="section-subtitle" data-i18n="gallery-subtitle">شريط الذاكرة</span>
-            <h2 class="section-title" data-i18n="gallery-title">أجواء روبابيكيا</h2>
-            <p class="section-desc" data-i18n="gallery-desc">اسحب الشريط أفقياً لاستكشاف أجواء وعوالم مجموعاتنا</p>
-            <div class="section-divider"></div>
-          </div>
+        <div class="gallery-intro-row">
+          <h2 class="gallery-section-title" data-i18n="gallery-title">أجواء روبابيكيا</h2>
+          <span class="gallery-section-hint" data-i18n="gallery-desc">اسحب الشريط لاستكشاف عوالمنا</span>
         </div>
 
         <div class="gallery-wrapper" id="gallery-wrapper">
@@ -845,12 +856,17 @@
          SPA VIEW: ORDER CONFIRMATION
          ========================================== -->
     <div id="view-order-confirm" class="spa-view" style="display:none;">
-      <div class="confirm-card glass-panel">
-        <span class="confirm-icon">✅</span>
-        <h1>تم استلام طلبك!</h1>
+      <div class="confirm-card">
+        <div class="confirm-ornament">
+          <span class="confirm-ornament-line"></span>
+          <span class="confirm-ornament-symbol">🌿</span>
+          <span class="confirm-ornament-line"></span>
+        </div>
+        <h1>الطلب وصلنا!</h1>
+        <p class="confirm-tagline">"شكراً إنك اخترت روبابيكيا."</p>
         <div class="confirm-divider"></div>
-        <p>شكراً لثقتك في روبابيكيا. سيتواصل معك فريقنا قريباً لتأكيد التوصيل.</p>
-        <p style="font-size:0.85rem; color: var(--beige-dim);">يُرجى إبقاء هاتفك متاحاً لتلقي المكالمة.</p>
+        <p>هنتواصل معاك قريباً لتأكيد التوصيل وتحديد أنسب وقت ليك.</p>
+        <p><strong>خلي تليفونك قريب منك</strong> — فريقنا رح يتصل بيك بالتفاصيل.</p>
         <a href="#home" class="btn btn-gold">متابعة التسوق</a>
       </div>
     </div>
