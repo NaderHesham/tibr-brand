@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const views = document.querySelectorAll(".spa-view");
   const navLinks = document.querySelectorAll(".nav-link");
 
-  const HOME_SECTIONS = ["#home", "#story", "#order", "#gallery", "#overview"];
+  const HOME_SECTIONS = ["#home", "#story", "#order"];
 
   // Force website to always open on the home landing page upon fresh reload
   if (window.location.hash) {

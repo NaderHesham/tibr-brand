@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="تجربة ثلاثية الأبعاد تفاعلية لعطور روبابيكيا — اسكرول لتدور الزجاجة وتتغير الإضاءة السينمائية." />
+  <title>روبابيكيا — التجربة ثلاثية الأبعاد</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:wght@400;600;700&family=Rakkas&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/reset.css?v=1.2" />
+  <link rel="stylesheet" href="css/variables.css?v=1.2" />
+  <link rel="stylesheet" href="css/3d-experience.css?v=1.5" />
+</head>
+<body class="experience-3d">
+  <a href="index.html" class="experience-back">← العودة للرئيسية</a>
+
+  <!-- Scroll progress bar -->
+  <div class="progress-track"><div id="progress-bar"></div></div>
+
+  <!-- 0. Parallax background (moves with scroll, behind canvas) -->
+  <div class="parallax-bg" id="parallax-bg">
+    <div class="parallax-layer parallax-layer--gradient"></div>
+    <div class="parallax-layer parallax-layer--particles"></div>
+  </div>
+
+  <!-- 1. Fixed 3D canvas -->
+  <div class="canvas-wrapper">
+    <canvas id="three-canvas"></canvas>
+  </div>
+
+  <!-- 3. Vignette -->
+  <div class="vignette"></div>
+
+  <!-- 4. Text overlay -->
+  <div class="overlay">
+    <!-- Orbiting words around the model (fade out mid-scroll) -->
+    <div class="orbit-svg-wrapper" id="orbit-svg">
+      <svg viewBox="-250 -250 500 500" class="orbit-svg" aria-hidden="true">
+        <defs>
+          <path id="textCircle" d="M 0,-180 A 180,180 0 1,1 -0.01,-180" fill="none" />
+        </defs>
+        <g id="orbit-svg-group">
+          <text class="orbit-svg-text">
+            <textPath href="#textCircle" startOffset="0%">
+              عود ✦ مسك ✦ ياسمين ✦ عنبر ✦ فخامة ✦ تراث ✦ أصالة ✦ حصري ✦
+            </textPath>
+          </text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="scene-text" id="scene-1">
+      <p class="scene-eyebrow" data-field="collection"></p>
+      <h2 class="scene-title" data-field="name"></h2>
+      <p class="scene-desc" data-field="shortDesc"></p>
+    </div>
+
+    <div class="scene-text scene-text--end" id="scene-2">
+      <p class="scene-eyebrow">الحكاية</p>
+      <h2 class="scene-title">تفاصيل لا تُنسى</h2>
+      <p class="scene-desc" data-field="desc"></p>
+    </div>
+
+    <div class="scene-text" id="scene-3">
+      <p class="scene-eyebrow">المكوّنات</p>
+      <h2 class="scene-title" data-field="mood"></h2>
+      <ul class="scent-notes" id="scent-notes"></ul>
+    </div>
+
+    <div class="scene-text" id="scene-4">
+      <p class="scene-eyebrow">اقتنِ الآن</p>
+      <h2 class="scene-title" data-field="name"></h2>
+      <div class="scent-meta" id="scent-meta"></div>
+      <div class="scene-cta">
+        <a href="index.html#perfumes" class="btn-3d" id="cta-shop">تسوّق هذا العطر</a>
+        <a href="index.html" class="btn-3d btn-3d--ghost">كل العطور</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Scroll hint -->
+  <div class="scroll-hint" id="scroll-hint">
+    <div class="scroll-hint__wheel"></div>
+    <span>اسكرول</span>
+  </div>
+
+  <!-- 6. Scroll spacer that drives the timeline -->
+  <div class="scroll-container" id="scroll-container"></div>
+
+  <!-- 7. Loading screen -->
+  <div class="loader-screen" id="loader-screen">
+    <div class="loader-logo">روبابيكيا</div>
+    <div class="loader-track"><div id="loader-fill"></div></div>
+    <div class="loader-label">جارٍ تحميل التجربة</div>
+  </div>
+
+  <!-- 8. No-WebGL / fallback -->
+  <div class="experience-fallback">
+    <h2 class="scene-title">المتصفح لا يدعم العرض ثلاثي الأبعاد</h2>
+    <p class="scene-desc">يمكنك تصفّح المجموعة الكاملة من الصفحة الرئيسية.</p>
+    <a href="index.html" class="btn-3d">الذهاب للرئيسية</a>
+  </div>
+
+  <!-- GSAP (classic globals) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Three.js ES-module import map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module" src="js/3d-experience.js?v=1.5"></script>
+</body>
+</html>

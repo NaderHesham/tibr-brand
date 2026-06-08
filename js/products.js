@@ -525,7 +525,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     refs.discoverBtn && (refs.discoverBtn.onclick = () => {
       const currentProduct = showcaseItems[state.current];
-      if (currentProduct) openProductModal(currentProduct.id);
+      if (!currentProduct) return;
+      // Open the dedicated 3D experience for this scent if recognised,
+      // otherwise fall back to the in-page product modal.
+      const match = /product_(\w+)\.png/.exec(currentProduct.image || "");
+      const slug = match && ["oud", "jasmine", "nostalgia"].includes(match[1])
+        ? match[1]
+        : null;
+      if (slug) {
+        window.location.href = `3d-product.html?p=${slug}`;
+      } else {
+        openProductModal(currentProduct.id);
+      }
     });
 
     if (state.timer) clearInterval(state.timer);

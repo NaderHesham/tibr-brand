@@ -203,11 +203,14 @@
             <a href="#story" class="btn btn-outline">
               <span data-i18n="hero-cta-story">حكايتنا</span>
             </a>
+            <a href="3d-product.html" class="btn btn-outline">
+              <span data-i18n="hero-cta-3d">التجربة ثلاثية الأبعاد</span>
+            </a>
           </div>
         </div>
 
         <!-- Animated Scroll Down Indicator -->
-        <a href="#overview" class="scroll-indicator" aria-label="Scroll Down">
+        <a href="#story" class="scroll-indicator" aria-label="Scroll Down">
           <span class="scroll-text" data-i18n="hero-scroll">اسحب لأسفل</span>
           <div class="scroll-arrow">
             <span></span>
@@ -216,79 +219,8 @@
         </a>
       </section>
 
-      <!-- Dynamic Collections Overview -->
-      <section class="overview-section" id="overview">
-        <div class="section-container">
-          
-          <div class="section-header">
-            <span class="section-subtitle" data-i18n="scents-subtitle">إصداراتنا الراقية</span>
-            <h2 class="section-title" data-i18n="scents-title">مجموعاتنا الخاصة</h2>
-            <div class="section-divider"></div>
-          </div>
-
-          <!-- Perfumes Section Preview -->
-          <div class="overview-group" id="group-perfumes">
-            <div class="group-header">
-              <h3 data-i18n="filter-perfumes">العطور</h3>
-            </div>
-            <div class="perfume-showcase perfume-showcase--overview" id="overview-perfume-showcase">
-              <div class="bg-vignette"></div>
-              <div class="light-beam" id="overview-perfume-light-beam"></div>
-              <canvas class="particles-canvas" id="overview-perfume-particles-canvas"></canvas>
-
-              <div class="showcase-header">
-                <div class="brand-name">ROBABIKIA</div>
-                <div class="divider"></div>
-                <div class="tagline" data-i18n="perfumes-header-subtitle">إبداعات شمية ساحرة</div>
-              </div>
-
-              <div class="carousel-wrapper">
-                <div class="bottles-container" id="overview-perfume-bottles-container"></div>
-              </div>
-
-              <div class="product-info" id="overview-perfume-product-info">
-                <div class="product-name" id="overview-perfume-product-name"></div>
-                <div class="product-subtitle" id="overview-perfume-product-subtitle"></div>
-                <div class="product-notes" id="overview-perfume-product-notes"></div>
-              </div>
-
-              <div class="nav-arrows">
-                <button class="arrow-btn" id="overview-perfume-prev-btn" type="button">&#8592;</button>
-                <button class="arrow-btn" id="overview-perfume-next-btn" type="button">&#8594;</button>
-              </div>
-
-              <div class="nav-dots" id="overview-perfume-nav-dots"></div>
-
-              <div class="cta-section">
-                <button class="discover-btn" id="overview-perfume-discover-btn" type="button" data-i18n="scents-discover-btn">اكتشف المنتج</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Clothes Section Preview -->
-          <div class="overview-group" id="group-clothes">
-            <div class="group-header">
-              <h3 data-i18n="filter-clothes">الملابس</h3>
-              <a href="#clothes" class="view-all-link" data-i18n="view-all">شوف الكل ←</a>
-            </div>
-            <div class="editorial-container" id="overview-clothes-grid">
-              <!-- JS Injected: Clothes Editorial Preview -->
-            </div>
-          </div>
-
-          <!-- Shoes Section Preview -->
-          <div class="overview-group" id="group-shoes">
-            <div class="group-header">
-              <h3 data-i18n="filter-shoes">الأحذية</h3>
-              <a href="#shoes" class="view-all-link" data-i18n="view-all">شوف الكل ←</a>
-            </div>
-            <div class="shoes-grid" id="overview-shoes-grid">
-              <!-- JS Injected: Shoes Lookbook Preview -->
-            </div>
-          </div>
-
-        </div>
-      </section>
+      <!-- Collections overview removed from home: products are now viewed
+           only via the nav tabs (العطور / الملابس / الأحذية). -->
 
       <!-- BRAND STORY SECTION -->
       <section class="story-section" id="story">
@@ -376,53 +308,7 @@
         </div>
       </section>
 
-      <!-- NOSTALGIA MOOD GALLERY -->
-      <section class="gallery-section" id="gallery">
-        <div class="gallery-intro-row">
-          <h2 class="gallery-section-title" data-i18n="gallery-title">أجواء روبابيكيا</h2>
-          <span class="gallery-section-hint" data-i18n="gallery-desc">اسحب الشريط لاستكشاف عوالمنا</span>
-        </div>
-
-        <div class="gallery-wrapper" id="gallery-wrapper">
-          <div class="gallery-track" id="gallery-track">
-            <div class="gallery-item" data-scent="ذاكرة الفل">
-              <img src="assets/images/product_jasmine.png" alt="ذاكرة الفل">
-              <div class="gallery-item-overlay">
-                <h3 data-i18n="gallery-item-1-title">ذاكرة الفل</h3>
-                <p data-i18n="gallery-item-1-desc">رقة ياسمين بيوت القاهرة</p>
-              </div>
-            </div>
-            <div class="gallery-item" data-scent="سر العود">
-              <img src="assets/images/product_oud.png" alt="سر العود">
-              <div class="gallery-item-overlay">
-                <h3 data-i18n="gallery-item-2-title">سر العود</h3>
-                <p data-i18n="gallery-item-2-desc">بخور الحسين المعتق</p>
-              </div>
-            </div>
-            <div class="gallery-item" data-scent="عبير النوستالجيا">
-              <img src="assets/images/product_nostalgia.png" alt="عبير النوستالجيا">
-              <div class="gallery-item-overlay">
-                <h3 data-i18n="gallery-item-3-title">عبير النوستالجيا</h3>
-                <p data-i18n="gallery-item-3-desc">ورد أحمر مخملي دافئ</p>
-              </div>
-            </div>
-            <div class="gallery-item" data-scent="حكايتنا">
-              <img src="assets/images/story_bg.png" alt="أجواء مصرية">
-              <div class="gallery-item-overlay">
-                <h3 data-i18n="gallery-item-4-title">أناقة معاصرة</h3>
-                <p data-i18n="gallery-item-4-desc">تصاميم كلاسيكية حديثة</p>
-              </div>
-            </div>
-            <div class="gallery-item" data-scent="ذاكرة الفل">
-              <img src="assets/images/hero_bg.png" alt="روبابيكيا">
-              <div class="gallery-item-overlay">
-                <h3 data-i18n="gallery-item-5-title">فن التفاصيل والجمال</h3>
-                <p data-i18n="gallery-item-5-desc">أصالة التراث في قالب فاخر</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <!-- Mood gallery removed from home per request (no product imagery on landing). -->
 
     </div> <!-- /view-home -->
 
@@ -1233,7 +1119,7 @@
 
   <!-- Modular Scripts -->
   <script src="js/supabase-client.js?v=1.2"></script>
-  <script src="js/api-client.js?v=1.3"></script>
+  <script src="js/api-client.js?v=1.4"></script>
   <script src="js/auth.js?v=1.5"></script>
   <script src="js/orders.js?v=1.3"></script>
   <script src="js/translations.js?v=1.3"></script>

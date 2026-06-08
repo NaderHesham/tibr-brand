@@ -34,8 +34,14 @@ window.apiClient = {
     return payload;
   },
 
-  getProducts() {
-    return this.request("/api/products");
+  async getProducts() {
+    // Public catalog read straight from Supabase, so the storefront works
+    // whether or not the Node/Express backend (/api) is running.
+    const { data, error } = await window.supabaseClient
+      .from("products")
+      .select("*");
+    if (error) throw new Error(error.message);
+    return { data: data || [] };
   },
 
   getProfile() {

@@ -15,9 +15,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let isDown = false;
   let startX;
   let scrollLeft;
+  let dragged = false;
 
   gallery.addEventListener("mousedown", (e) => {
     isDown = true;
+    dragged = false;
     gallery.classList.add("active");
     startX = e.pageX - gallery.offsetLeft;
     scrollLeft = gallery.scrollLeft;
@@ -55,7 +57,19 @@ document.addEventListener("DOMContentLoaded", () => {
     // Calculate distance dragged
     const x = e.pageX - gallery.offsetLeft;
     const walk = (x - startX) * 2; // scroll speed multiplier
+    if (Math.abs(x - startX) > 6) dragged = true;
     gallery.scrollLeft = scrollLeft - walk;
+  });
+
+  // ==========================================
+  // 1b. CLICK A PERFUME CARD → ITS 3D PAGE
+  // ==========================================
+  track?.querySelectorAll(".gallery-item[data-perfume]").forEach((item) => {
+    item.style.cursor = "pointer";
+    item.addEventListener("click", () => {
+      if (dragged) return; // ignore clicks that were really drags
+      window.location.href = `3d-product.html?p=${item.dataset.perfume}`;
+    });
   });
 
   // ==========================================
