@@ -42,7 +42,7 @@
 
 .parallax-layer--gradient {
   /* Custom-generated cohesive background image; dark base fallback behind it */
-  background: #0D0A07 url("../assets/images/bg-3d.png") center top / cover no-repeat;
+  background: #0D0A07 url("../../assets/images/bg-3d.png") center top / cover no-repeat;
 }
 
 .parallax-layer--particles {

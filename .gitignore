@@ -8,3 +8,4 @@ dist/
 # Local agent / skill tooling (not part of the product)
 .claude/
 .impeccable/
+assets/models/bottle-texture.glb
