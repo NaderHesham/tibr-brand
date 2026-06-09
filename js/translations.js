@@ -185,6 +185,23 @@ const translations = {
     "auth-error": "حدث خطأ. حاول مرة أخرى.",
     "auth-google-error": "تعذر تسجيل الدخول عبر Google. تأكد من تفعيل Google Provider وإضافة رابط الموقع الحالي إلى Redirect URLs في Supabase.",
 
+    // 3D Experience scenes
+    "3d-scene1-eyebrow": "روبابيكيا",
+    "3d-scene1-title": "روائح تسكن الذاكرة",
+    "3d-scene1-desc": "تشكيلة فاخرة مُقطَّرة من روح التراث المصري",
+    "3d-scene2-eyebrow": "الحكاية",
+    "3d-scene2-title": "في كل قطرة، ذاكرة",
+    "3d-scene2-desc": "من حدائق القاهرة القديمة إلى أسواق التوابل العريقة — كل عطر يحمل قصة تتشرّب في الروح وتبقى في الذاكرة.",
+    "3d-scene3-eyebrow": "تركيبة العطر",
+    "3d-scene3-title": "اكتشف تشكيلتنا",
+    "3d-note1-label": "شرقية",
+    "3d-note1": "العود الملكي · البخور · المسك",
+    "3d-note2-label": "زهرية",
+    "3d-note2": "الياسمين · الورد الدمشقي · الفل",
+    "3d-scene4-eyebrow": "اجعله لكَ",
+    "3d-scene4-title": "عطرك — بصمتك الخالدة",
+    "3d-scene4-cta": "اكتشف التشكيلة",
+
     // WhatsApp Messages
     "wa-msg-prefix": "أهلاً روبابيكيا 🌸\n\nأود طلب عطر \"{name}\" الفاخر ({collection}).\nالسعر: {price}\n\nيرجى تأكيد الطلب وتحديد تفاصيل الشحن.",
     "wa-msg-apparel": "أهلاً روبابيكيا 🌸\n\nأود طلب قطعتي الفاخرة \"{name}\" من مجموعة ({collection}).\nالمقاس المحدد: {size}\nالسعر: {price}\n\nيرجى تأكيد الطلب وتفاصيل الشحن.",
@@ -371,6 +388,23 @@ const translations = {
     "auth-loading": "Loading...",
     "auth-error": "An error occurred. Please try again.",
     "auth-google-error": "Unable to sign in with Google. Please make sure Google Provider is enabled and the current site URL is added to Redirect URLs in Supabase.",
+
+    // 3D Experience scenes
+    "3d-scene1-eyebrow": "Robabikia",
+    "3d-scene1-title": "Scents That Never Leave",
+    "3d-scene1-desc": "A luxury collection distilled from the living soul of Egyptian heritage",
+    "3d-scene2-eyebrow": "The Story",
+    "3d-scene2-title": "A Memory in Every Drop",
+    "3d-scene2-desc": "From Cairo's ancient gardens to its storied spice markets — every Robabikia fragrance carries a tale that seeps into the soul and lingers.",
+    "3d-scene3-eyebrow": "The Notes",
+    "3d-scene3-title": "Explore the Collection",
+    "3d-note1-label": "Oriental",
+    "3d-note1": "Royal Oud · Incense · Musk",
+    "3d-note2-label": "Floral",
+    "3d-note2": "Jasmine · Damascus Rose · Jasmine Sambac",
+    "3d-scene4-eyebrow": "Make It Yours",
+    "3d-scene4-title": "Your Scent. Your Signature.",
+    "3d-scene4-cta": "Explore the Collection",
 
     // WhatsApp Messages
     "wa-msg-prefix": "Hello Robabikia 🌸\n\nI would like to order the luxury perfume \"{name}\" ({collection}).\nPrice: {price}\n\nPlease confirm my order and specify delivery details.",

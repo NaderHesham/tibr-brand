@@ -58,7 +58,8 @@ const PRODUCTS = {
   },
 };
 
-const cfg = PRODUCTS.oud;
+/* ── Scene accent color ── */
+const cfg = { accent: "#b5651d" };
 
 /* ── Lazy initialization guard ───────────────────────────── */
 let _initialized = false;
@@ -76,7 +77,7 @@ window.init3DExperience = function () {
   const { gsap, ScrollTrigger } = window;
   gsap.registerPlugin(ScrollTrigger);
 
-  const root = document.getElementById("perfume-3d-shell");
+  const root = document.getElementById("perfume-3d-shell") || document.body;
   const canvas = document.getElementById("three-canvas");
   const loaderScreen = document.getElementById("loader-screen");
   const loaderFill = document.getElementById("loader-fill");
@@ -85,33 +86,7 @@ window.init3DExperience = function () {
   const prefersReducedMotion =
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ── Populate scene texts from the default config ── */
-  function populateContent(c) {
-    root.querySelectorAll("[data-field]").forEach((el) => {
-      if (c[el.dataset.field] != null) el.textContent = c[el.dataset.field];
-    });
-
-    const orbitPath = root.querySelector("#orbit-svg-group textPath");
-    if (orbitPath) orbitPath.textContent = c.orbit.join(" ✦ ") + " ✦ ";
-
-    const notes = root.querySelector("#scent-notes");
-    if (notes) {
-      notes.innerHTML = `
-        <li><span class="note-label">المقدمة</span> ${c.notesTop}</li>
-        <li><span class="note-label">القاعدة</span> ${c.notesBase}</li>`;
-    }
-
-    const meta = root.querySelector("#scent-meta");
-    if (meta) {
-      meta.innerHTML = `
-        <span class="scent-meta__price">${c.price}</span>
-        <span class="scent-meta__sizes">${c.sizes.join(" · ")}</span>`;
-    }
-
-    root.style.setProperty("--x-red", c.accent);
-  }
-
-  populateContent(cfg);
+  root.style.setProperty("--x-red", cfg.accent);
 
   /* ── WebGL capability check ── */
   function webglSupported() {
@@ -197,6 +172,7 @@ window.init3DExperience = function () {
       model.position.sub(center.multiplyScalar(scale));
 
       pivot.add(model);
+
       hideLoader();
       initScrollAnimations();
     },
@@ -243,14 +219,6 @@ window.init3DExperience = function () {
 
     tl.to(".parallax-layer--gradient", { yPercent: -40, ease: "none", duration: 1 }, 0);
     tl.to(".parallax-layer--particles", { yPercent: -50, ease: "none", duration: 1 }, 0);
-
-    tl.to("#orbit-svg-group", {
-      rotation: 360,
-      transformOrigin: "center center",
-      ease: "none",
-      duration: 1,
-    }, 0);
-    tl.to("#orbit-svg", { opacity: 0, scale: 1.3, duration: 0.15 }, 0.55);
 
     tl.to(model.rotation, { y: Math.PI * 2, ease: "none", duration: 1 }, 0);
 
@@ -342,3 +310,8 @@ window.init3DExperience = function () {
     ScrollTrigger.refresh();
   });
 };
+
+/* ── Auto-init when loaded as standalone page (3d-product.html) ── */
+if (!document.getElementById("perfume-3d-shell")) {
+  window.init3DExperience();
+}

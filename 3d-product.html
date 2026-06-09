@@ -39,44 +39,37 @@
     <!-- Orbiting words around the model (fade out mid-scroll) -->
     <div class="orbit-svg-wrapper" id="orbit-svg">
       <svg viewBox="-250 -250 500 500" class="orbit-svg" aria-hidden="true">
-        <defs>
-          <path id="textCircle" d="M 0,-180 A 180,180 0 1,1 -0.01,-180" fill="none" />
-        </defs>
-        <g id="orbit-svg-group">
-          <text class="orbit-svg-text">
-            <textPath href="#textCircle" startOffset="0%">
-              عود ✦ مسك ✦ ياسمين ✦ عنبر ✦ فخامة ✦ تراث ✦ أصالة ✦ حصري ✦
-            </textPath>
-          </text>
-        </g>
+        <g id="orbit-svg-group"></g>
       </svg>
     </div>
 
     <div class="scene-text" id="scene-1">
-      <p class="scene-eyebrow" data-field="collection"></p>
-      <h2 class="scene-title" data-field="name"></h2>
-      <p class="scene-desc" data-field="shortDesc"></p>
+      <p class="scene-eyebrow" data-i18n="3d-scene1-eyebrow">روبابيكيا</p>
+      <h2 class="scene-title" data-i18n="3d-scene1-title">روائح تسكن الذاكرة</h2>
+      <p class="scene-desc" data-i18n="3d-scene1-desc">تشكيلة فاخرة مُقطَّرة من روح التراث المصري</p>
     </div>
 
     <div class="scene-text scene-text--end" id="scene-2">
-      <p class="scene-eyebrow">الحكاية</p>
-      <h2 class="scene-title">تفاصيل لا تُنسى</h2>
-      <p class="scene-desc" data-field="desc"></p>
+      <p class="scene-eyebrow" data-i18n="3d-scene2-eyebrow">الحكاية</p>
+      <h2 class="scene-title" data-i18n="3d-scene2-title">في كل قطرة، ذاكرة</h2>
+      <p class="scene-desc" data-i18n="3d-scene2-desc">من حدائق القاهرة القديمة إلى أسواق التوابل العريقة — كل عطر يحمل قصة تتشرّب في الروح وتبقى في الذاكرة.</p>
     </div>
 
     <div class="scene-text" id="scene-3">
-      <p class="scene-eyebrow">المكوّنات</p>
-      <h2 class="scene-title" data-field="mood"></h2>
-      <ul class="scent-notes" id="scent-notes"></ul>
+      <p class="scene-eyebrow" data-i18n="3d-scene3-eyebrow">تركيبة العطر</p>
+      <h2 class="scene-title" data-i18n="3d-scene3-title">اكتشف تشكيلتنا</h2>
+      <ul class="scent-notes" id="scent-notes">
+        <li><span class="note-label" data-i18n="3d-note1-label">شرقية</span> <span data-i18n="3d-note1">العود الملكي · البخور · المسك</span></li>
+        <li><span class="note-label" data-i18n="3d-note2-label">زهرية</span> <span data-i18n="3d-note2">الياسمين · الورد الدمشقي · الفل</span></li>
+      </ul>
     </div>
 
-    <div class="scene-text" id="scene-4">
-      <p class="scene-eyebrow">اقتنِ الآن</p>
-      <h2 class="scene-title" data-field="name"></h2>
-      <div class="scent-meta" id="scent-meta"></div>
+    <div class="scene-text scene-text--end" id="scene-4">
+      <p class="scene-eyebrow" data-i18n="3d-scene4-eyebrow">اجعله لكَ</p>
+      <h2 class="scene-title" data-i18n="3d-scene4-title">عطرك — بصمتك الخالدة</h2>
       <div class="scene-cta">
-        <a href="index.html#perfumes" class="btn-3d" id="cta-shop">تسوّق هذا العطر</a>
-        <a href="index.html" class="btn-3d btn-3d--ghost">كل العطور</a>
+        <a href="index.html#perfumes" class="btn-3d" id="cta-shop" data-i18n="3d-scene4-cta">اكتشف التشكيلة</a>
+        <a href="index.html" class="btn-3d btn-3d--ghost" data-i18n="nav-perfumes">العطور</a>
       </div>
     </div>
   </div>

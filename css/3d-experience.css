@@ -84,8 +84,12 @@
   box-shadow: 0 0 10px var(--x-gold-glow);
 }
 
-/* ── Orbiting words (SVG textPath) ──────────────────────── */
+/* ── Orbiting words — SVG wrapper hidden; orbit is now 3D Three.js sprites ── */
 .orbit-svg-wrapper {
+  display: none;
+}
+
+.orbit-svg-wrapper-legacy {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -103,10 +107,15 @@
 }
 
 .orbit-svg-text {
-  font-family: var(--font-arabic);
-  font-size: 20px;
-  fill: rgba(var(--gold-rgb), 0.7);
-  letter-spacing: 3px;
+  font-family: 'Amiri', 'Cairo', 'Rakkas', serif;
+  font-size: 17px;
+  fill: rgba(var(--gold-rgb), 0.75);
+  letter-spacing: 0;
+}
+
+.orbit-svg-sep {
+  font-size: 13px;
+  fill: rgba(var(--gold-rgb), 0.5);
 }
 
 /* ── 1. Fixed 3D canvas ─────────────────────────────────── */
@@ -175,17 +184,20 @@
 
 .scene-text {
   position: absolute;
-  top: 50%;
-  inset-inline-start: 8vw;
+  top: 40%;
+  inset-inline-start: 5vw;
   transform: translateY(-50%) translateY(40px);
-  max-width: 460px;
+  /* Never exceed 30 % of viewport so text stays in the side column
+     and never reaches the centered 3-D model (which spans ~30–70 vw) */
+  max-width: min(440px, 32vw);
   opacity: 0;
+  padding-bottom: 8vh;
 }
 
 /* RTL/LTR aware: keep text block readable on both sides */
 .scene-text--end {
   inset-inline-start: auto;
-  inset-inline-end: 8vw;
+  inset-inline-end: 5vw;
   text-align: end;
 }
 
@@ -194,22 +206,22 @@
   font-family: var(--font-display);
   letter-spacing: 0.25em;
   text-transform: uppercase;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--x-gold);
-  margin-bottom: 1rem;
+  margin-bottom: 0.8rem;
 }
 
 .scene-title {
   font-family: var(--font-arabic);
-  font-size: clamp(2.4rem, 6vw, 4.5rem);
-  line-height: 1.05;
+  font-size: clamp(1.4rem, 2.6vw, 2.4rem);
+  line-height: 1.15;
   color: var(--x-beige);
-  margin: 0 0 1.2rem;
+  margin: 0 0 1rem;
   text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
 }
 
 .scene-desc {
-  font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+  font-size: clamp(0.9rem, 1.6vw, 1.15rem);
   line-height: 1.7;
   color: var(--x-beige-dim);
 }
