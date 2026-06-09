@@ -233,7 +233,7 @@
 }
 
 .intro-logo-en {
-  font-family: var(--font-display);
+  font-family: 'Cinzel Decorative', Georgia, serif;
   font-size: clamp(0.75rem, 2vw, 1.1rem);
   color: var(--beige);
   letter-spacing: 24px;

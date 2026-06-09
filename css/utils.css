@@ -1,5 +1,10 @@
 /* utils.css — Shared utility classes */
 
+.no-transitions * {
+  transition: none !important;
+  animation: none !important;
+}
+
 /* ── Glass Panel ─────────────────────────────────────────── */
 .glass-panel {
   background: var(--glass-bg);

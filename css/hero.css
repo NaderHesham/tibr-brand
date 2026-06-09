@@ -53,7 +53,7 @@
 }
 
 .logo-text-en {
-  font-family: var(--font-display);
+  font-family: 'Cinzel Decorative', Georgia, serif;
   font-size: 0.7rem;
   color: var(--beige);
   letter-spacing: 4px;
@@ -232,12 +232,49 @@
 }
 
 .hero-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  line-height: 1;
+}
+
+.hero-title-ar {
   font-family: 'Rakkas', serif;
   font-size: 6.5rem;
   color: var(--gold);
   line-height: 1.1;
   text-shadow: 0 5px 25px rgba(201, 168, 76, 0.4);
-  margin: 0;
+}
+
+.hero-title-en {
+  font-family: 'Cinzel Decorative', Georgia, serif;
+  font-size: 1.4rem;
+  color: var(--beige);
+  letter-spacing: 8px;
+  margin-top: -0.5rem;
+}
+
+/* Arabic mode: hide English subtitle */
+html[lang="ar"] .hero-title-en {
+  display: none;
+}
+
+/* English mode: swap sizes */
+html[lang="en"] .hero-title-en {
+  font-size: 6.5rem;
+  color: var(--gold);
+  letter-spacing: 4px;
+  text-shadow: 0 5px 25px rgba(201, 168, 76, 0.4);
+  margin-top: 0;
+}
+
+html[lang="en"] .hero-title-ar {
+  display: none;
+}
+
+html[lang="en"] .hero-title-en {
+  order: 1;
 }
 
 .hero-tagline {
@@ -352,7 +389,8 @@
    RESPONSIVE DESIGN (NAV & HERO)
    ========================================== */
 @media (max-width: 991px) {
-  .hero-title {
+  .hero-title-ar,
+  html[lang="en"] .hero-title-en {
     font-size: 5rem;
   }
   .hero-tagline {
@@ -411,10 +449,11 @@
     margin-inline-start: 1.5rem;
   }
 
-  .hero-title {
+  .hero-title-ar,
+  html[lang="en"] .hero-title-en {
     font-size: 4rem;
   }
-  
+
   .hero-tagline {
     font-size: 1.3rem;
   }
@@ -436,7 +475,8 @@
 }
 
 @media (max-width: 480px) {
-  .hero-title {
+  .hero-title-ar,
+  html[lang="en"] .hero-title-en {
     font-size: 3.2rem;
   }
 

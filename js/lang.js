@@ -74,7 +74,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggleLanguage = () => {
     currentLang = currentLang === "ar" ? "en" : "ar";
     localStorage.setItem("robabikia-lang", currentLang);
+    document.body.classList.add('no-transitions');
     applyTranslations(currentLang);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      document.body.classList.remove('no-transitions');
+    }));
   };
 
   // Bind click event
