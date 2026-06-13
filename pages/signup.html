@@ -1,22 +1,22 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <style id="lang-cloak">html{visibility:hidden}</style>
 <style>html,body{background:oklch(0.165 0.006 75)}</style>
 <style>:root[lang="en"] [data-lang-ar]{display:none}:root[lang="ar"] [data-lang-en]{display:none}</style>
 <style id="attr-cloak">:root[lang="en"] [data-en-ph]::placeholder{color:transparent}</style>
-<meta name="title-en" content="Sign in · Tibr">
+<meta name="title-en" content="Create account · Tibr">
 <script>(function(){var l=localStorage.getItem("tibr-lang");if(l!=="ar")l="en";var d=document.documentElement;d.lang=l;d.dir=l==="ar"?"rtl":"ltr";if(l==="en"){var m=document.querySelector('meta[name="title-en"]');if(m)document.title=m.content}var c=document.getElementById("lang-cloak");if(c)c.parentNode.removeChild(c)})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="تسجيل الدخول إلى حسابك في تِبْر.">
-  <title>تسجيل الدخول · تِبْر</title>
+  <meta name="description" content="أنشئ حسابك في تِبْر.">
+  <title>إنشاء حساب · تِبْر</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&family=Reem+Kufi:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/css/store/store.css">
 </head>
-<body data-nav="" data-title-ar="تسجيل الدخول · تِبْر" data-title-en="Sign in · Tibr">
+<body data-nav="" data-title-ar="إنشاء حساب · تِبْر" data-title-en="Create account · Tibr">
   <a class="skip-link" href="#main"><span data-lang-ar>تخطَّ إلى النموذج</span><span data-lang-en>Skip to form</span></a>
 
   <!-- ============================ HEADER ============================ -->
@@ -38,7 +38,7 @@
             <div data-impeccable-variant="original">
               <div class="store-utils">
                 <button class="store-iconbtn store-util-extra" type="button" data-ar-label="بحث" data-en-label="Search" aria-label="بحث"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
-                <a class="store-iconbtn store-util-extra" href="/wishlist" data-ar-label="المفضلة" data-en-label="Wishlist" aria-label="المفضلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></a>
+                <a class="store-iconbtn store-util-extra" href="/account?tab=wishlist" data-ar-label="المفضلة" data-en-label="Wishlist" aria-label="المفضلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></a>
                 <a class="store-iconbtn store-util-extra" href="/account" data-ar-label="حسابي" data-en-label="Account" aria-label="حسابي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
                 <a class="store-iconbtn" href="/cart" id="cart-btn" data-ar-label="سلة التسوق" data-en-label="Cart" aria-label="سلة التسوق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a4 4 0 0 1 8 0v2"/><rect width="16" height="14" x="4" y="8" rx="2"/></svg><span class="store-cart-count" id="cart-count" aria-hidden="true">0</span></a>
                 <button class="store-lang-toggle" id="lang-switch" type="button" aria-label="Switch language">
@@ -66,7 +66,7 @@
       <a class="store-drawer__link" href="/shop/perfumes"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a>
       <a class="store-drawer__link" href="/shop/clothing"><span data-lang-ar>الملابس</span><span data-lang-en>Clothing</span></a>
       <a class="store-drawer__link" href="/shop/sneakers"><span data-lang-ar>الأحذية</span><span data-lang-en>Sneakers</span></a>
-      <a class="store-drawer__link" href="/wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a>
+      <a class="store-drawer__link" href="/account?tab=wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a>
       <a class="store-drawer__link" href="/account"><span data-lang-ar>حسابي</span><span data-lang-en>Account</span></a>
     </nav>
     <div class="store-drawer__foot">
@@ -79,32 +79,47 @@
   <main id="main" class="store-container auth">
     <div class="auth__card">
       <div class="auth__brand"><a class="store-wordmark" href="/" aria-label="تِبْر"><span data-lang-ar>تِبْر</span><span data-lang-en>Tibr<span class="dot">.</span></span></a></div>
-      <h1 class="auth__title"><span data-lang-ar>أهلاً بعودتك</span><span data-lang-en>Welcome back</span></h1>
-      <p class="auth__sub"><span data-lang-ar>سجّل الدخول لمتابعة طلباتك ومفضّلتك.</span><span data-lang-en>Sign in to track your orders and wishlist.</span></p>
+      <h1 class="auth__title"><span data-lang-ar>أنشئ حسابك</span><span data-lang-en>Create your account</span></h1>
+      <p class="auth__sub"><span data-lang-ar>احفظ عناوينك وتابع طلباتك بسهولة.</span><span data-lang-en>Save your addresses and follow your orders.</span></p>
 
-      <form class="auth__form" data-form="login" novalidate>
+      <form class="auth__form" data-form="signup" novalidate>
+        <div class="field">
+          <label class="field__label" for="name"><span data-lang-ar>الاسم بالكامل</span><span data-lang-en>Full name</span></label>
+          <input class="input" id="name" name="name" autocomplete="name" required>
+          <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>من فضلك أدخل اسمك.</span><span data-lang-en>Please enter your name.</span></p>
+        </div>
         <div class="field">
           <label class="field__label" for="email"><span data-lang-ar>البريد الإلكتروني</span><span data-lang-en>Email</span></label>
           <input class="input" id="email" name="email" type="email" autocomplete="email" required>
           <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>أدخل بريدًا إلكترونيًا صحيحًا.</span><span data-lang-en>Enter a valid email address.</span></p>
         </div>
         <div class="field">
+          <label class="field__label" for="phone"><span data-lang-ar>رقم الهاتف</span><span data-lang-en>Phone number</span></label>
+          <input class="input" id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="01XXXXXXXXX" required>
+          <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>أدخل رقم موبايل مصري صحيح (١١ رقمًا).</span><span data-lang-en>Enter a valid Egyptian mobile number (11 digits).</span></p>
+        </div>
+        <div class="field">
           <label class="field__label" for="password"><span data-lang-ar>كلمة المرور</span><span data-lang-en>Password</span></label>
-          <input class="input" id="password" name="password" type="password" autocomplete="current-password" required>
-          <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>أدخل كلمة المرور.</span><span data-lang-en>Enter your password.</span></p>
+          <input class="input" id="password" name="password" type="password" autocomplete="new-password" required>
+          <p class="field__hint"><span data-lang-ar>٨ أحرف على الأقل.</span><span data-lang-en>At least 8 characters.</span></p>
+          <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>كلمة المرور يجب ألا تقل عن ٨ أحرف.</span><span data-lang-en>Password must be at least 8 characters.</span></p>
         </div>
-        <div class="auth__row">
-          <label class="check"><input type="checkbox" name="remember"><span data-lang-ar>تذكّرني</span><span data-lang-en>Remember me</span></label>
-          <a class="auth__link" href="/help/reset"><span data-lang-ar>نسيت كلمة المرور؟</span><span data-lang-en>Forgot password?</span></a>
+        <div class="field">
+          <label class="field__label" for="confirm"><span data-lang-ar>تأكيد كلمة المرور</span><span data-lang-en>Confirm password</span></label>
+          <input class="input" id="confirm" name="confirm" type="password" autocomplete="new-password" required>
+          <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>كلمتا المرور غير متطابقتين.</span><span data-lang-en>Passwords do not match.</span></p>
         </div>
-        <button class="btn btn--primary btn--block btn--lg" type="submit"><span data-lang-ar>تسجيل الدخول</span><span data-lang-en>Sign in</span></button>
+        <button class="btn btn--primary btn--block btn--lg" type="submit"><span data-lang-ar>إنشاء الحساب</span><span data-lang-en>Create account</span></button>
       </form>
 
-      <p class="auth__switch"><span data-lang-ar>ليس لديك حساب؟ </span><span data-lang-en>No account yet? </span><a href="/signup"><span data-lang-ar>أنشئ حسابًا</span><span data-lang-en>Create one</span></a></p>
+      <p class="auth__switch"><span data-lang-ar>لديك حساب بالفعل؟ </span><span data-lang-en>Already have an account? </span><a href="/login"><span data-lang-ar>سجّل الدخول</span><span data-lang-en>Sign in</span></a></p>
     </div>
   </main>
 
+  <script src="/js/config.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
   <script src="/js/store/chrome.js" defer></script>
+  <script src="/js/store/session.js" defer></script>
   <script src="/js/store/auth.js" defer></script>
   <!-- ============================ FOOTER ============================ -->
   <footer class="store-footer">
@@ -120,7 +135,7 @@
             <li><a href="/shop/perfumes"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a></li>
             <li><a href="/shop/clothing"><span data-lang-ar>الملابس</span><span data-lang-en>Clothing</span></a></li>
             <li><a href="/shop/sneakers"><span data-lang-ar>الأحذية</span><span data-lang-en>Sneakers</span></a></li>
-            <li><a href="/wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a></li>
+            <li><a href="/account?tab=wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a></li>
           </ul>
         </div>
         <div class="store-footer__col">

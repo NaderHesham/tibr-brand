@@ -186,6 +186,53 @@
 .address-card__name { font-weight: var(--fw-semibold); color: var(--ink); }
 .address-card__body { color: var(--ink-2); font-size: var(--fs-sm); line-height: var(--lh-snug); }
 
+/* ============================ PASSWORD MODAL ============================ */
+.pw-modal-backdrop {
+  position: fixed; inset: 0; z-index: var(--z-drawer);
+  display: grid; place-items: center;
+  padding: var(--gutter);
+  background: oklch(0.1 0.005 75 / 0.75);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 280ms var(--ease-out), visibility 280ms;
+}
+.pw-modal-backdrop.is-open  { opacity: 1; visibility: visible; pointer-events: auto; }
+.pw-modal-backdrop.is-closing { opacity: 0; visibility: visible; pointer-events: none; }
+
+.pw-modal__card {
+  inline-size: 100%; max-inline-size: 30rem;
+  background: var(--bg-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  padding: var(--sp-6);
+  box-shadow: var(--shadow-3);
+  opacity: 0;
+  transform: translateY(28px) scale(0.93);
+  transition: opacity 380ms var(--ease-out-soft), transform 380ms var(--ease-out-soft);
+}
+.pw-modal-backdrop.is-open .pw-modal__card { opacity: 1; transform: none; }
+.pw-modal-backdrop.is-closing .pw-modal__card {
+  opacity: 0; transform: translateY(12px) scale(0.97);
+  transition-duration: 220ms;
+}
+
+.pw-modal__head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--sp-3); margin-block-end: var(--sp-5);
+}
+.pw-modal__title {
+  display: flex; align-items: center; gap: var(--sp-2);
+  font-family: var(--font-display); font-size: var(--fs-h3); color: var(--ink);
+}
+.pw-modal__title svg { inline-size: 1.2rem; block-size: 1.2rem; color: var(--gold); flex-shrink: 0; }
+.pw-modal__form { display: flex; flex-direction: column; gap: var(--sp-4); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pw-modal-backdrop, .pw-modal__card { transition: none; }
+  .pw-modal-backdrop.is-open .pw-modal__card { opacity: 1; transform: none; }
+}
+
 /* ============================ ADMIN ============================ */
 .admin-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--sp-4); margin-block-end: var(--sp-6); }
 .stat {

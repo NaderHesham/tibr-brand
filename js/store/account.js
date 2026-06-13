@@ -1,144 +1,272 @@
 /* -------------------------------------------------------------
  * STORE / ACCOUNT.JS — Account dashboard
- * Tab switching, orders (from RB.orders), profile, addresses.
- * Depends on chrome.js (window.RB).
+ * Auth-guarded. Loads profile + orders from real API.
+ * Depends on chrome.js (window.RB) + session.js (RB.supabase).
  * ------------------------------------------------------------- */
 (function () {
   "use strict";
-  const $  = (s, c = document) => c.querySelector(s);
-  const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
-  if (!window.RB) return;
-  const bi = (ar, en) => `<span data-lang-ar>${ar}</span><span data-lang-en>${en}</span>`;
-  const ar = () => RB.lang() === "ar";
 
-  const STATUS = {
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.from((c || document).querySelectorAll(s)); };
+  if (!window.RB) return;
+
+  var bi = function (ar, en) { return "<span data-lang-ar>" + ar + "</span><span data-lang-en>" + en + "</span>"; };
+  var isAr = function () { return RB.lang() === "ar"; };
+
+  var STATUS = {
     pending:   { ar: "قيد المراجعة", en: "Pending" },
-    confirmed: { ar: "مؤكّد", en: "Confirmed" },
-    shipped:   { ar: "في الطريق", en: "Shipped" },
-    delivered: { ar: "تم التوصيل", en: "Delivered" },
-    cancelled: { ar: "ملغي", en: "Cancelled" }
+    confirmed: { ar: "مؤكّد",         en: "Confirmed" },
+    shipped:   { ar: "في الطريق",     en: "Shipped" },
+    delivered: { ar: "تم التوصيل",   en: "Delivered" },
+    cancelled: { ar: "ملغي",          en: "Cancelled" }
   };
 
-  /* ---- Greeting + profile prefill ---- */
-  const email = (function () { try { return localStorage.getItem("tibr-auth") || ""; } catch (_) { return ""; } })();
-  const greet = $("#account-greeting");
-  if (greet) greet.innerHTML = email
-    ? bi(`مرحبًا، ${email}`, `Welcome, ${email}`)
-    : bi("أهلاً بك في حسابك.", "Welcome to your account.");
-  if ($("#pf-email")) $("#pf-email").value = email;
+  var _token = null;
 
-  /* ---- Tabs ---- */
-  const TABS = ["profile", "orders", "addresses", "wishlist"];
-  function activate(tab) {
-    if (!TABS.includes(tab)) tab = "profile";
-    $$(".dash-nav__item[data-tab]").forEach((b) =>
-      b.setAttribute("aria-current", String(b.dataset.tab === tab)));
-    $$(".dash-panel").forEach((p) => p.classList.toggle("is-active", p.dataset.panel === tab));
-    try { history.replaceState(null, "", "?tab=" + tab); } catch (_) {}
+  // ---- Tabs ----
+  function setupTabs() {
+    var TABS = ["profile", "orders", "wishlist"];
+    function activate(tab) {
+      if (TABS.indexOf(tab) === -1) tab = "profile";
+      $$(".dash-nav__item[data-tab]").forEach(function (b) {
+        b.setAttribute("aria-current", String(b.dataset.tab === tab));
+      });
+      $$(".dash-panel").forEach(function (p) {
+        p.classList.toggle("is-active", p.dataset.panel === tab);
+      });
+      try { history.replaceState(null, "", "?tab=" + tab); } catch (_) {}
+    }
+    $$(".dash-nav__item[data-tab]").forEach(function (b) {
+      b.addEventListener("click", function () { activate(b.dataset.tab); });
+    });
+    activate(new URLSearchParams(location.search).get("tab") || "profile");
   }
-  $$(".dash-nav__item[data-tab]").forEach((b) =>
-    b.addEventListener("click", () => activate(b.dataset.tab)));
-  activate(new URLSearchParams(location.search).get("tab") || "profile");
 
-  /* ---- Logout ---- */
-  $("#logout-btn").addEventListener("click", () => {
-    try { localStorage.removeItem("tibr-auth"); } catch (_) {}
-    location.href = "/login";
-  });
+  // ---- Profile ----
+  function loadProfile() {
+    fetch("/api/profile", { headers: { "Authorization": "Bearer " + _token } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (body) {
+        if (!body || !body.data) return;
+        var d = body.data;
+        if (d.full_name    && $("#pf-name"))    $("#pf-name").value    = d.full_name;
+        if (d.phone_number && $("#pf-phone"))   $("#pf-phone").value   = d.phone_number;
+        if (d.gender       && $("#pf-gender"))  $("#pf-gender").value  = d.gender;
+        if (d.date_of_birth && $("#pf-dob"))    $("#pf-dob").value     = d.date_of_birth;
+        if (d.address      && $("#pf-address")) $("#pf-address").value = d.address;
+        if (d.role === "admin") {
+          var adminTab = $("#admin-tab");
+          if (adminTab) adminTab.hidden = false;
+        }
+      })
+      .catch(function () {});
+  }
 
-  /* ---- Profile save ---- */
-  $("#profile-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    RB.toast(ar() ? "تم حفظ التغييرات" : "Changes saved");
-  });
+  function setupProfileForm() {
+    var form = $("#profile-form");
+    if (!form) return;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var btn = form.querySelector('[type="submit"]');
+      if (btn) { btn.disabled = true; btn.classList.add("is-loading"); }
+      fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + _token },
+        body: JSON.stringify({
+          full_name:     ($("#pf-name")    ? $("#pf-name").value.trim()    : ""),
+          phone_number:  ($("#pf-phone")   ? $("#pf-phone").value.trim()   : ""),
+          gender:        ($("#pf-gender")  ? $("#pf-gender").value         : ""),
+          date_of_birth: ($("#pf-dob")     ? $("#pf-dob").value            : ""),
+          address:       ($("#pf-address") ? $("#pf-address").value.trim() : "")
+        })
+      })
+        .then(function (r) {
+          RB.toast(r.ok
+            ? (isAr() ? "تم حفظ التغييرات" : "Changes saved")
+            : (isAr() ? "حدث خطأ أثناء الحفظ" : "Error saving changes"));
+        })
+        .catch(function () { RB.toast(isAr() ? "حدث خطأ أثناء الحفظ" : "Error saving changes"); })
+        .finally(function () { if (btn) { btn.disabled = false; btn.classList.remove("is-loading"); } });
+    });
+  }
 
-  /* ---- Orders ---- */
+  // ---- Orders ----
   function fmtDate(iso) {
-    try { return new Date(iso).toLocaleDateString(ar() ? "ar-EG" : "en-GB", { year: "numeric", month: "short", day: "numeric" }); }
+    try { return new Date(iso).toLocaleDateString(isAr() ? "ar-EG" : "en-GB", { year: "numeric", month: "short", day: "numeric" }); }
     catch (_) { return ""; }
   }
+
   function renderOrders() {
-    const list = $("#orders-list");
-    const orders = RB.orders.all();
-    if (!orders.length) {
-      list.innerHTML = `
-      <div class="rb-empty">
-        <span class="rb-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z" stroke-linejoin="round"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7" stroke-linecap="round"/></svg></span>
-        <h3 class="rb-empty__title">${bi("لا طلبات بعد", "No orders yet")}</h3>
-        <p class="rb-empty__text">${bi("أول طلب يبدأ من هنا.", "Your first order starts here.")}</p>
-        <a class="btn btn--primary" href="/shop/perfumes">${bi("تصفّح العطور", "Browse perfumes")}</a>
-      </div>`;
+    var list = $("#orders-list");
+    if (!list) return;
+    list.innerHTML = "<div class='dash-loading'><span>" + bi("جارٍ التحميل…", "Loading…") + "</span></div>";
+    fetch("/api/orders", { headers: { "Authorization": "Bearer " + _token } })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (body) {
+        var orders = (body && body.data) ? body.data : [];
+        if (!orders.length) {
+          list.innerHTML =
+            "<div class='rb-empty'>" +
+            "<span class='rb-empty__icon'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.3' aria-hidden='true'><path d='M6 7h12l-1 13H7L6 7z' stroke-linejoin='round'/><path d='M9 7V5.5a3 3 0 0 1 6 0V7' stroke-linecap='round'/></svg></span>" +
+            "<h3 class='rb-empty__title'>" + bi("لا طلبات بعد", "No orders yet") + "</h3>" +
+            "<p class='rb-empty__text'>" + bi("أول طلب يبدأ من هنا.", "Your first order starts here.") + "</p>" +
+            "<a class='btn btn--primary' href='/shop/perfumes'>" + bi("تصفّح العطور", "Browse perfumes") + "</a>" +
+            "</div>";
+          return;
+        }
+        list.innerHTML = orders.map(function (o) {
+          var st = STATUS[o.status] || STATUS.pending;
+          var product = o.products || {};
+          var price = o.order_total != null ? o.order_total : (o.unit_price ? o.unit_price * (o.qty || 1) : 0);
+          var ref = o.checkout_reference || o.id.slice(0, 8);
+          return "<article class='order-card'>" +
+            (product.image ? "<img class='order-card__thumb' src='" + product.image + "' alt='" + (isAr() ? (product.ar_name || "") : (product.en_name || "")) + "'>" : "") +
+            "<div>" +
+              "<p class='order-card__name'>" + bi(product.ar_name || "", product.en_name || "") + "</p>" +
+              "<p class='order-card__meta'>" + ref + " · " + fmtDate(o.created_at) + "</p>" +
+            "</div>" +
+            "<div class='order-card__side'>" +
+              "<span class='badge badge--" + o.status + "'>" + bi(st.ar, st.en) + "</span>" +
+              (price ? "<span class='order-card__price'>" + bi(RB.formatPrice(price, "ar"), RB.formatPrice(price, "en")) + "</span>" : "") +
+            "</div>" +
+            "</article>";
+        }).join("");
+      })
+      .catch(function () {
+        list.innerHTML = "<p>" + bi("تعذّر تحميل الطلبات.", "Failed to load orders.") + "</p>";
+      });
+  }
+
+  // ---- Change Password Modal ----
+  var _pwTrigger = null;
+
+  function openPwModal() {
+    var modal = $("#pw-modal");
+    if (!modal) return;
+    modal.classList.remove("is-closing");
+    modal.classList.add("is-open");
+    setTimeout(function () {
+      var f = $("#pw-current");
+      if (f) f.focus();
+    }, 60);
+  }
+
+  function closePwModal() {
+    var modal = $("#pw-modal");
+    if (!modal || !modal.classList.contains("is-open")) return;
+    modal.classList.add("is-closing");
+    setTimeout(function () {
+      modal.classList.remove("is-open", "is-closing");
+      if (_pwTrigger) _pwTrigger.focus();
+    }, 300);
+  }
+
+  function setupPasswordForm() {
+    var modal     = $("#pw-modal");
+    var form      = $("#password-form");
+    var trigger   = $("#change-pw-btn");
+    var closeBtn  = $("#pw-modal-close");
+    if (!modal || !form) return;
+
+    _pwTrigger = trigger;
+
+    if (trigger) trigger.addEventListener("click", openPwModal);
+
+    if (closeBtn) closeBtn.addEventListener("click", closePwModal);
+
+    modal.addEventListener("click", function (e) {
+      if (e.target === modal) closePwModal();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && modal.classList.contains("is-open")) closePwModal();
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var currentPw = $("#pw-current");
+      var newPw     = $("#pw-new");
+      var confirmPw = $("#pw-confirm");
+
+      var ok = true;
+      currentPw.closest(".field").classList.remove("is-invalid");
+      newPw.closest(".field").classList.remove("is-invalid");
+      confirmPw.closest(".field").classList.remove("is-invalid");
+
+      if (!currentPw.value) { currentPw.closest(".field").classList.add("is-invalid"); ok = false; }
+      if (newPw.value.length < 8) { newPw.closest(".field").classList.add("is-invalid"); ok = false; }
+      if (confirmPw.value !== newPw.value) { confirmPw.closest(".field").classList.add("is-invalid"); ok = false; }
+      if (!ok) return;
+
+      var btn = form.querySelector('[type="submit"]');
+      if (btn) { btn.disabled = true; btn.classList.add("is-loading"); }
+
+      var email = ($("#pf-email") ? $("#pf-email").value : "");
+
+      RB.supabase.auth.signInWithPassword({ email: email, password: currentPw.value })
+        .then(function (res) {
+          if (res.error) {
+            currentPw.closest(".field").classList.add("is-invalid");
+            if (btn) { btn.disabled = false; btn.classList.remove("is-loading"); }
+            return;
+          }
+          return RB.supabase.auth.updateUser({ password: newPw.value })
+            .then(function (upd) {
+              if (btn) { btn.disabled = false; btn.classList.remove("is-loading"); }
+              if (upd.error) {
+                RB.toast(isAr() ? "حدث خطأ أثناء تغيير كلمة المرور" : "Error changing password");
+              } else {
+                form.reset();
+                closePwModal();
+                RB.toast(isAr() ? "تم تغيير كلمة المرور بنجاح" : "Password changed successfully");
+              }
+            });
+        })
+        .catch(function () {
+          RB.toast(isAr() ? "حدث خطأ أثناء تغيير كلمة المرور" : "Error changing password");
+          if (btn) { btn.disabled = false; btn.classList.remove("is-loading"); }
+        });
+    });
+  }
+
+  // ---- Init (auth-guarded) ----
+  function init() {
+    if (!RB.requireAuth) {
+      // session.js not loaded — redirect to login
+      location.replace("/login?next=" + encodeURIComponent(location.pathname + location.search));
       return;
     }
-    list.innerHTML = orders.map((o) => {
-      const st = STATUS[o.status] || STATUS.pending;
-      const lead = o.items[0] || {};
-      const count = o.items.reduce((n, x) => n + x.qty, 0);
-      return `
-      <article class="order-card">
-        <img class="order-card__thumb" src="${lead.image || ""}" alt="${ar() ? (lead.ar_name || "") : (lead.en_name || "")}">
-        <div>
-          <p class="order-card__name">${bi(lead.ar_name || "", lead.en_name || "")}${count > 1 ? bi(` و${RB.arDigits(count - 1)} غير ذلك`, ` and ${count - 1} more`) : ""}</p>
-          <p class="order-card__meta">${o.ref} · ${fmtDate(o.date)}</p>
-        </div>
-        <div class="order-card__side">
-          <span class="badge badge--${o.status}">${bi(st.ar, st.en)}</span>
-          <span class="order-card__price">${bi(RB.formatPrice(o.total, "ar"), RB.formatPrice(o.total, "en"))}</span>
-        </div>
-      </article>`;
-    }).join("");
+    RB.requireAuth().then(function (session) {
+      if (!session) return; // already redirected
+      _token = session.access_token;
+      var email = (session.user && session.user.email) || "";
+
+      var greet = $("#account-greeting");
+      if (greet) greet.innerHTML = email
+        ? bi("مرحبًا، " + email, "Welcome, " + email)
+        : bi("أهلاً بك في حسابك.", "Welcome to your account.");
+      if ($("#pf-email")) $("#pf-email").value = email;
+
+      setupTabs();
+      loadProfile();
+      setupProfileForm();
+      setupPasswordForm();
+      renderOrders();
+
+      var logoutBtn = $("#logout-btn");
+      if (logoutBtn) logoutBtn.addEventListener("click", function () { RB.signOut(); });
+
+      function syncSelectLang() {
+    var ar = isAr();
+    $$("select[id] option[data-text-ar]").forEach(function (opt) {
+      opt.textContent = ar ? opt.dataset.textAr : opt.dataset.textEn;
+    });
   }
 
-  /* ---- Addresses ---- */
-  const ADDR_KEY = "tibr-addresses";
-  function readAddr() { try { return JSON.parse(localStorage.getItem(ADDR_KEY)) || seed(); } catch (_) { return seed(); } }
-  function seed() {
-    const s = [{ id: "a1", label_ar: "المنزل", label_en: "Home", street: ar() ? "شارع المعز، الجمالية، القاهرة" : "Al-Muizz St, Gamaleya, Cairo", phone: "01012345678", default: true }];
-    return s;
+  syncSelectLang();
+  document.addEventListener("languageChanged", function () { renderOrders(); syncSelectLang(); });
+    });
   }
-  function writeAddr(list) { localStorage.setItem(ADDR_KEY, JSON.stringify(list)); }
-  function renderAddresses() {
-    const list = readAddr();
-    const wrap = $("#addresses-list");
-    wrap.innerHTML = list.map((a) => `
-      <div class="address-card${a.default ? " is-default" : ""}" data-id="${a.id}">
-        <div class="address-card__label">
-          <span class="address-card__name">${a.label_ar ? bi(a.label_ar, a.label_en || a.label_ar) : (a.label || "")}</span>
-          ${a.default ? `<span class="badge badge--shipped">${bi("الافتراضي", "Default")}</span>` : ""}
-        </div>
-        <p class="address-card__body">${a.street}<br>${a.phone || ""}</p>
-        <div style="display:flex; gap: var(--sp-3); margin-block-start: var(--sp-3);">
-          ${a.default ? "" : `<button class="auth__link" type="button" data-default style="background:none;border:none;cursor:pointer;font-size:var(--fs-sm)">${bi("اجعله افتراضيًا", "Make default")}</button>`}
-          <button class="cart-line__remove" type="button" data-del>${bi("حذف", "Delete")}</button>
-        </div>
-      </div>`).join("");
-  }
-  const addrForm = $("#address-form");
-  $("#add-address-btn").addEventListener("click", () => { addrForm.hidden = !addrForm.hidden; if (!addrForm.hidden) $("#ad-street").focus(); });
-  $("#cancel-address").addEventListener("click", () => { addrForm.hidden = true; });
-  addrForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const street = $("#ad-street");
-    const ok = street.value.trim().length >= 4;
-    street.closest(".field").classList.toggle("is-invalid", !ok);
-    if (!ok) { street.focus(); return; }
-    const list = readAddr();
-    list.push({ id: "a" + Date.now(), label: $("#ad-label").value.trim() || (ar() ? "عنوان" : "Address"), street: street.value.trim(), phone: $("#ad-phone").value.trim(), default: list.length === 0 });
-    writeAddr(list);
-    addrForm.reset(); addrForm.hidden = true;
-    renderAddresses();
-    RB.toast(ar() ? "تمت إضافة العنوان" : "Address added");
-  });
-  $("#addresses-list").addEventListener("click", (e) => {
-    const card = e.target.closest(".address-card"); if (!card) return;
-    const id = card.dataset.id; let list = readAddr();
-    if (e.target.closest("[data-del]")) { list = list.filter((a) => a.id !== id); }
-    else if (e.target.closest("[data-default]")) { list.forEach((a) => a.default = a.id === id); }
-    else return;
-    writeAddr(list); renderAddresses();
-  });
 
-  renderOrders();
-  renderAddresses();
-  document.addEventListener("languageChanged", () => { renderOrders(); renderAddresses(); });
+  init();
 })();

@@ -3,7 +3,6 @@ const { randomUUID } = require("crypto");
 const express = require("express");
 const compression = require("compression");
 const dotenv = require("dotenv");
-const ws = require("ws");
 const { createClient } = require("@supabase/supabase-js");
 
 dotenv.config();
@@ -26,9 +25,6 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: false,
     persistSession: false
-  },
-  realtime: {
-    transport: ws
   }
 });
 
@@ -143,9 +139,6 @@ const createAuthedClient = (token) =>
       autoRefreshToken: false,
       persistSession: false
     },
-    realtime: {
-      transport: ws
-    },
     global: {
       headers: {
         Authorization: `Bearer ${token}`
@@ -207,6 +200,12 @@ const ADMIN_ORDER_STATUSES = new Set([
   "cancelled"
 ]);
 
+app.get("/js/config.js", (_req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
+  res.type("application/javascript");
+  res.send(`window.TIBR_CONFIG=${JSON.stringify({ url: supabaseUrl, key: supabaseAnonKey })};`);
+});
+
 app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
@@ -260,7 +259,7 @@ app.post("/api/orders", requireUser, async (req, res) => {
 
   const { data: product, error: productError } = await supabase
     .from("products")
-    .select("id")
+    .select("id, ar_price, en_price")
     .eq("id", productId)
     .single();
 
@@ -273,13 +272,7 @@ app.post("/api/orders", requireUser, async (req, res) => {
     ? paymentMethod
     : "cash_on_delivery";
 
-  const { data: fullProduct } = await supabase
-    .from("products")
-    .select("ar_price, en_price")
-    .eq("id", productId)
-    .single();
-
-  const unitPrice = parsePrice(fullProduct?.ar_price || fullProduct?.en_price);
+  const unitPrice = parsePrice(product.ar_price || product.en_price);
   const orderTotal = unitPrice * quantity;
 
   const { data, error } = await insertOrdersCompat(userClient, [{
@@ -408,38 +401,34 @@ app.get("/api/orders", requireUser, async (req, res) => {
 
 app.get("/api/admin/orders", requireUser, requireAdmin, async (req, res) => {
   const userClient = createAuthedClient(req.accessToken);
-  const { data, error } = await selectOrdersCompat(userClient, req.user.id);
+  let { data, error } = await userClient
+    .from("orders")
+    .select("id, status, size, qty, payment_method, checkout_reference, unit_price, order_total, customer_name, customer_phone, customer_address, created_at, user_id, product_id, products(id, ar_name, en_name, ar_price, en_price, image)")
+    .order("created_at", { ascending: false });
 
-  if (!error) {
-    const { data: allOrders, error: adminError } = await userClient
+  if (error && isLegacyOrdersSchemaError(error)) {
+    ({ data, error } = await userClient
       .from("orders")
-      .select("id, status, size, qty, payment_method, checkout_reference, unit_price, order_total, customer_name, customer_phone, customer_address, created_at, user_id, product_id, products(id, ar_name, en_name, ar_price, en_price, image)")
-      .order("created_at", { ascending: false });
+      .select("id, status, size, customer_name, customer_phone, customer_address, created_at, user_id, product_id, products(id, ar_name, en_name, ar_price, en_price, image)")
+      .order("created_at", { ascending: false }));
 
-    if (!adminError) {
-      return res.json({ data: allOrders });
+    if (!error && Array.isArray(data)) {
+      data = data.map((order) => ({
+        ...order,
+        qty: 1,
+        payment_method: "cash_on_delivery",
+        checkout_reference: null,
+        unit_price: null,
+        order_total: null
+      }));
     }
   }
 
-  const { data: fallbackOrders, error: fallbackError } = await userClient
-    .from("orders")
-    .select("id, status, size, customer_name, customer_phone, customer_address, created_at, user_id, product_id, products(id, ar_name, en_name, ar_price, en_price, image)")
-    .order("created_at", { ascending: false });
-
-  if (fallbackError) {
+  if (error) {
     return res.status(500).json({ error: "Failed to load admin orders." });
   }
 
-  res.json({
-    data: fallbackOrders.map((order) => ({
-      ...order,
-      qty: 1,
-      payment_method: "cash_on_delivery",
-      checkout_reference: null,
-      unit_price: null,
-      order_total: null
-    }))
-  });
+  res.json({ data });
 });
 
 app.patch("/api/admin/orders/:id", requireUser, requireAdmin, async (req, res) => {
@@ -490,11 +479,11 @@ app.patch("/api/admin/orders/:id", requireUser, requireAdmin, async (req, res) =
 
 app.put("/api/profile", requireUser, async (req, res) => {
   const userClient = createAuthedClient(req.accessToken);
-  const { full_name, phone_number, address } = req.body || {};
+  const { full_name, phone_number, address, gender, date_of_birth } = req.body || {};
 
   const { data, error } = await userClient
     .from("profiles")
-    .update({ full_name, phone_number, address })
+    .update({ full_name, phone_number, address, gender, date_of_birth: date_of_birth || null })
     .eq("id", req.user.id)
     .select("id, full_name, phone_number, address, gender, date_of_birth, role")
     .single();
@@ -525,8 +514,8 @@ app.post("/api/profile/addresses", requireUser, async (req, res) => {
   const userClient = createAuthedClient(req.accessToken);
   const { label, city, street, phone, is_default } = req.body || {};
 
-  if (!city || !street) {
-    return res.status(400).json({ error: "city and street are required." });
+  if (!street) {
+    return res.status(400).json({ error: "street is required." });
   }
 
   if (is_default) {
@@ -538,7 +527,7 @@ app.post("/api/profile/addresses", requireUser, async (req, res) => {
     .insert({
       user_id: req.user.id,
       label: label || "المنزل",
-      city,
+      city: city || "",
       street,
       phone: phone || null,
       is_default: !!is_default
@@ -654,10 +643,28 @@ app.post("/api/products", requireUser, requireAdmin, async (req, res) => {
   res.status(201).json({ data: normalizeProduct(data) });
 });
 
+// Store pages — served from pages/ subdirectory
+const PAGE_ROUTES = ['account', 'admin', 'cart', 'checkout', 'login', 'product', 'signup'];
+PAGE_ROUTES.forEach(name => {
+  app.get(`/${name}`, (_req, res) =>
+    res.sendFile(path.join(rootDir, 'pages', `${name}.html`))
+  );
+});
+
+// Shop category pages
+['perfumes', 'clothing', 'sneakers'].forEach(name => {
+  app.get(`/shop/${name}`, (_req, res) =>
+    res.sendFile(path.join(rootDir, 'shop', `${name}.html`))
+  );
+});
+
+// Wishlist is a tab on the account page
+app.get('/wishlist', (_req, res) => res.redirect(301, '/account?tab=wishlist'));
+
 const staticOpts = { extensions: ["html"], setHeaders: (res, filePath) => {
   const ext = path.extname(filePath);
   if (/\.(css|js|mjs)$/i.test(ext)) {
-    res.setHeader("Cache-Control", CACHE_IMMUTABLE);
+    res.setHeader("Cache-Control", "no-cache");
   } else if (/\.(png|jpg|jpeg|gif|ico|svg|webp|avif|glb)$/i.test(ext)) {
     res.setHeader("Cache-Control", `public, max-age=${CACHE_DURATION}`);
   } else if (/\.(woff2?|ttf|otf|eot)$/i.test(ext)) {

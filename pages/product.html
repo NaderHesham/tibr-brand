@@ -5,19 +5,20 @@
 <style>html,body{background:oklch(0.165 0.006 75)}</style>
 <style>:root[lang="en"] [data-lang-ar]{display:none}:root[lang="ar"] [data-lang-en]{display:none}</style>
 <style id="attr-cloak">:root[lang="en"] [data-en-ph]::placeholder{color:transparent}</style>
-<meta name="title-en" content="My account · Tibr">
+<meta name="title-en" content="Product · Tibr">
 <script>(function(){var l=localStorage.getItem("tibr-lang");if(l!=="ar")l="en";var d=document.documentElement;d.lang=l;d.dir=l==="ar"?"rtl":"ltr";if(l==="en"){var m=document.querySelector('meta[name="title-en"]');if(m)document.title=m.content}var c=document.getElementById("lang-cloak");if(c)c.parentNode.removeChild(c)})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="حسابك في تِبْر.">
-  <title>حسابي · تِبْر</title>
+  <meta name="description" content="تفاصيل المنتج من تِبْر.">
+  <title>المنتج · تِبْر</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..600&family=Hanken+Grotesk:wght@400;500;600;700&family=Reem+Kufi:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
   <link rel="stylesheet" href="/css/store/store.css">
+  <link rel="prefetch" href="/cart" as="document">
 </head>
-<body data-nav="" data-title-ar="حسابي · تِبْر" data-title-en="My account · Tibr">
-  <a class="skip-link" href="#main"><span data-lang-ar>تخطَّ إلى المحتوى</span><span data-lang-en>Skip to content</span></a>
+<body data-nav="" data-title-ar="المنتج · تِبْر" data-title-en="Product · Tibr">
+  <a class="skip-link" href="#main"><span data-lang-ar>تخطَّ إلى المنتج</span><span data-lang-en>Skip to product</span></a>
 
   <!-- ============================ HEADER ============================ -->
   <header class="store-header" id="store-header">
@@ -38,7 +39,7 @@
             <div data-impeccable-variant="original">
               <div class="store-utils">
                 <button class="store-iconbtn store-util-extra" type="button" data-ar-label="بحث" data-en-label="Search" aria-label="بحث"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
-                <a class="store-iconbtn store-util-extra" href="/wishlist" data-ar-label="المفضلة" data-en-label="Wishlist" aria-label="المفضلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></a>
+                <a class="store-iconbtn store-util-extra" href="/account?tab=wishlist" data-ar-label="المفضلة" data-en-label="Wishlist" aria-label="المفضلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg></a>
                 <a class="store-iconbtn store-util-extra" href="/account" data-ar-label="حسابي" data-en-label="Account" aria-label="حسابي"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
                 <a class="store-iconbtn" href="/cart" id="cart-btn" data-ar-label="سلة التسوق" data-en-label="Cart" aria-label="سلة التسوق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a4 4 0 0 1 8 0v2"/><rect width="16" height="14" x="4" y="8" rx="2"/></svg><span class="store-cart-count" id="cart-count" aria-hidden="true">0</span></a>
                 <button class="store-lang-toggle" id="lang-switch" type="button" aria-label="Switch language">
@@ -66,7 +67,7 @@
       <a class="store-drawer__link" href="/shop/perfumes"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a>
       <a class="store-drawer__link" href="/shop/clothing"><span data-lang-ar>الملابس</span><span data-lang-en>Clothing</span></a>
       <a class="store-drawer__link" href="/shop/sneakers"><span data-lang-ar>الأحذية</span><span data-lang-en>Sneakers</span></a>
-      <a class="store-drawer__link" href="/wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a>
+      <a class="store-drawer__link" href="/account?tab=wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a>
       <a class="store-drawer__link" href="/account"><span data-lang-ar>حسابي</span><span data-lang-en>Account</span></a>
     </nav>
     <div class="store-drawer__foot">
@@ -77,111 +78,78 @@
   </aside>
 
   <main id="main" class="store-container">
-    <header class="page-head">
-      <h1 class="page-head__title"><span data-lang-ar>حسابي</span><span data-lang-en>My account</span></h1>
-      <p class="page-head__sub" id="account-greeting"></p>
-    </header>
+    <nav class="breadcrumb" aria-label="مسار التصفح">
+      <a href="/"><span data-lang-ar>الرئيسية</span><span data-lang-en>Home</span></a>
+      <span class="breadcrumb__sep" aria-hidden="true">/</span>
+      <a href="/shop/perfumes" id="pdp-cat-link"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a>
+      <span class="breadcrumb__sep" aria-hidden="true">/</span>
+      <span aria-current="page" id="pdp-crumb"></span>
+    </nav>
 
-    <div class="dashboard">
-      <nav class="dash-nav" aria-label="أقسام الحساب">
-        <button class="dash-nav__item" type="button" data-tab="profile">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c.8-3.4 3.6-5.2 7-5.2s6.2 1.8 7 5.2" stroke-linecap="round"/></svg>
-          <span data-lang-ar>الملف الشخصي</span><span data-lang-en>Profile</span>
+    <article class="pdp">
+      <div class="pdp__media">
+        <img class="pdp__img" id="pdp-img" src="" alt="" decoding="async">
+        <button class="pdp__wish" type="button" data-wish aria-pressed="false" id="pdp-wish"
+          data-ar-label="أضف إلى المفضلة" data-en-label="Add to wishlist" aria-label="أضف إلى المفضلة">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
-        <button class="dash-nav__item" type="button" data-tab="orders">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 7h12l-1 13H7L6 7z" stroke-linejoin="round"/><path d="M9 7V5.5a3 3 0 0 1 6 0V7" stroke-linecap="round"/></svg>
-          <span data-lang-ar>طلباتي</span><span data-lang-en>Orders</span>
-        </button>
-        <button class="dash-nav__item" type="button" data-tab="addresses">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21s-6.5-5.2-6.5-10A6.5 6.5 0 0 1 18.5 11c0 4.8-6.5 10-6.5 10z" stroke-linejoin="round"/><circle cx="12" cy="11" r="2.3"/></svg>
-          <span data-lang-ar>العناوين</span><span data-lang-en>Addresses</span>
-        </button>
-        <button class="dash-nav__item" type="button" data-tab="wishlist">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linejoin="round"/></svg>
-          <span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span>
-        </button>
-        <button class="dash-nav__item dash-nav__item--danger" type="button" id="logout-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 12H6m0 0l3-3m-3 3l3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M13 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5" stroke-linecap="round"/></svg>
-          <span data-lang-ar>تسجيل الخروج</span><span data-lang-en>Sign out</span>
-        </button>
-      </nav>
-
-      <div>
-        <!-- Profile -->
-        <section class="dash-panel" data-panel="profile" role="region" aria-label="الملف الشخصي">
-          <div class="dash-panel__head"><h2 class="dash-panel__title"><span data-lang-ar>الملف الشخصي</span><span data-lang-en>Profile</span></h2></div>
-          <div class="dash-card">
-            <form class="dash-form" id="profile-form" novalidate>
-              <div class="field">
-                <label class="field__label" for="pf-name"><span data-lang-ar>الاسم</span><span data-lang-en>Name</span></label>
-                <input class="input" id="pf-name" name="name" autocomplete="name" value="">
-              </div>
-              <div class="field">
-                <label class="field__label" for="pf-phone"><span data-lang-ar>رقم الهاتف</span><span data-lang-en>Phone</span></label>
-                <input class="input" id="pf-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="01XXXXXXXXX">
-              </div>
-              <div class="field field--full">
-                <label class="field__label" for="pf-email"><span data-lang-ar>البريد الإلكتروني</span><span data-lang-en>Email</span></label>
-                <input class="input" id="pf-email" name="email" type="email" readonly>
-                <p class="field__hint"><span data-lang-ar>لا يمكن تغيير البريد الإلكتروني هنا.</span><span data-lang-en>Email can't be changed here.</span></p>
-              </div>
-              <div class="field--full">
-                <button class="btn btn--primary" type="submit"><span data-lang-ar>حفظ التغييرات</span><span data-lang-en>Save changes</span></button>
-              </div>
-            </form>
-          </div>
-        </section>
-
-        <!-- Orders -->
-        <section class="dash-panel" data-panel="orders" role="region" aria-label="طلباتي">
-          <div class="dash-panel__head"><h2 class="dash-panel__title"><span data-lang-ar>طلباتي</span><span data-lang-en>Orders</span></h2></div>
-          <div id="orders-list" class="dash-orders"></div>
-        </section>
-
-        <!-- Addresses -->
-        <section class="dash-panel" data-panel="addresses" role="region" aria-label="العناوين">
-          <div class="dash-panel__head">
-            <h2 class="dash-panel__title"><span data-lang-ar>العناوين</span><span data-lang-en>Addresses</span></h2>
-            <button class="btn btn--secondary" type="button" id="add-address-btn"><span data-lang-ar>إضافة عنوان</span><span data-lang-en>Add address</span></button>
-          </div>
-          <form class="dash-card dash-form" id="address-form" hidden novalidate style="margin-block-end: var(--sp-5);">
-            <div class="field">
-              <label class="field__label" for="ad-label"><span data-lang-ar>الاسم المختصر</span><span data-lang-en>Label</span></label>
-              <input class="input" id="ad-label" placeholder="المنزل">
-            </div>
-            <div class="field">
-              <label class="field__label" for="ad-phone"><span data-lang-ar>رقم الهاتف</span><span data-lang-en>Phone</span></label>
-              <input class="input" id="ad-phone" type="tel" inputmode="numeric" placeholder="01XXXXXXXXX">
-            </div>
-            <div class="field field--full">
-              <label class="field__label" for="ad-street"><span data-lang-ar>العنوان بالتفصيل</span><span data-lang-en>Street address</span><span class="field__req">*</span></label>
-              <input class="input" id="ad-street">
-              <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg><span data-lang-ar>أدخل العنوان.</span><span data-lang-en>Enter the address.</span></p>
-            </div>
-            <div class="field--full" style="display:flex; gap: var(--sp-3);">
-              <button class="btn btn--primary" type="submit"><span data-lang-ar>حفظ العنوان</span><span data-lang-en>Save address</span></button>
-              <button class="btn btn--ghost" type="button" id="cancel-address"><span data-lang-ar>إلغاء</span><span data-lang-en>Cancel</span></button>
-            </div>
-          </form>
-          <div id="addresses-list" class="address-grid"></div>
-        </section>
-
-        <!-- Wishlist -->
-        <section class="dash-panel" data-panel="wishlist" role="region" aria-label="المفضلة">
-          <div class="dash-panel__head"><h2 class="dash-panel__title"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></h2></div>
-          <div class="rb-empty">
-            <span class="rb-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linejoin="round"/></svg></span>
-            <h3 class="rb-empty__title"><span data-lang-ar>لا منتجات في المفضلة بعد</span><span data-lang-en>Your wishlist is empty</span></h3>
-            <p class="rb-empty__text"><span data-lang-ar>احفظ ما يعجبك أثناء التصفّح.</span><span data-lang-en>Save what catches your eye while browsing.</span></p>
-            <a class="btn btn--primary" href="/shop/perfumes"><span data-lang-ar>تصفّح العطور</span><span data-lang-en>Browse perfumes</span></a>
-          </div>
-        </section>
       </div>
-    </div>
+
+      <div class="pdp__buy">
+        <p class="pdp__collection" id="pdp-collection"></p>
+        <h1 class="pdp__title" id="pdp-title"></h1>
+        <p class="pdp__price" id="pdp-price"></p>
+        <p class="pdp__desc" id="pdp-desc"></p>
+
+        <div class="pdp__notes">
+          <div>
+            <p class="note__label" id="pdp-spec1-label"></p>
+            <p class="note__val" id="pdp-spec1"></p>
+          </div>
+          <div>
+            <p class="note__label" id="pdp-spec2-label"></p>
+            <p class="note__val" id="pdp-spec2"></p>
+          </div>
+        </div>
+
+        <div>
+          <p class="pdp__field-label"><span data-lang-ar>المقاس</span><span data-lang-en>Size</span></p>
+          <div class="size-options" id="pdp-sizes" role="radiogroup" aria-label="المقاس"></div>
+        </div>
+
+        <div class="pdp__actions">
+          <div class="stepper" role="group" aria-label="الكمية">
+            <button class="stepper__btn" type="button" id="qty-minus" data-ar-label="إنقاص الكمية" data-en-label="Decrease quantity" aria-label="إنقاص الكمية">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg>
+            </button>
+            <span class="stepper__value" id="qty-value" aria-live="polite">1</span>
+            <button class="stepper__btn" type="button" id="qty-plus" data-ar-label="زيادة الكمية" data-en-label="Increase quantity" aria-label="زيادة الكمية">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          <button class="btn btn--primary btn--lg" type="button" id="pdp-add">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
+            <span data-lang-ar>أضف للسلة</span><span data-lang-en>Add to cart</span>
+          </button>
+        </div>
+
+        <p class="pdp__cod">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/></svg>
+          <span data-lang-ar>الدفع عند الاستلام في كل محافظات مصر.</span><span data-lang-en>Cash on delivery across every Egyptian governorate.</span>
+        </p>
+      </div>
+    </article>
+
+    <section class="related" aria-labelledby="related-title">
+      <h2 class="page-head__title" id="related-title" style="font-size: var(--fs-h2); margin-block-end: var(--sp-5);">
+        <span data-lang-ar>تشكيلة مكمّلة</span><span data-lang-en>Pairs well with</span>
+      </h2>
+      <div class="catalog-grid" id="pdp-related"></div>
+    </section>
   </main>
 
   <script src="/js/store/chrome.js" defer></script>
-  <script src="/js/store/account.js" defer></script>
+  <script src="/js/store/product.js" defer></script>
   <!-- ============================ FOOTER ============================ -->
   <footer class="store-footer">
     <div class="store-container">
@@ -196,7 +164,7 @@
             <li><a href="/shop/perfumes"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a></li>
             <li><a href="/shop/clothing"><span data-lang-ar>الملابس</span><span data-lang-en>Clothing</span></a></li>
             <li><a href="/shop/sneakers"><span data-lang-ar>الأحذية</span><span data-lang-en>Sneakers</span></a></li>
-            <li><a href="/wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a></li>
+            <li><a href="/account?tab=wishlist"><span data-lang-ar>المفضلة</span><span data-lang-en>Wishlist</span></a></li>
           </ul>
         </div>
         <div class="store-footer__col">

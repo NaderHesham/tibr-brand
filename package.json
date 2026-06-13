@@ -22,5 +22,8 @@
     "luxury"
   ],
   "author": "Robabikia Perfumes",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "puppeteer-core": "^25.1.0"
+  }
 }

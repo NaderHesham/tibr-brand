@@ -1,122 +1,197 @@
 /* -------------------------------------------------------------
  * STORE / ADMIN.JS — Orders control panel
- * Status filter, per-row status change, live stats.
- * Demo dataset is seeded locally (tibr-admin-orders).
- * Depends on chrome.js (window.RB).
+ * Auth-guarded + admin-role check. Loads real orders from API.
+ * Depends on chrome.js (window.RB) + session.js (RB.supabase).
  * ------------------------------------------------------------- */
 (function () {
   "use strict";
-  const $  = (s, c = document) => c.querySelector(s);
-  const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.from((c || document).querySelectorAll(s)); };
   if (!window.RB) return;
-  const bi = (ar, en) => `<span data-lang-ar>${ar}</span><span data-lang-en>${en}</span>`;
-  const ar = () => RB.lang() === "ar";
 
-  const STATUS = {
+  var bi = function (ar, en) { return "<span data-lang-ar>" + ar + "</span><span data-lang-en>" + en + "</span>"; };
+  var isAr = function () { return RB.lang() === "ar"; };
+
+  var STATUS = {
     pending:   { ar: "قيد المراجعة", en: "Pending" },
-    confirmed: { ar: "مؤكّد", en: "Confirmed" },
-    shipped:   { ar: "في الطريق", en: "Shipped" },
-    delivered: { ar: "تم التوصيل", en: "Delivered" },
-    cancelled: { ar: "ملغي", en: "Cancelled" }
+    confirmed: { ar: "مؤكّد",         en: "Confirmed" },
+    shipped:   { ar: "في الطريق",     en: "Shipped" },
+    delivered: { ar: "تم التوصيل",   en: "Delivered" },
+    cancelled: { ar: "ملغي",          en: "Cancelled" }
   };
-  const ORDER = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+  var ORDER = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
 
-  const KEY = "tibr-admin-orders";
-  const daysAgo = (d) => new Date(Date.now() - d * 864e5).toISOString();
-  function seed() {
-    return [
-      { ref: "TB-A1001", name_ar: "منى حسن", name_en: "Mona Hassan", items_ar: "وردة الأناقة ×١", items_en: "Rose Elegance ×1", total: 350, date: daysAgo(0), status: "pending" },
-      { ref: "TB-A1002", name_ar: "أحمد سمير", name_en: "Ahmed Samir", items_ar: "سر العود ×٢", items_en: "Oud Mystery ×2", total: 900, date: daysAgo(1), status: "confirmed" },
-      { ref: "TB-A1003", name_ar: "ليلى مصطفى", name_en: "Layla Mostafa", items_ar: "ذاكرة الفل ×١", items_en: "Jasmine Memories ×1", total: 375, date: daysAgo(2), status: "shipped" },
-      { ref: "TB-A1004", name_ar: "كريم عادل", name_en: "Karim Adel", items_ar: "سر العود ×١، وردة الأناقة ×١", items_en: "Oud Mystery ×1, Rose Elegance ×1", total: 800, date: daysAgo(4), status: "delivered" },
-      { ref: "TB-A1005", name_ar: "سارة فؤاد", name_en: "Sara Fouad", items_ar: "ذاكرة الفل ×١", items_en: "Jasmine Memories ×1", total: 375, date: daysAgo(6), status: "cancelled" }
-    ];
-  }
-  function read() { try { return JSON.parse(localStorage.getItem(KEY)) || seed(); } catch (_) { return seed(); } }
-  function write(list) { localStorage.setItem(KEY, JSON.stringify(list)); }
-
-  let orders = read();
-  write(orders);
-  let filter = "all";
+  var _token  = null;
+  var _orders = [];
+  var _filter = "all";
 
   function fmtDate(iso) {
-    try { return new Date(iso).toLocaleDateString(ar() ? "ar-EG" : "en-GB", { month: "short", day: "numeric" }); }
+    try { return new Date(iso).toLocaleDateString(isAr() ? "ar-EG" : "en-GB", { month: "short", day: "numeric" }); }
     catch (_) { return ""; }
   }
 
   function renderStats() {
-    const total = orders.length;
-    const pending = orders.filter((o) => o.status === "pending").length;
-    const delivered = orders.filter((o) => o.status === "delivered").length;
-    const revenue = orders.filter((o) => o.status !== "cancelled").reduce((n, o) => n + o.total, 0);
-    const stat = (val, gold, labAr, labEn) =>
-      `<div class="stat"><p class="stat__value${gold ? " stat__value--gold" : ""}">${val}</p><p class="stat__label">${bi(labAr, labEn)}</p></div>`;
-    $("#admin-stats").innerHTML =
-      stat(ar() ? RB.arDigits(total) : total, false, "إجمالي الطلبات", "Total orders") +
-      stat(ar() ? RB.arDigits(pending) : pending, false, "قيد المراجعة", "Pending") +
-      stat(ar() ? RB.arDigits(delivered) : delivered, false, "تم التوصيل", "Delivered") +
+    var total     = _orders.length;
+    var pending   = _orders.filter(function (o) { return o.status === "pending"; }).length;
+    var delivered = _orders.filter(function (o) { return o.status === "delivered"; }).length;
+    var revenue   = _orders.filter(function (o) { return o.status !== "cancelled"; })
+                           .reduce(function (n, o) { return n + (o.order_total || 0); }, 0);
+    var stat = function (val, gold, labAr, labEn) {
+      return "<div class='stat'><p class='stat__value" + (gold ? " stat__value--gold" : "") + "'>" + val + "</p>" +
+             "<p class='stat__label'>" + bi(labAr, labEn) + "</p></div>";
+    };
+    var stats = $("#admin-stats");
+    if (!stats) return;
+    stats.innerHTML =
+      stat(isAr() ? RB.arDigits(total)     : total,     false, "إجمالي الطلبات", "Total orders") +
+      stat(isAr() ? RB.arDigits(pending)   : pending,   false, "قيد المراجعة",   "Pending") +
+      stat(isAr() ? RB.arDigits(delivered) : delivered, false, "تم التوصيل",     "Delivered") +
       stat(bi(RB.formatPrice(revenue, "ar"), RB.formatPrice(revenue, "en")), true, "الإيرادات", "Revenue");
   }
 
   function statusSelect(o) {
-    const opts = ORDER.map((s) =>
-      `<option value="${s}"${s === o.status ? " selected" : ""}>${ar() ? STATUS[s].ar : STATUS[s].en}</option>`).join("");
-    return `<select class="status-select" data-ref="${o.ref}" aria-label="${ar() ? "تغيير حالة الطلب" : "Change order status"}">${opts}</select>`;
+    var opts = ORDER.map(function (s) {
+      return "<option value='" + s + "'" + (s === o.status ? " selected" : "") + ">" +
+             (isAr() ? STATUS[s].ar : STATUS[s].en) + "</option>";
+    }).join("");
+    return "<select class='status-select' data-id='" + o.id + "' aria-label='" +
+           (isAr() ? "تغيير حالة الطلب" : "Change order status") + "'>" + opts + "</select>";
   }
 
   function renderRows() {
-    const rows = orders.filter((o) => filter === "all" || o.status === filter);
-    const tbody = $("#admin-rows");
-    const emptyWrap = $("#admin-empty");
-    const tableWrap = $(".table-wrap");
+    var rows   = _orders.filter(function (o) { return _filter === "all" || o.status === _filter; });
+    var tbody  = $("#admin-rows");
+    var emptyW = $("#admin-empty");
+    var tWrap  = $(".table-wrap");
+    var count  = $("#admin-count");
 
-    $("#admin-count").innerHTML = bi(`${RB.arDigits(rows.length)} طلب`, `${rows.length} orders`);
+    if (count) count.innerHTML = bi(RB.arDigits(rows.length) + " طلب", rows.length + " orders");
 
     if (!rows.length) {
-      tbody.innerHTML = "";
-      tableWrap.style.display = "none";
-      emptyWrap.innerHTML = `
-      <div class="rb-empty">
-        <span class="rb-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg></span>
-        <h3 class="rb-empty__title">${bi("لا طلبات بهذه الحالة", "No orders with this status")}</h3>
-      </div>`;
+      if (tbody)  tbody.innerHTML = "";
+      if (tWrap)  tWrap.style.display = "none";
+      if (emptyW) emptyW.innerHTML =
+        "<div class='rb-empty'>" +
+        "<span class='rb-empty__icon'><svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.3' aria-hidden='true'><circle cx='11' cy='11' r='7'/><path d='M21 21l-4.3-4.3' stroke-linecap='round'/></svg></span>" +
+        "<h3 class='rb-empty__title'>" + bi("لا طلبات بهذه الحالة", "No orders with this status") + "</h3>" +
+        "</div>";
       return;
     }
-    tableWrap.style.display = "";
-    emptyWrap.innerHTML = "";
-    tbody.innerHTML = rows.map((o) => `
-      <tr>
-        <td class="num">${o.ref}</td>
-        <td>${bi(o.name_ar, o.name_en)}</td>
-        <td>${bi(o.items_ar, o.items_en)}</td>
-        <td class="num">${bi(RB.formatPrice(o.total, "ar"), RB.formatPrice(o.total, "en"))}</td>
-        <td>${fmtDate(o.date)}</td>
-        <td>${statusSelect(o)}</td>
-      </tr>`).join("");
+
+    if (tWrap)  tWrap.style.display = "";
+    if (emptyW) emptyW.innerHTML = "";
+
+    if (tbody) tbody.innerHTML = rows.map(function (o) {
+      var product  = o.products || {};
+      var itemName = isAr() ? (product.ar_name || "") : (product.en_name || "");
+      var qty      = o.qty || 1;
+      var itemStr  = itemName + (qty > 1 ? " ×" + (isAr() ? RB.arDigits(qty) : qty) : "");
+      var total    = o.order_total != null ? o.order_total : (o.unit_price ? o.unit_price * qty : 0);
+      return "<tr>" +
+        "<td class='num'>" + (o.checkout_reference || o.id.slice(0, 8)) + "</td>" +
+        "<td>" + (o.customer_name || "") + "</td>" +
+        "<td>" + itemStr + "</td>" +
+        "<td class='num'>" + bi(RB.formatPrice(total, "ar"), RB.formatPrice(total, "en")) + "</td>" +
+        "<td>" + fmtDate(o.created_at) + "</td>" +
+        "<td>" + statusSelect(o) + "</td>" +
+        "</tr>";
+    }).join("");
   }
 
   function renderAll() { renderStats(); renderRows(); }
 
+  function loadOrders() {
+    fetch("/api/admin/orders", { headers: { "Authorization": "Bearer " + _token } })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function (body) {
+        _orders = (body && body.data) ? body.data : [];
+        renderAll();
+      })
+      .catch(function (err) {
+        var emptyW = $("#admin-empty");
+        var tWrap  = $(".table-wrap");
+        if (tWrap) tWrap.style.display = "none";
+        if (emptyW) emptyW.innerHTML =
+          "<div class='rb-empty'>" +
+          "<h3 class='rb-empty__title'>" + bi("تعذّر تحميل الطلبات", "Failed to load orders") + "</h3>" +
+          "</div>";
+      });
+  }
+
   // Status filter chips
-  $$(".filter-chip[data-status]").forEach((chip) =>
-    chip.addEventListener("click", () => {
-      filter = chip.dataset.status;
-      $$(".filter-chip[data-status]").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
+  $$(".filter-chip[data-status]").forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      _filter = chip.dataset.status;
+      $$(".filter-chip[data-status]").forEach(function (c) {
+        c.setAttribute("aria-pressed", String(c === chip));
+      });
       renderRows();
-    }));
+    });
+  });
 
   // Per-row status change
-  $("#admin-rows").addEventListener("change", (e) => {
-    const sel = e.target.closest(".status-select");
+  var adminRows = $("#admin-rows");
+  if (adminRows) adminRows.addEventListener("change", function (e) {
+    var sel = e.target.closest(".status-select");
     if (!sel) return;
-    const o = orders.find((x) => x.ref === sel.dataset.ref);
-    if (!o) return;
-    o.status = sel.value;
-    write(orders);
-    renderAll();
-    RB.toast(ar() ? `تم تحديث حالة ${o.ref}` : `Updated ${o.ref}`);
+    var id     = sel.dataset.id;
+    var status = sel.value;
+
+    fetch("/api/admin/orders/" + id, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + _token },
+      body: JSON.stringify({ status: status })
+    })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (body) {
+        var updated = body && body.data;
+        if (updated) {
+          var idx = _orders.findIndex(function (o) { return o.id === id; });
+          if (idx !== -1) _orders[idx].status = updated.status;
+        }
+        renderAll();
+        RB.toast(isAr() ? "تم تحديث الحالة" : "Status updated");
+      })
+      .catch(function () {
+        RB.toast(isAr() ? "فشل تحديث الحالة" : "Failed to update status");
+        loadOrders();
+      });
   });
 
   document.addEventListener("languageChanged", renderAll);
-  renderAll();
+
+  // ---- Init (auth + admin guard) ----
+  function init() {
+    if (!RB.requireAuth) {
+      location.replace("/login?next=/admin");
+      return;
+    }
+    RB.requireAuth("/admin").then(function (session) {
+      if (!session) return;
+      _token = session.access_token;
+
+      // Check admin role via profile API
+      fetch("/api/profile", { headers: { "Authorization": "Bearer " + _token } })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+        .then(function (body) {
+          var role = body && body.data && body.data.role;
+          if (role !== "admin") {
+            document.body.innerHTML =
+              "<div style='display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem'>" +
+              "<div><h1 style='font-size:1.5rem;margin-bottom:1rem'>" +
+              bi("غير مصرّح", "Access denied") +
+              "</h1><p>" + bi("هذه الصفحة للمسؤولين فقط.", "This page is for admins only.") + "</p>" +
+              "<a href='/account' style='margin-top:1.5rem;display:inline-block'>" + bi("العودة للحساب", "Back to account") + "</a></div></div>";
+            return;
+          }
+          loadOrders();
+        })
+        .catch(function () {
+          location.replace("/login?next=/admin");
+        });
+    });
+  }
+
+  init();
 })();
