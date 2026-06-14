@@ -253,23 +253,35 @@
 .product__badge--gold { background: var(--gold); color: var(--on-gold); }
 .product__badge--soft { background: oklch(0.15 0.006 75 / 0.78); color: var(--ink); border: 1px solid var(--line-strong); }
 
-.product__body { padding-block: 10px 12px; display: flex; flex-direction: column; gap: 5px; }
-.product__collection { font-size: var(--fs-xs); color: var(--muted); }
+.product__body { padding-block: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
 .product__name {
   font-family: var(--font-display);
   font-size: 0.9375rem; font-weight: var(--fw-semibold);
   color: var(--ink);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
   transition: color var(--dur) var(--ease-out);
 }
 .product__name-link:hover .product__name { color: var(--gold); }
-.product__desc {
-  font-size: var(--fs-sm); color: var(--muted);
-  display: none;
+.product__reviews {
+  display: flex; align-items: center; gap: 5px;
 }
-.product__sizes { display: flex; flex-wrap: wrap; gap: 4px; }
-.product__size { font-size: var(--fs-xs); color: var(--ink-2); border: 1px solid var(--line); border-radius: var(--r-xs); padding: 2px 6px; }
-.product__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); margin-block-start: 8px; }
-.product__price { font-weight: var(--fw-semibold); font-size: var(--fs-sm); color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.product__stars { color: var(--gold); font-size: 0.7rem; letter-spacing: 0.02em; line-height: 1; }
+.product__review-count { font-size: var(--fs-xs); color: var(--muted); }
+.product__meta { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-2); margin-block-start: 6px; }
+.product__price { font-weight: var(--fw-bold); font-size: var(--fs-base); color: var(--gold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.product__cart-btn {
+  display: inline-grid; place-items: center;
+  inline-size: 2.25rem; block-size: 2.25rem;
+  color: var(--ink-2);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  transition: color var(--dur) var(--ease-out),
+              background var(--dur) var(--ease-out),
+              border-color var(--dur) var(--ease-out);
+}
+.product__cart-btn:hover { color: var(--gold); border-color: var(--gold-line); background: var(--gold-ghost); }
+.product__cart-btn svg { inline-size: 1.1rem; block-size: 1.1rem; }
 
 /* ============================ SKELETON LOADING ============================ */
 .skeleton-grid { margin-block-start: var(--sp-6); }

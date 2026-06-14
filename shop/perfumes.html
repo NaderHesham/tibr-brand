@@ -26,43 +26,43 @@
 
   <!-- ============================ HEADER ============================ -->
   <header class="store-header" id="store-header">
-    <div class="store-container store-header__inner">
-      <a class="store-wordmark" href="/" aria-label="تِبْر">
-        <span data-lang-ar>تِبْر</span><span data-lang-en>Tibr<span class="dot">.</span></span>
-      </a>
+<div class="store-container store-header__inner">
+              <a class="store-wordmark" href="/" aria-label="تِبْر">
+                <span data-lang-ar>تِبْر</span><span data-lang-en>Tibr<span class="dot">.</span></span>
+              </a>
 
-      <nav class="store-nav" aria-label="التصنيفات">
-        <ul class="store-nav__list">
-          <li><a class="store-nav__link" aria-current="page" href="/shop/perfumes"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a></li>
-          <li><a class="store-nav__link" href="/shop/clothing"><span data-lang-ar>الملابس</span><span data-lang-en>Clothing</span></a></li>
-          <li><a class="store-nav__link" href="/shop/sneakers"><span data-lang-ar>الأحذية</span><span data-lang-en>Sneakers</span></a></li>
-        </ul>
-      </nav>
+              <nav class="store-nav" aria-label="التصنيفات">
+                <ul class="store-nav__list">
+                  <li><a class="store-nav__link" aria-current="page" href="/shop/perfumes"><span data-lang-ar>العطور</span><span data-lang-en>Perfumes</span></a></li>
+                  <li><a class="store-nav__link" href="/shop/clothing"><span data-lang-ar>الملابس</span><span data-lang-en>Clothing</span></a></li>
+                  <li><a class="store-nav__link" href="/shop/sneakers"><span data-lang-ar>الأحذية</span><span data-lang-en>Sneakers</span></a></li>
+                </ul>
+              </nav>
 
-      <div class="store-utils">
-        <button class="store-iconbtn store-util-extra" type="button" data-ar-label="بحث" data-en-label="Search" aria-label="بحث">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <div class="store-utils">
+                <button class="store-iconbtn store-util-extra" type="button" data-ar-label="بحث" data-en-label="Search" aria-label="بحث">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </button>
+                <a class="store-iconbtn store-util-extra" href="/account?tab=wishlist" data-ar-label="المفضلة" data-en-label="Wishlist" aria-label="المفضلة">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+                </a>
+                <a class="store-iconbtn store-util-extra" href="/account" data-ar-label="حسابي" data-en-label="Account" aria-label="حسابي">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </a>
+                <a class="store-iconbtn" href="/cart" id="cart-btn" data-ar-label="سلة التسوق" data-en-label="Cart" aria-label="سلة التسوق">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a4 4 0 0 1 8 0v2"/><rect width="16" height="14" x="4" y="8" rx="2"/></svg>
+                  <span class="store-cart-count" id="cart-count" aria-hidden="true">0</span>
+                </a>
+                <button class="store-lang-toggle" id="lang-switch" type="button" aria-label="Switch language">
+          <div class="store-lang-toggle__slider"></div>
+          <span class="store-lang-toggle__opt" data-opt="ar">AR</span>
+          <span class="store-lang-toggle__opt" data-opt="en">EN</span>
         </button>
-        <a class="store-iconbtn store-util-extra" href="/account?tab=wishlist" data-ar-label="المفضلة" data-en-label="Wishlist" aria-label="المفضلة">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
-        </a>
-        <a class="store-iconbtn store-util-extra" href="/account" data-ar-label="حسابي" data-en-label="Account" aria-label="حسابي">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </a>
-        <a class="store-iconbtn" href="/cart" id="cart-btn" data-ar-label="سلة التسوق" data-en-label="Cart" aria-label="سلة التسوق">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8V6a4 4 0 0 1 8 0v2"/><rect width="16" height="14" x="4" y="8" rx="2"/></svg>
-          <span class="store-cart-count" id="cart-count" aria-hidden="true">0</span>
-        </a>
-        <button class="store-lang-toggle" id="lang-switch" type="button" aria-label="Switch language">
-  <div class="store-lang-toggle__slider"></div>
-  <span class="store-lang-toggle__opt" data-opt="ar">AR</span>
-  <span class="store-lang-toggle__opt" data-opt="en">EN</span>
-</button>
-        <button class="store-burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" data-ar-label="القائمة" data-en-label="Menu" aria-label="القائمة">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke-linecap="round"/></svg>
-        </button>
-      </div>
-    </div>
+                <button class="store-burger" id="burger" type="button" aria-expanded="false" aria-controls="drawer" data-ar-label="القائمة" data-en-label="Menu" aria-label="القائمة">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10" stroke-linecap="round"/></svg>
+                </button>
+              </div>
+            </div>
   </header>
 
   <!-- ============================ MOBILE DRAWER ============================ -->
@@ -178,17 +178,17 @@
             </button>
           </div>
           <div class="product__body">
-            <p class="product__collection"><span data-lang-ar>مجموعة الرجولة</span><span data-lang-en>Masculinity Collection</span></p>
             <a class="product__name-link" href="/product?id=oud-mystery">
               <h3 class="product__name"><span data-lang-ar>سر العود</span><span data-lang-en>Oud Mystery</span></h3>
             </a>
-            <p class="product__desc"><span data-lang-ar>عود معتق فاخر مع بخور تقليدي، رائحة عميقة تعكس عراقة التراث.</span><span data-lang-en>Aged premium oud with traditional incense, a deep scent rooted in heritage.</span></p>
-            <div class="product__sizes"><span class="product__size">50ml</span><span class="product__size">100ml</span></div>
+            <div class="product__reviews">
+              <span class="product__stars" aria-hidden="true">★★★★★</span>
+              <span class="product__review-count">(127)</span>
+            </div>
             <div class="product__meta">
               <span class="product__price"><span data-lang-ar>٤٥٠ ج.م</span><span data-lang-en>450 EGP</span></span>
-              <button class="btn btn--secondary" type="button" data-add data-ar-name="سر العود" data-en-name="Oud Mystery">
+              <button class="product__cart-btn" type="button" data-add data-ar-name="سر العود" data-en-name="Oud Mystery" data-ar-label="أضف للسلة" data-en-label="Add to cart" aria-label="أضف للسلة">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
-                <span data-lang-ar>أضف للسلة</span><span data-lang-en>Add to cart</span>
               </button>
             </div>
           </div>
@@ -209,17 +209,17 @@
             </button>
           </div>
           <div class="product__body">
-            <p class="product__collection"><span data-lang-ar>مجموعة النخبة</span><span data-lang-en>Heritage Line</span></p>
             <a class="product__name-link" href="/product?id=jasmine-memories">
               <h3 class="product__name"><span data-lang-ar>ذاكرة الفل</span><span data-lang-en>Jasmine Memories</span></h3>
             </a>
-            <p class="product__desc"><span data-lang-ar>ياسمين ليلي على شرفات القاهرة القديمة، زهور بيضاء فوق قاعدة خشبية دافئة.</span><span data-lang-en>Night jasmine on old Cairo balconies, white florals over a warm wooden base.</span></p>
-            <div class="product__sizes"><span class="product__size">50ml</span><span class="product__size">100ml</span></div>
+            <div class="product__reviews">
+              <span class="product__stars" aria-hidden="true">★★★★★</span>
+              <span class="product__review-count">(89)</span>
+            </div>
             <div class="product__meta">
               <span class="product__price"><span data-lang-ar>٣٧٥ ج.م</span><span data-lang-en>375 EGP</span></span>
-              <button class="btn btn--secondary" type="button" data-add data-ar-name="ذاكرة الفل" data-en-name="Jasmine Memories">
+              <button class="product__cart-btn" type="button" data-add data-ar-name="ذاكرة الفل" data-en-name="Jasmine Memories" data-ar-label="أضف للسلة" data-en-label="Add to cart" aria-label="أضف للسلة">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
-                <span data-lang-ar>أضف للسلة</span><span data-lang-en>Add to cart</span>
               </button>
             </div>
           </div>
@@ -240,17 +240,17 @@
             </button>
           </div>
           <div class="product__body">
-            <p class="product__collection"><span data-lang-ar>مجموعة النخبة</span><span data-lang-en>Elite Collection</span></p>
             <a class="product__name-link" href="/product?id=rose-elegance">
               <h3 class="product__name"><span data-lang-ar>وردة الأناقة</span><span data-lang-en>Rose Elegance</span></h3>
             </a>
-            <p class="product__desc"><span data-lang-ar>رقّة الورد الدمشقي مع مسك أبيض ناعم، دفء حنيني يذكّر بحدائق القاهرة.</span><span data-lang-en>Damask rose softened by white musk, a nostalgic warmth recalling Cairo's gardens.</span></p>
-            <div class="product__sizes"><span class="product__size">50ml</span><span class="product__size">100ml</span></div>
+            <div class="product__reviews">
+              <span class="product__stars" aria-hidden="true">★★★★★</span>
+              <span class="product__review-count">(64)</span>
+            </div>
             <div class="product__meta">
               <span class="product__price"><span data-lang-ar>٣٥٠ ج.م</span><span data-lang-en>350 EGP</span></span>
-              <button class="btn btn--secondary" type="button" data-add data-ar-name="وردة الأناقة" data-en-name="Rose Elegance">
+              <button class="product__cart-btn" type="button" data-add data-ar-name="وردة الأناقة" data-en-name="Rose Elegance" data-ar-label="أضف للسلة" data-en-label="Add to cart" aria-label="أضف للسلة">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
-                <span data-lang-ar>أضف للسلة</span><span data-lang-en>Add to cart</span>
               </button>
             </div>
           </div>
@@ -330,5 +330,8 @@
 
   <script src="/js/store/chrome.js" defer></script>
   <script src="/js/store/catalog.js" defer></script>
+<!-- impeccable-live-start -->
+<script src="http://localhost:8400/live.js"></script>
+<!-- impeccable-live-end -->
 </body>
 </html>

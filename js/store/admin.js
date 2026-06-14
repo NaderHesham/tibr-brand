@@ -21,7 +21,6 @@
       .replace(/'/g, "&#39;");
   };
   var biSafe = function (ar, en) { return bi(escapeHtml(ar), escapeHtml(en)); };
-  var text = function (value) { return escapeHtml(value); };
 
   var STATUS = {
     pending:   { ar: "قيد المراجعة", en: "Pending" },
@@ -37,35 +36,21 @@
     clothing: { ar: "الملابس", en: "Clothing" },
     sneakers: { ar: "الأحذية", en: "Sneakers" }
   };
-  var PRODUCT_GENDERS = {
-    men: { ar: "رجالي", en: "Men" },
-    women: { ar: "نسائي", en: "Women" },
-    unisex: { ar: "للجنسين", en: "Unisex" }
-  };
 
   var _token = null;
   var _orders = [];
   var _products = [];
   var _filter = "all";
-  var _editingProductId = null;
   var _ordersLoadFailed = false;
   var _productsLoadFailed = false;
 
-  var productForm = $("#product-form");
   var productNewButton = $("#product-new");
-  var productSubmitButton = $("#product-submit");
-  var productCancelButton = $("#product-cancel");
-  var productModal = $("#product-modal");
-  var productModalClose = $("#product-modal-close");
-  var productMode = $("#product-form-mode");
-  var productOriginalId = $("#product-original-id");
   var productTbody = $("#admin-products");
   var productEmpty = $("#admin-products-empty");
   var productTableWrap = $(".admin-product-table-wrap .table-wrap");
   var tableWrap = $(".admin-orders-table-wrap");
   var adminTabs = $$(".admin-tab");
   var adminPanes = $$("[data-admin-pane]");
-  var activePane = "orders";
 
   function fmtDate(iso) {
     try {
@@ -80,7 +65,6 @@
   }
 
   function setActivePane(name) {
-    activePane = name;
     adminTabs.forEach(function (tab) {
       var isActive = tab.dataset.adminTab === name;
       tab.classList.toggle("is-active", isActive);
@@ -95,27 +79,8 @@
     return PRODUCT_CATEGORIES[key] || { ar: key || "", en: key || "" };
   }
 
-  function genderLabel(key) {
-    return PRODUCT_GENDERS[key] || { ar: key || "", en: key || "" };
-  }
-
   function productPrice(product) {
     return Number(product.ar_price || product.en_price || product.price || 0);
-  }
-
-  function productName(product) {
-    return isAr() ? (product.ar_name || "") : (product.en_name || "");
-  }
-
-  function productSizes(product) {
-    if (!Array.isArray(product.sizes) || !product.sizes.length) return isAr() ? "بدون" : "None";
-    return product.sizes.join(", ");
-  }
-
-  function syncSelectLabels() {
-    $$("select[id] option[data-text-ar]").forEach(function (option) {
-      option.textContent = isAr() ? (option.dataset.textAr || option.textContent) : (option.dataset.textEn || option.textContent);
-    });
   }
 
   function renderStats() {
@@ -240,15 +205,11 @@
 
     tbody.innerHTML = _products.map(function (product) {
       var category = categoryLabel(product.category);
-      var gender = genderLabel(product.gender);
-      var sizes = productSizes(product);
       var price = formatMoney(productPrice(product));
       return "<tr data-product-id='" + escapeHtml(product.id) + "'>" +
-        "<td class='num'>" + escapeHtml(product.id || "") + "</td>" +
         "<td>" + biSafe(category.ar, category.en) + "</td>" +
-        "<td><div class='admin-product-meta'><span class='admin-product-meta__name'>" + escapeHtml(product.ar_name || "") + "</span><span class='admin-product-meta__sub'>" + escapeHtml(product.en_name || "") + "</span><span class='admin-product-meta__sub'>" + biSafe(gender.ar, gender.en) + "</span></div></td>" +
+        "<td><div class='admin-product-meta'><span class='admin-product-meta__name'>" + escapeHtml(product.ar_name || "") + "</span><span class='admin-product-meta__sub'>" + escapeHtml(product.en_name || "") + "</span></div></td>" +
         "<td>" + price + "</td>" +
-        "<td class='admin-product-sizes'>" + escapeHtml(sizes) + "</td>" +
         "<td><div class='product-actions'>" +
           "<button class='btn btn--secondary' type='button' data-product-action='edit' data-id='" + escapeHtml(product.id) + "'>" +
             bi("تعديل", "Edit") +
@@ -307,157 +268,6 @@
       });
   }
 
-  function setFormMode(mode, productId) {
-    if (productMode) productMode.value = mode;
-    if (productOriginalId) productOriginalId.value = productId || "";
-    if ($("#product-id")) $("#product-id").readOnly = mode === "edit";
-    if (productSubmitButton) productSubmitButton.innerHTML = mode === "edit" ? bi("حفظ التعديل", "Save changes") : bi("حفظ المنتج", "Save product");
-    if (productCancelButton) productCancelButton.hidden = false;
-  }
-
-  function clearProductForm() {
-    if (!productForm) return;
-    productForm.reset();
-    if ($("#product-category")) $("#product-category").value = "perfumes";
-    if ($("#product-gender")) $("#product-gender").value = "men";
-    if ($("#product-id")) $("#product-id").readOnly = false;
-    setFormMode("create", "");
-    _editingProductId = null;
-  }
-
-  function openProductModal(mode, product) {
-    if (!productModal) return;
-    if (mode === "edit" && product) {
-      fillProductForm(product);
-    } else {
-      clearProductForm();
-    }
-
-    if (productModal.hidden) productModal.hidden = false;
-    productModal.setAttribute("aria-hidden", "false");
-    productModal.dataset.mode = mode;
-    document.body.classList.add("product-modal-open");
-    syncProductModalTitle();
-
-    var focusTarget = $("#product-id");
-    if (focusTarget && focusTarget.focus) {
-      setTimeout(function () { focusTarget.focus(); }, 0);
-    }
-  }
-
-  function closeProductModal() {
-    if (!productModal) return;
-    productModal.hidden = true;
-    productModal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("product-modal-open");
-  }
-
-  function syncProductModalTitle() {
-    var title = $("#product-modal-title");
-    if (!title) return;
-    title.innerHTML = productModal && productModal.dataset.mode === "edit"
-      ? bi("تعديل منتج", "Edit product")
-      : bi("منتج جديد", "New product");
-  }
-
-  function fillProductForm(product) {
-    if (!productForm) return;
-    $("#product-id").value = product.id || "";
-    $("#product-category").value = product.category || "perfumes";
-    $("#product-gender").value = product.gender || "men";
-    $("#product-image").value = product.image || "";
-    $("#product-ar-price").value = product.ar_price != null ? product.ar_price : "";
-    $("#product-en-price").value = product.en_price != null ? product.en_price : "";
-    $("#product-sizes").value = Array.isArray(product.sizes) ? product.sizes.join(", ") : "";
-    $("#product-ar-name").value = product.ar_name || "";
-    $("#product-en-name").value = product.en_name || "";
-    $("#product-ar-collection").value = product.ar_collection || "";
-    $("#product-en-collection").value = product.en_collection || "";
-    $("#product-ar-desc").value = product.ar_desc || "";
-    $("#product-en-desc").value = product.en_desc || "";
-    $("#product-ar-alt").value = product.ar_alt || "";
-    $("#product-en-alt").value = product.en_alt || "";
-    $("#product-s1l-ar").value = product.s1l || "";
-    $("#product-s1l-en").value = product.s1l || "";
-    $("#product-ar-s1").value = product.ar_s1 || "";
-    $("#product-en-s1").value = product.en_s1 || "";
-    $("#product-s2l-ar").value = product.s2l || "";
-    $("#product-s2l-en").value = product.s2l || "";
-    $("#product-ar-s2").value = product.ar_s2 || "";
-    $("#product-en-s2").value = product.en_s2 || "";
-    _editingProductId = product.id;
-    setFormMode("edit", product.id);
-  }
-
-  function readProductForm() {
-    return {
-      id: ($("#product-id").value || "").trim(),
-      category: $("#product-category").value,
-      gender: $("#product-gender").value,
-      image: ($("#product-image").value || "").trim(),
-      ar_price: Number($("#product-ar-price").value),
-      en_price: Number($("#product-en-price").value),
-      sizes: ($("#product-sizes").value || "").trim(),
-      ar_name: ($("#product-ar-name").value || "").trim(),
-      en_name: ($("#product-en-name").value || "").trim(),
-      ar_collection: ($("#product-ar-collection").value || "").trim(),
-      en_collection: ($("#product-en-collection").value || "").trim(),
-      ar_desc: ($("#product-ar-desc").value || "").trim(),
-      en_desc: ($("#product-en-desc").value || "").trim(),
-      ar_alt: ($("#product-ar-alt").value || "").trim(),
-      en_alt: ($("#product-en-alt").value || "").trim(),
-      s1l: ($("#product-s1l-ar").value || "").trim() || ($("#product-s1l-en").value || "").trim(),
-      s2l: ($("#product-s2l-ar").value || "").trim() || ($("#product-s2l-en").value || "").trim(),
-      ar_s1: ($("#product-ar-s1").value || "").trim(),
-      en_s1: ($("#product-en-s1").value || "").trim(),
-      ar_s2: ($("#product-ar-s2").value || "").trim(),
-      en_s2: ($("#product-en-s2").value || "").trim()
-    };
-  }
-
-  function scrollToProducts() {
-    var section = $("#admin-products-title");
-    if (section && section.scrollIntoView) section.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function saveProduct(event) {
-    event.preventDefault();
-
-    if (!_token || !productForm) return;
-
-    var payload = readProductForm();
-    if (!payload.id || !payload.category || !payload.gender || !payload.image || !payload.ar_name || !payload.en_name || !(payload.ar_price > 0) || !(payload.en_price > 0)) {
-      RB.toast(isAr() ? "أكمل الحقول المطلوبة" : "Please fill the required fields");
-      return;
-    }
-
-    var endpoint = _editingProductId ? "/api/admin/products/" + encodeURIComponent(_editingProductId) : "/api/admin/products";
-    var method = _editingProductId ? "PATCH" : "POST";
-
-    fetch(endpoint, {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + _token
-      },
-      body: JSON.stringify(payload)
-    })
-      .then(function (response) {
-        return response.ok ? response.json() : response.json().then(function (body) {
-          throw new Error((body && body.error) || "Request failed");
-        });
-      })
-      .then(function () {
-        RB.toast(isAr() ? (_editingProductId ? "تم تحديث المنتج" : "تمت إضافة المنتج") : (_editingProductId ? "Product updated" : "Product added"));
-        clearProductForm();
-        closeProductModal();
-        return loadProducts().then(renderProducts);
-      })
-      .catch(function (error) {
-        RB.toast(error && error.message ? error.message : (isAr() ? "فشل حفظ المنتج" : "Failed to save product"));
-      });
-  }
-
   function deleteProduct(productId) {
     if (!productId) return;
     var confirmMessage = isAr() ? "هل تريد حذف هذا المنتج؟" : "Delete this product?";
@@ -473,7 +283,6 @@
         });
       })
       .then(function () {
-        if (_editingProductId === productId) clearProductForm();
         RB.toast(isAr() ? "تم حذف المنتج" : "Product deleted");
         return loadProducts().then(renderProducts);
       })
@@ -486,11 +295,9 @@
     var actionButton = event.target.closest("[data-product-action]");
     if (!actionButton) return;
     var productId = actionButton.dataset.id;
-    var product = _products.find(function (item) { return item.id === productId; });
-    if (!product) return;
 
     if (actionButton.dataset.productAction === "edit") {
-      openProductModal("edit", product);
+      location.href = "/admin/product?id=" + encodeURIComponent(productId);
     } else if (actionButton.dataset.productAction === "delete") {
       deleteProduct(productId);
     }
@@ -538,39 +345,23 @@
     });
   }
 
-  if (productForm) productForm.addEventListener("submit", saveProduct);
-  if (productTbody) productTbody.addEventListener("click", handleProductAction);
-  if (productNewButton) productNewButton.addEventListener("click", function () { openProductModal("create"); });
-  if (productCancelButton) productCancelButton.addEventListener("click", function () { clearProductForm(); closeProductModal(); });
-  if (productModalClose) productModalClose.addEventListener("click", function () { clearProductForm(); closeProductModal(); });
-  if (productModal) {
-    productModal.addEventListener("click", function (event) {
-      if (event.target && event.target.hasAttribute && event.target.hasAttribute("data-product-modal-close")) {
-        clearProductForm();
-        closeProductModal();
-      }
+  if (productNewButton) {
+    productNewButton.addEventListener("click", function () {
+      location.href = "/admin/product";
     });
   }
+
+  if (productTbody) productTbody.addEventListener("click", handleProductAction);
+
   adminTabs.forEach(function (tab) {
     tab.addEventListener("click", function () {
       setActivePane(tab.dataset.adminTab || "orders");
-      if (tab.dataset.adminTab === "products") {
-        renderProducts();
-      }
+      if (tab.dataset.adminTab === "products") renderProducts();
     });
   });
 
   document.addEventListener("languageChanged", function () {
-    syncSelectLabels();
-    syncProductModalTitle();
     renderAll();
-  });
-
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape" && productModal && !productModal.hidden) {
-      clearProductForm();
-      closeProductModal();
-    }
   });
 
   function init() {
@@ -597,11 +388,10 @@
             return;
           }
 
+          var urlTab = new URLSearchParams(window.location.search).get("tab") || "orders";
           Promise.all([loadOrders(), loadProducts()]).then(function () {
-            syncSelectLabels();
             renderAll();
-            clearProductForm();
-            setActivePane(activePane || "orders");
+            setActivePane(urlTab);
           });
         })
         .catch(function () {

@@ -61,7 +61,6 @@ const normalizeProduct = (product) => ({
 });
 
 const PRODUCT_CATEGORIES = new Set(["perfumes", "clothing", "sneakers"]);
-const PRODUCT_GENDERS = new Set(["men", "women", "unisex"]);
 
 const trimValue = (value) => (typeof value === "string" ? value.trim() : value);
 
@@ -94,40 +93,34 @@ const parseSizesInput = (sizes) => {
 
 const sanitizeProductPayload = (payload) => {
   const sizes = parseSizesInput(payload.sizes);
-  const price = payload.price;
-  const arPrice = payload.ar_price ?? payload.arPrice ?? price;
-  const enPrice = payload.en_price ?? payload.enPrice ?? price;
+  const cat = trimValue(payload.category);
+  const hasColor = cat === "clothing" || cat === "sneakers";
+  const arPrice = payload.ar_price ?? payload.arPrice;
+  const enPrice = payload.en_price ?? payload.enPrice;
 
   return {
     id: trimValue(payload.id),
-    category: trimValue(payload.category),
-    gender: trimValue(payload.gender),
-    ar_name: trimValue(payload.ar_name),
-    en_name: trimValue(payload.en_name),
-    ar_collection: trimValue(payload.ar_collection) || null,
-    en_collection: trimValue(payload.en_collection) || null,
-    ar_desc: trimValue(payload.ar_desc) || null,
-    en_desc: trimValue(payload.en_desc) || null,
-    ar_alt: trimValue(payload.ar_alt) || null,
-    en_alt: trimValue(payload.en_alt) || null,
-    s1l: trimValue(payload.s1l) || null,
-    s2l: trimValue(payload.s2l) || null,
-    ar_s1: trimValue(payload.ar_s1) || null,
-    en_s1: trimValue(payload.en_s1) || null,
-    ar_s2: trimValue(payload.ar_s2) || null,
-    en_s2: trimValue(payload.en_s2) || null,
+    category: cat,
+    image: trimValue(payload.image) || null,
+    ar_name: trimValue(payload.ar_name) || null,
+    en_name: trimValue(payload.en_name) || null,
     ar_price: parsePrice(arPrice),
     en_price: parsePrice(enPrice),
-    image: trimValue(payload.image),
-    sizes
+    quantity: parseInt(payload.quantity, 10) || 0,
+    ar_color: hasColor ? (trimValue(payload.ar_color) || null) : null,
+    en_color: hasColor ? (trimValue(payload.en_color) || null) : null,
+    sizes,
+    review_avg: Math.min(5, Math.max(0, parseFloat(payload.review_avg) || 0)),
+    review_count: parseInt(payload.review_count, 10) || 0,
+    ar_desc: trimValue(payload.ar_desc) || null,
+    en_desc: trimValue(payload.en_desc) || null
   };
 };
 
 const validateProductPayload = (payload, requireId = true) => {
   if (requireId && !payload.id) return "id is required.";
   if (!payload.category || !PRODUCT_CATEGORIES.has(payload.category)) return "category is required.";
-  if (!payload.gender || !PRODUCT_GENDERS.has(payload.gender)) return "gender is required.";
-  if (!payload.ar_name || !payload.en_name) return "Arabic/English names are required.";
+  if (!payload.ar_name || !payload.en_name) return "Arabic and English names are required.";
   if (!(Number.isFinite(payload.ar_price) && payload.ar_price > 0) || !(Number.isFinite(payload.en_price) && payload.en_price > 0)) return "Arabic/English prices are required.";
   if (!payload.image) return "image is required.";
   return null;
@@ -802,6 +795,10 @@ PAGE_ROUTES.forEach(name => {
     res.sendFile(path.join(rootDir, 'pages', `${name}.html`))
   );
 });
+
+app.get('/admin/product', (_req, res) =>
+  res.sendFile(path.join(rootDir, 'pages', 'admin-product.html'))
+);
 
 // Shop category pages
 ['perfumes', 'clothing', 'sneakers'].forEach(name => {
