@@ -269,8 +269,29 @@
 
 /* ============================ RESPONSIVE ============================ */
 @media (max-width: 56rem) {
-  .store-nav { display: none; }
-  .store-header__inner { grid-template-columns: auto auto; justify-content: space-between; }
+  .store-header__inner {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "brand utils"
+      "nav nav";
+    row-gap: var(--sp-2);
+  }
+
+  .store-wordmark { grid-area: brand; }
+  .store-nav {
+    grid-area: nav;
+    justify-self: stretch;
+    min-inline-size: 0;
+  }
+  .store-nav__list {
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-block-end: var(--sp-1);
+    scrollbar-width: none;
+  }
+  .store-nav__list::-webkit-scrollbar { display: none; }
+  .store-utils { grid-area: utils; flex-wrap: wrap; justify-content: end; }
   .store-burger {
     display: inline-grid;
     place-items: center;
@@ -279,8 +300,6 @@
     border-radius: var(--r-sm);
   }
   .store-burger:hover { background: var(--surface); }
-  /* On mobile, keep cart + burger + lang in the cluster; fold the rest into the drawer */
-  .store-utils .store-util-extra { display: none; }
   .store-footer__grid { grid-template-columns: 1fr 1fr; }
   .store-footer__brand { grid-column: 1 / -1; }
 }

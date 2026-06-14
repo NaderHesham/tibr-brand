@@ -35,14 +35,103 @@ const CACHE_IMMUTABLE = `public, max-age=${CACHE_DURATION}, immutable`;
 
 app.use(express.json());
 
+const normalizeSizes = (sizes) => {
+  if (Array.isArray(sizes)) {
+    return sizes;
+  }
+
+  if (typeof sizes === "string" && sizes.trim()) {
+    try {
+      const parsed = JSON.parse(sizes);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    } catch (_) {
+      return sizes.split(/[,،]/).map((size) => size.trim()).filter(Boolean);
+    }
+  }
+
+  return [];
+};
+
 const normalizeProduct = (product) => ({
   ...product,
-  sizes: Array.isArray(product.sizes)
-    ? product.sizes
-    : typeof product.sizes === "string" && product.sizes.trim()
-      ? JSON.parse(product.sizes)
-      : []
+  price: parsePrice(product.ar_price || product.en_price || product.price),
+  sizes: normalizeSizes(product.sizes)
 });
+
+const PRODUCT_CATEGORIES = new Set(["perfumes", "clothing", "sneakers"]);
+const PRODUCT_GENDERS = new Set(["men", "women", "unisex"]);
+
+const trimValue = (value) => (typeof value === "string" ? value.trim() : value);
+
+const parseSizesInput = (sizes) => {
+  if (Array.isArray(sizes)) {
+    return sizes.map((size) => trimValue(size)).filter(Boolean);
+  }
+
+  if (typeof sizes === "string") {
+    const text = sizes.trim();
+    if (!text) return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      if (Array.isArray(parsed)) {
+        return parsed.map((size) => trimValue(size)).filter(Boolean);
+      }
+    } catch (_) {
+      // fall back to comma-separated parsing
+    }
+
+    return text
+      .split(/[,،]/)
+      .map((size) => size.trim())
+      .filter(Boolean);
+  }
+
+  return [];
+};
+
+const sanitizeProductPayload = (payload) => {
+  const sizes = parseSizesInput(payload.sizes);
+  const price = payload.price;
+  const arPrice = payload.ar_price ?? payload.arPrice ?? price;
+  const enPrice = payload.en_price ?? payload.enPrice ?? price;
+
+  return {
+    id: trimValue(payload.id),
+    category: trimValue(payload.category),
+    gender: trimValue(payload.gender),
+    ar_name: trimValue(payload.ar_name),
+    en_name: trimValue(payload.en_name),
+    ar_collection: trimValue(payload.ar_collection) || null,
+    en_collection: trimValue(payload.en_collection) || null,
+    ar_desc: trimValue(payload.ar_desc) || null,
+    en_desc: trimValue(payload.en_desc) || null,
+    ar_alt: trimValue(payload.ar_alt) || null,
+    en_alt: trimValue(payload.en_alt) || null,
+    s1l: trimValue(payload.s1l) || null,
+    s2l: trimValue(payload.s2l) || null,
+    ar_s1: trimValue(payload.ar_s1) || null,
+    en_s1: trimValue(payload.en_s1) || null,
+    ar_s2: trimValue(payload.ar_s2) || null,
+    en_s2: trimValue(payload.en_s2) || null,
+    ar_price: parsePrice(arPrice),
+    en_price: parsePrice(enPrice),
+    image: trimValue(payload.image),
+    sizes
+  };
+};
+
+const validateProductPayload = (payload, requireId = true) => {
+  if (requireId && !payload.id) return "id is required.";
+  if (!payload.category || !PRODUCT_CATEGORIES.has(payload.category)) return "category is required.";
+  if (!payload.gender || !PRODUCT_GENDERS.has(payload.gender)) return "gender is required.";
+  if (!payload.ar_name || !payload.en_name) return "Arabic/English names are required.";
+  if (!(Number.isFinite(payload.ar_price) && payload.ar_price > 0) || !(Number.isFinite(payload.en_price) && payload.en_price > 0)) return "Arabic/English prices are required.";
+  if (!payload.image) return "image is required.";
+  return null;
+};
 
 const parsePrice = (price) => {
   if (typeof price === "number") return price;
@@ -611,24 +700,12 @@ app.post("/api/products/:id/reviews", requireUser, async (req, res) => {
 
 app.post("/api/products", requireUser, requireAdmin, async (req, res) => {
   const userClient = createAuthedClient(req.accessToken);
-  const payload = req.body || {};
+  const productToInsert = sanitizeProductPayload(req.body || {});
+  const validationError = validateProductPayload(productToInsert, true);
 
-  if (!payload.id || !payload.category || !payload.gender || !payload.image) {
-    return res.status(400).json({
-      error: "id, category, gender, and image are required."
-    });
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
   }
-
-  if (!payload.ar_name || !payload.en_name || !payload.ar_price || !payload.en_price) {
-    return res.status(400).json({
-      error: "Arabic/English names and prices are required."
-    });
-  }
-
-  const productToInsert = {
-    ...payload,
-    sizes: Array.isArray(payload.sizes) ? payload.sizes : []
-  };
 
   const { data, error } = await userClient
     .from("products")
@@ -641,6 +718,81 @@ app.post("/api/products", requireUser, requireAdmin, async (req, res) => {
   }
 
   res.status(201).json({ data: normalizeProduct(data) });
+});
+
+app.post("/api/admin/products", requireUser, requireAdmin, async (req, res) => {
+  const userClient = createAuthedClient(req.accessToken);
+  const productToInsert = sanitizeProductPayload(req.body || {});
+  const validationError = validateProductPayload(productToInsert, true);
+
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  const { data, error } = await userClient
+    .from("products")
+    .insert(productToInsert)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message || "Failed to save product." });
+  }
+
+  res.status(201).json({ data: normalizeProduct(data) });
+});
+
+app.get("/api/admin/products", requireUser, requireAdmin, async (req, res) => {
+  const userClient = createAuthedClient(req.accessToken);
+  const { data, error } = await userClient
+    .from("products")
+    .select("*")
+    .order("category", { ascending: true })
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return res.status(500).json({ error: "Failed to load products." });
+  }
+
+  res.json({ data: (data || []).map(normalizeProduct) });
+});
+
+app.patch("/api/admin/products/:id", requireUser, requireAdmin, async (req, res) => {
+  const userClient = createAuthedClient(req.accessToken);
+  const productToUpdate = sanitizeProductPayload(req.body || {});
+  delete productToUpdate.id;
+  const validationError = validateProductPayload({ ...productToUpdate, id: req.params.id }, false);
+
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  const { data, error } = await userClient
+    .from("products")
+    .update(productToUpdate)
+    .eq("id", req.params.id)
+    .select()
+    .single();
+
+  if (error) {
+    return res.status(500).json({ error: error.message || "Failed to update product." });
+  }
+
+  res.json({ data: normalizeProduct(data) });
+});
+
+app.delete("/api/admin/products/:id", requireUser, requireAdmin, async (req, res) => {
+  const userClient = createAuthedClient(req.accessToken);
+  const { error } = await userClient
+    .from("products")
+    .delete()
+    .eq("id", req.params.id);
+
+  if (error) {
+    return res.status(500).json({ error: error.message || "Failed to delete product." });
+  }
+
+  res.json({ success: true });
 });
 
 // Store pages — served from pages/ subdirectory

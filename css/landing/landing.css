@@ -725,9 +725,32 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 
 /* ---- RESPONSIVE -------------------------------------------- */
 @media (max-width: 56rem) {
-  .lp-nav__links { display: none; }
-  .lp-nav__shop { display: none; }
-  .lp-nav__divider { display: none; }
+  .lp-nav__inner {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo actions"
+      "nav nav";
+    row-gap: 0.75rem;
+  }
+
+  .lp-nav__logo { grid-area: logo; }
+  .lp-nav__actions { grid-area: actions; justify-self: end; }
+  .lp-nav__inner > nav {
+    grid-area: nav;
+    min-inline-size: 0;
+  }
+  .lp-nav__links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 1.5rem;
+    padding-block-end: 0.25rem;
+    scrollbar-width: none;
+  }
+  .lp-nav__links::-webkit-scrollbar { display: none; }
+  .lp-nav__shop { font-size: 0.875rem; padding-inline: 1rem; }
+  .lp-nav__divider { display: block; }
   .lp-nav__burger { display: flex; }
   .lp-nav__drawer { display: flex; }
 
@@ -746,6 +769,105 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
 
   .lp-footer__main { grid-template-columns: 1fr; gap: 2rem; }
   .lp-footer__bottom-inner { justify-content: center; text-align: center; }
+}
+
+@media (max-width: 48rem) {
+  .lp-nav {
+    padding-block: 1rem;
+  }
+
+  .lp-nav.scrolled {
+    padding-block: 0.75rem;
+  }
+
+  .lp-nav__inner {
+    gap: 1rem;
+  }
+
+  .lp-nav__actions {
+    gap: 0.5rem;
+  }
+
+  .lp-nav__logo-ar {
+    font-size: 1.35rem;
+  }
+
+  .lp-nav__logo-en {
+    font-size: 0.45rem;
+    letter-spacing: 0.28em;
+  }
+
+  .lp-hero {
+    min-block-size: 32rem;
+  }
+
+  .lp-hero__content {
+    padding-block-start: 4.25rem;
+  }
+
+  .lp-hero__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .lp-hero__actions .lp-btn {
+    inline-size: 100%;
+  }
+
+  .lp-story__image img {
+    aspect-ratio: 1 / 1;
+  }
+
+  .lp-steps__grid {
+    gap: 1.75rem;
+  }
+
+  .lp-step {
+    padding-inline: 0;
+  }
+
+  .lp-footer__social {
+    justify-content: center;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 36rem) {
+  .lp-nav__actions {
+    gap: 0.35rem;
+  }
+
+  .lp-nav__burger {
+    padding: 2px;
+  }
+
+  .lp-nav__burger span {
+    inline-size: 20px;
+  }
+
+  .lp-hero {
+    min-block-size: 30rem;
+  }
+
+  .lp-hero__name-ar {
+    font-size: clamp(3.5rem, 18vw, 6rem);
+  }
+
+  .lp-hero__tagline {
+    margin-block-end: 2rem;
+  }
+
+  .lp-story__heading {
+    margin-block-end: 1.5rem;
+  }
+
+  .lp-step__desc {
+    max-width: 28ch;
+  }
+
+  .lp-footer__bottom-inner {
+    gap: 0.75rem;
+  }
 }
 
 @media (min-width: 56rem) and (max-width: 72rem) {
