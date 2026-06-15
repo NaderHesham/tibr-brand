@@ -1,8 +1,10 @@
 const path = require("path");
+const fs = require("fs");
 const { randomUUID } = require("crypto");
 const express = require("express");
 const compression = require("compression");
 const dotenv = require("dotenv");
+const multer = require("multer");
 const { createClient } = require("@supabase/supabase-js");
 
 dotenv.config();
@@ -303,6 +305,19 @@ app.get("/api/products", async (_req, res) => {
   }
 
   res.json({ data: data.map(normalizeProduct) });
+});
+
+app.get("/api/products/:id", async (req, res) => {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("id", req.params.id)
+    .maybeSingle();
+
+  if (error) return res.status(500).json({ error: "Failed to load product." });
+  if (!data) return res.status(404).json({ error: "Product not found." });
+
+  res.json({ data: normalizeProduct(data) });
 });
 
 app.get("/api/profile", requireUser, async (req, res) => {
@@ -786,6 +801,33 @@ app.delete("/api/admin/products/:id", requireUser, requireAdmin, async (req, res
   }
 
   res.json({ success: true });
+});
+
+// Image upload — saves to /assets/images/products/ on disk
+const uploadStorage = multer.diskStorage({
+  destination: function (_req, _file, cb) {
+    const dir = path.join(rootDir, "assets", "images", "products");
+    fs.mkdirSync(dir, { recursive: true });
+    cb(null, dir);
+  },
+  filename: function (_req, file, cb) {
+    const ext = path.extname(file.originalname).toLowerCase() || ".jpg";
+    cb(null, "product-" + Date.now() + "-" + randomUUID().slice(0, 8) + ext);
+  }
+});
+const upload = multer({
+  storage: uploadStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10 MB
+  fileFilter: function (_req, file, cb) {
+    if (/^image\//.test(file.mimetype)) cb(null, true);
+    else cb(new Error("Only image files are allowed"));
+  }
+});
+
+app.post("/api/admin/upload", requireUser, requireAdmin, upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file received" });
+  const publicUrl = "/assets/images/products/" + req.file.filename;
+  res.json({ url: publicUrl });
 });
 
 // Store pages — served from pages/ subdirectory

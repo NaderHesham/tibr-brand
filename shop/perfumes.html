@@ -110,23 +110,7 @@
             <svg class="catalog-filter__caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </summary>
           <div class="catalog-filter__panel">
-            <div class="catalog-filter__field" role="group" aria-label="Filter by type">
-              <span class="catalog-filter__flabel"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5.5 19c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6" stroke-linecap="round"/></svg>For</span>
-              <div class="catalog-filter__opts">
-                <button class="filter-chip catalog-filter__chip" type="button" data-filter="gender" data-value="all" aria-pressed="true">All</button>
-                <button class="filter-chip catalog-filter__chip" type="button" data-filter="gender" data-value="women" aria-pressed="false">Women</button>
-                <button class="filter-chip catalog-filter__chip" type="button" data-filter="gender" data-value="men" aria-pressed="false">Men</button>
-              </div>
-            </div>
-            <div class="catalog-filter__field" role="group" aria-label="Filter by collection">
-              <span class="catalog-filter__flabel"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 4h12l3 5-9 11L3 9z" stroke-linejoin="round"/><path d="M3 9h18M9 4 6 9l6 11 6-11-3-5" stroke-linejoin="round"/></svg>Collection</span>
-              <div class="catalog-filter__opts">
-                <button class="filter-chip catalog-filter__chip" type="button" data-filter="collection" data-value="all" aria-pressed="true">All</button>
-                <button class="filter-chip catalog-filter__chip" type="button" data-filter="collection" data-value="elite" aria-pressed="false">Elite</button>
-                <button class="filter-chip catalog-filter__chip" type="button" data-filter="collection" data-value="masculine" aria-pressed="false">Masculine</button>
-              </div>
-            </div>
-            <div class="catalog-filter__field">
+              <div class="catalog-filter__field">
               <span class="catalog-filter__flabel"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M7 5v14m0 0-3-3m3 3 3-3M17 19V5m0 0-3 3m3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>Sort</span>
               <div class="catalog-filter__sort">
                 <svg class="ic-sort" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M7 5v14m0 0-3-3m3 3 3-3M17 19V5m0 0-3 3m3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -148,95 +132,8 @@
     <!-- Skeletons (shown only while filtering; hidden by default) -->
     <div class="catalog-grid skeleton-grid" id="skeleton-grid" hidden aria-hidden="true"></div>
 
-    <!-- Product grid -->
-    <!-- Product grid -->
-      <section class="catalog-grid" id="product-grid" aria-label="Perfumes list" aria-busy="false">
-
-        <!-- Oud Mystery -->
-        <article class="product" data-product data-id="oud-mystery" data-gender="men" data-collection="masculine" data-price="450" data-order="3" data-reveal data-en-name="Oud Mystery">
-          <div class="product__media">
-            <a class="product__link" href="/product?id=oud-mystery" aria-label="Oud Mystery">
-              <img class="product__img" src="/assets/images/product_oud.webp" loading="lazy" decoding="async"
-                alt="Oud Mystery bottle, noble amber with incense rising over dark wood">
-            </a>
-            <span class="product__badge product__badge--soft">Bestseller</span>
-            <button class="product__wish" type="button" aria-pressed="false" aria-label="Add Oud Mystery to wishlist">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <div class="product__body">
-            <a class="product__name-link" href="/product?id=oud-mystery">
-              <h3 class="product__name">Oud Mystery</h3>
-            </a>
-            <div class="product__reviews">
-              <span class="product__stars" aria-hidden="true">★★★★★</span>
-              <span class="product__review-count">(127)</span>
-            </div>
-            <div class="product__meta">
-              <span class="product__price">450 EGP</span>
-              <button class="product__cart-btn" type="button" data-add data-en-name="Oud Mystery" aria-label="Add to cart">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Jasmine Memories -->
-        <article class="product" data-product data-id="jasmine-memories" data-gender="women" data-collection="elite" data-price="375" data-order="2" data-reveal data-en-name="Jasmine Memories">
-          <div class="product__media">
-            <a class="product__link" href="/product?id=jasmine-memories" aria-label="Jasmine Memories">
-              <img class="product__img" src="/assets/images/product_jasmine.webp" loading="lazy" decoding="async"
-                alt="Jasmine Memories bottle on dark velvet, ringed by white jasmine blossoms">
-            </a>
-            <button class="product__wish" type="button" aria-pressed="false" aria-label="Add Jasmine Memories to wishlist">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <div class="product__body">
-            <a class="product__name-link" href="/product?id=jasmine-memories">
-              <h3 class="product__name">Jasmine Memories</h3>
-            </a>
-            <div class="product__reviews">
-              <span class="product__stars" aria-hidden="true">★★★★★</span>
-              <span class="product__review-count">(89)</span>
-            </div>
-            <div class="product__meta">
-              <span class="product__price">375 EGP</span>
-              <button class="product__cart-btn" type="button" data-add data-en-name="Jasmine Memories" aria-label="Add to cart">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
-              </button>
-            </div>
-          </div>
-        </article>
-
-        <!-- Rose Elegance -->
-        <article class="product" data-product data-id="rose-elegance" data-gender="women" data-collection="elite" data-price="350" data-order="1" data-reveal data-en-name="Rose Elegance">
-          <div class="product__media">
-            <a class="product__link" href="/product?id=rose-elegance" aria-label="Rose Elegance">
-              <img class="product__img" src="/assets/images/product_nostalgia.webp" loading="lazy" decoding="async"
-                alt="Rose Elegance crystal bottle with a burgundy atomizer on dark marble">
-            </a>
-            <button class="product__wish" type="button" aria-pressed="false" aria-label="Add Rose Elegance to wishlist">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-          </div>
-          <div class="product__body">
-            <a class="product__name-link" href="/product?id=rose-elegance">
-              <h3 class="product__name">Rose Elegance</h3>
-            </a>
-            <div class="product__reviews">
-              <span class="product__stars" aria-hidden="true">★★★★★</span>
-              <span class="product__review-count">(64)</span>
-            </div>
-            <div class="product__meta">
-              <span class="product__price">350 EGP</span>
-              <button class="product__cart-btn" type="button" data-add data-en-name="Rose Elegance" aria-label="Add to cart">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg>
-              </button>
-            </div>
-          </div>
-        </article>
-
+    <!-- Product grid — populated from API by catalog.js -->
+      <section class="catalog-grid" id="product-grid" data-category="perfumes" aria-label="Perfumes list" aria-busy="true">
       </section>
 
     <!-- Empty state (shown when a filter combination has no matches) -->

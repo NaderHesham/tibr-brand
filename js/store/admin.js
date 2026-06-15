@@ -198,17 +198,24 @@
     tbody.innerHTML = _products.map(function (product) {
       var category = categoryLabel(product.category);
       var price = formatMoney(productPrice(product));
+      var imgSrc = escapeHtml(product.image || "");
+      var imgCell = imgSrc
+        ? "<td class='ap-thumb-cell'><img class='ap-thumb' src='" + imgSrc + "' alt='' loading='lazy'></td>"
+        : "<td class='ap-thumb-cell'><div class='ap-thumb ap-thumb--empty'></div></td>";
+      var rawSizes = product.sizes;
+      var sizesArr = Array.isArray(rawSizes) ? rawSizes : (typeof rawSizes === "string" && rawSizes ? rawSizes.split(/[,،]/).map(function(s){return s.trim();}) : []);
+      var sizesHtml = sizesArr.length
+        ? sizesArr.map(function(s){ return "<span class='ap-size-tag'>" + escapeHtml(s) + "</span>"; }).join("")
+        : "<span class='ap-muted'>—</span>";
       return "<tr data-product-id='" + escapeHtml(product.id) + "'>" +
+        imgCell +
         "<td>" + escapeHtml(category) + "</td>" +
         "<td><div class='admin-product-meta'><span class='admin-product-meta__name'>" + escapeHtml(product.en_name || "") + "</span></div></td>" +
+        "<td><div class='ap-sizes'>" + sizesHtml + "</div></td>" +
         "<td>" + price + "</td>" +
         "<td><div class='product-actions'>" +
-          "<button class='btn btn--secondary' type='button' data-product-action='edit' data-id='" + escapeHtml(product.id) + "'>" +
-            "Edit" +
-          "</button>" +
-          "<button class='btn btn--danger' type='button' data-product-action='delete' data-id='" + escapeHtml(product.id) + "'>" +
-            "Delete" +
-          "</button>" +
+          "<button class='btn btn--secondary' type='button' data-product-action='edit' data-id='" + escapeHtml(product.id) + "'>Edit</button>" +
+          "<button class='btn btn--danger' type='button' data-product-action='delete' data-id='" + escapeHtml(product.id) + "'>Delete</button>" +
         "</div></td>" +
         "</tr>";
     }).join("");

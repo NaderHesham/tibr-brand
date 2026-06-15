@@ -287,9 +287,10 @@
               </div>
               <div>
                 <label class="ap-label ap-label-ar" for="product-id">
-                  Product ID<span class="ap-req">*</span>
+                  Product ID
                 </label>
-                <input class="ap-input" id="product-id" name="id" placeholder="oud-mystery" required autocomplete="off">
+                <input class="ap-input" id="product-id" name="id" placeholder="—" readonly autocomplete="off">
+                <p class="ap-hint">Auto-assigned based on category</p>
               </div>
               <div>
                 <label class="ap-label ap-label-ar" for="product-en-name">
@@ -362,39 +363,48 @@
             </div>
           </div>
 
-          <!-- Reviews & Descriptions -->
+          <!-- Description -->
           <div class="ap-group">
             <div class="ap-group-hd">
               <div class="ap-group-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke-width="1.5"/>
-                  <path d="M12 6l1.2 2.5 2.8.4-2 2 .5 2.8L12 13l-2.5 1.2.5-2.8-2-2 2.8-.4L12 6z" fill="currentColor" opacity=".3" stroke="none"/>
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke-width="1.5"/>
+                  <polyline points="14 2 14 8 20 8" stroke-width="1.5"/>
+                  <line x1="8" y1="13" x2="16" y2="13" stroke-width="1.5"/>
+                  <line x1="8" y1="17" x2="13" y2="17" stroke-width="1.5"/>
                 </svg>
               </div>
-              <span class="ap-group-title">Reviews &amp; Descriptions</span>
+              <span class="ap-group-title">Description</span>
               <div class="ap-group-line" aria-hidden="true"></div>
             </div>
             <div class="ap-grid">
-              <div>
-                <label class="ap-label ap-label-ar" for="product-review-avg">
-                  Rating (0–5)
-                </label>
-                <input class="ap-input" id="product-review-avg" name="review_avg" type="number" min="0" max="5" step="0.1" value="0">
-              </div>
-              <div>
-                <label class="ap-label ap-label-ar" for="product-review-count">
-                  Review count
-                </label>
-                <input class="ap-input" id="product-review-count" name="review_count" type="number" min="0" step="1" value="0">
-              </div>
               <div class="ap-full">
-                <label class="ap-label ap-label-ar" for="product-en-desc">
-                  Description
-                </label>
-                <textarea class="ap-textarea" id="product-en-desc" name="en_desc" rows="3" dir="ltr"></textarea>
+                <div class="ap-desc-bar">
+                  <label class="ap-label ap-label-ar" for="product-en-desc" style="margin:0">Product description</label>
+                  <button type="button" class="ap-autogen-btn" id="desc-autogen-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" stroke-width="1.5"/></svg>
+                    Auto-generate
+                  </button>
+                </div>
+                <textarea class="ap-textarea" id="product-en-desc" name="en_desc" rows="4" dir="ltr" placeholder="Write a description, or click Auto-generate to build one from the product details above."></textarea>
               </div>
             </div>
           </div>
+          <style>
+            .ap-desc-bar { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); margin-bottom: var(--sp-1); }
+            .ap-autogen-btn {
+              display: inline-flex; align-items: center; gap: 5px;
+              padding: .3rem .65rem; font-size: var(--fs-xs); font-weight: var(--fw-semibold);
+              font-family: var(--font-body); letter-spacing: .04em;
+              background: var(--gold-ghost); border: 1px solid var(--gold-line); border-radius: var(--r-sm);
+              color: var(--gold); cursor: pointer; white-space: nowrap;
+              transition: background var(--dur) var(--ease-out), border-color var(--dur) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+            }
+            .ap-autogen-btn svg { width: .8rem; height: .8rem; flex-shrink: 0; }
+            .ap-autogen-btn:hover { background: oklch(0.800 0.090 86 / .18); border-color: var(--gold); }
+            .ap-autogen-btn:active { transform: scale(.97); }
+            .ap-autogen-btn.is-loading { opacity: .6; pointer-events: none; }
+          </style>
 
           <!-- Actions -->
           <div class="ap-actions">

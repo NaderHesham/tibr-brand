@@ -13,39 +13,41 @@
   var toLatinDigits = function (s) { return String(s).replace(/[٠-٩]/g, function (d) { return d.charCodeAt(0) - 0x0660; }); };
 
   var form       = $("#checkout-form");
-  var emptyEl    = $("#checkout-empty");
   var successEl  = $("#checkout-success");
   var summaryEl  = $("#checkout-summary");
   var _token     = null;
 
   function showState() {
-    var has = RB.cart.items().length > 0;
-    if (emptyEl)   emptyEl.hidden  =  has;
-    if (form)      form.hidden     = !has;
+    if (form) form.hidden = false;
   }
 
   function renderSummary() {
     if (!summaryEl) return;
     var items    = RB.cart.items();
     var subtotal = RB.cart.subtotal();
-    var count    = RB.cart.count();
+    var itemsHtml = items.map(function (it) {
+      var imgHtml = it.image
+        ? "<img class='summary__item-img' src='" + it.image + "' alt='' loading='lazy'>"
+        : "<div class='summary__item-img summary__item-img--empty'></div>";
+      var meta = [it.size, it.qty > 1 ? "×" + it.qty : ""].filter(Boolean).join(" · ");
+      return "<div class='summary__item'>" +
+        imgHtml +
+        "<div class='summary__item-info'>" +
+          "<span class='summary__item-name'>" + (it.en_name || it.ar_name || "") + "</span>" +
+          (meta ? "<span class='summary__item-meta'>" + meta + "</span>" : "") +
+        "</div>" +
+        "<span class='summary__item-price'>" + RB.formatPrice(it.price * it.qty) + "</span>" +
+        "</div>";
+    }).join("");
     summaryEl.innerHTML =
       "<h2 class='summary__title'>Order summary</h2>" +
-      items.map(function (it) {
-        return "<div class='summary__row'>" +
-          "<span>" + (it.en_name || it.ar_name || "") + (it.size ? " · " + it.size : "") +
-          " ×" + it.qty + "</span>" +
-          "<span class='val'>" + RB.formatPrice(it.price * it.qty) + "</span>" +
-          "</div>";
-      }).join("") +
-      "<div class='summary__row'><span>Items</span><span class='val'>" + count + "</span></div>" +
-      "<div class='summary__row summary__row--total'><span>Total</span><span class='val'>" +
-        RB.formatPrice(subtotal) + "</span></div>" +
-      "<button class='btn btn--primary btn--block btn--lg' type='submit' id='place-order' style='margin-block-start:var(--sp-5)'>" +
-        "Place order</button>" +
-      "<p class='summary__note'>" +
-        "By placing the order you agree to be contacted over WhatsApp to confirm delivery." +
-      "</p>";
+      "<div class='summary__items'>" + itemsHtml + "</div>" +
+      "<div class='summary__divider'></div>" +
+      "<div class='summary__row'><span>Subtotal</span><span class='val'>" + RB.formatPrice(subtotal) + "</span></div>" +
+      "<div class='summary__row'><span>Delivery</span><span class='val summary__free'>Free</span></div>" +
+      "<div class='summary__row summary__row--total'><span>Total</span><span class='val'>" + RB.formatPrice(subtotal) + "</span></div>" +
+      "<button class='btn btn--primary btn--block btn--lg' type='submit' id='place-order' style='margin-block-start:var(--sp-5)'>Place order</button>" +
+      "<p class='summary__note'>By placing the order you agree to be contacted over WhatsApp to confirm delivery.</p>";
   }
 
   function setInvalid(field, invalid) {

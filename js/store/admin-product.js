@@ -11,6 +11,49 @@
 
   var _token = null;
   var _editingProductId = null;
+  var _allProducts = null;
+
+  var ID_CONFIG = {
+    perfumes: 1,
+    clothing: 2,
+    sneakers: 3
+  };
+
+  function generateNextId(category, products) {
+    var pad = ID_CONFIG[category] || 1;
+    var catProducts = products.filter(function (p) { return p.category === category; });
+    var maxNum = 0;
+    catProducts.forEach(function (p) {
+      var num = parseInt(p.id, 10);
+      if (!isNaN(num) && num > maxNum) maxNum = num;
+    });
+    var next = String(maxNum + 1);
+    while (next.length < pad) next = "0" + next;
+    return next;
+  }
+
+  function autoFillId(category) {
+    var idInput = $("#product-id");
+    if (!idInput || _editingProductId) return;
+
+    function fill(products) {
+      idInput.value = generateNextId(category, products);
+    }
+
+    if (_allProducts) {
+      fill(_allProducts);
+      return;
+    }
+
+    if (!_token) return;
+    fetch("/api/admin/products", { headers: { Authorization: "Bearer " + _token } })
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (body) {
+        _allProducts = (body && body.data) ? body.data : [];
+        fill(_allProducts);
+      })
+      .catch(function () {});
+  }
 
   var productForm = $("#product-form");
   var productSubmitBtn = $("#product-submit");
@@ -29,7 +72,11 @@
   function setMode(mode) {
     var isEdit = mode === "edit";
     var idInput = $("#product-id");
-    if (idInput) idInput.readOnly = isEdit;
+    if (idInput) {
+      idInput.readOnly = true; // always readonly — system-assigned in create, locked in edit
+      idInput.style.opacity = isEdit ? "1" : "0.6";
+      idInput.title = isEdit ? "" : "Auto-assigned by the system";
+    }
 
     if (productSubmitBtn) {
       productSubmitBtn.textContent = isEdit ? "Save changes" : "Save product";
@@ -68,10 +115,6 @@
     if (enColor) enColor.value = product.en_color || product.ar_color || "";
     var sizes = $("#product-sizes");
     if (sizes) sizes.value = Array.isArray(product.sizes) ? product.sizes.join(", ") : (product.sizes || "");
-    var reviewAvg = $("#product-review-avg");
-    if (reviewAvg) reviewAvg.value = product.review_avg || 0;
-    var reviewCount = $("#product-review-count");
-    if (reviewCount) reviewCount.value = product.review_count || 0;
     var enDesc = $("#product-en-desc");
     if (enDesc) enDesc.value = product.en_desc || product.ar_desc || "";
     syncColorRow(cat);
@@ -107,8 +150,8 @@
       ar_color:     color,
       en_color:     color,
       sizes:        (($("#product-sizes") || {}).value || "").trim(),
-      review_avg:   parseFloat(($("#product-review-avg") || {}).value) || 0,
-      review_count: parseInt(($("#product-review-count") || {}).value, 10) || 0,
+      review_avg:   0,
+      review_count: 0,
       ar_desc:      desc,
       en_desc:      desc
     };
@@ -123,10 +166,10 @@
     if (!_token || !productForm) return;
 
     var payload = readForm();
-    if (!payload.id || !payload.category || !payload.image || !payload.en_name || !(payload.en_price > 0)) {
-      RB.toast("Please fill the required fields");
-      return;
-    }
+    if (!payload.id)              { RB.toast("Product ID is missing — try changing the category to regenerate it"); return; }
+    if (!payload.en_name)         { RB.toast("Please enter the product name"); return; }
+    if (!(payload.en_price > 0))  { RB.toast("Please enter a valid price"); return; }
+    if (!payload.image)           { RB.toast("Please add a product image (upload or paste a URL)"); return; }
 
     var endpoint = _editingProductId
       ? "/api/admin/products/" + encodeURIComponent(_editingProductId)
@@ -161,6 +204,7 @@
       syncColorRow(catSelect.value);
       var lbl = $("#ap-cat-label");
       if (lbl) lbl.textContent = catSelect.options[catSelect.selectedIndex].textContent;
+      if (!_editingProductId) autoFillId(catSelect.value);
     });
   }
 
@@ -211,23 +255,24 @@
       if (uploadStatus) uploadStatus.hidden = false;
       if (browseBtn) browseBtn.hidden = true;
 
-      var bucket = "product-images";
-      var ext = file.name.split(".").pop().toLowerCase();
-      var destName = "product-" + Date.now() + "." + ext;
-
-      var supabase = RB.supabase || (window.supabaseClient);
-      if (!supabase) {
+      if (!_token) {
         if (uploadStatus) uploadStatus.hidden = true;
         if (browseBtn) browseBtn.hidden = false;
-        RB.toast("Storage not available");
+        RB.toast("Not authenticated — please refresh and log in again");
         return;
       }
 
-      supabase.storage.from(bucket).upload(destName, file, { upsert: true })
-        .then(function (res) {
-          if (res.error) throw res.error;
-          var pub = supabase.storage.from(bucket).getPublicUrl(destName);
-          var publicUrl = pub.data && pub.data.publicUrl;
+      var formData = new FormData();
+      formData.append("file", file);
+
+      fetch("/api/admin/upload", {
+        method: "POST",
+        headers: { "Authorization": "Bearer " + _token },
+        body: formData
+      })
+        .then(function (r) { return r.ok ? r.json() : r.json().then(function (b) { throw new Error((b && b.error) || "Upload failed"); }); })
+        .then(function (body) {
+          var publicUrl = body && body.url;
           if (publicUrl && imageInput) {
             imageInput.value = publicUrl;
             setPreviewUrl(publicUrl);
@@ -239,8 +284,7 @@
         .catch(function (err) {
           if (uploadStatus) uploadStatus.hidden = true;
           if (browseBtn) browseBtn.hidden = false;
-          var msg = err && err.message ? err.message : "Upload failed";
-          RB.toast(msg);
+          RB.toast(err && err.message ? err.message : "Upload failed");
         });
     });
   }
@@ -251,6 +295,44 @@
       if (fileInfo) fileInfo.hidden = true;
       if (imageInput) imageInput.value = "";
       setPreviewUrl("");
+    });
+  }
+
+  var descAutoGenBtn = $("#desc-autogen-btn");
+  if (descAutoGenBtn) {
+    descAutoGenBtn.addEventListener("click", function () {
+      var name     = (($("#product-en-name") || {}).value || "").trim();
+      var cat      = (($("#product-category") || {}).value || "perfumes");
+      var price    = (($("#product-en-price") || {}).value || "").trim();
+      var sizes    = (($("#product-sizes") || {}).value || "").trim();
+      var color    = (($("#product-en-color") || {}).value || "").trim();
+      var descArea = $("#product-en-desc");
+
+      var catLabels = { perfumes: "perfume", clothing: "clothing piece", sneakers: "sneaker" };
+      var catLabel  = catLabels[cat] || cat;
+
+      var parts = [];
+      if (name) {
+        parts.push(name + " is a premium " + catLabel + " by Tibr.");
+      } else {
+        parts.push("A premium " + catLabel + " by Tibr.");
+      }
+      if (color) parts.push("Available in " + color + ".");
+      if (sizes) parts.push("Comes in " + sizes + ".");
+      if (price) parts.push("Priced at " + price + " EGP.");
+
+      if (cat === "perfumes") {
+        parts.push("A luxurious scent crafted from the finest ingredients, inspired by the heritage and spirit of Egypt.");
+      } else if (cat === "clothing") {
+        parts.push("Designed for those who appreciate quality craftsmanship and timeless Egyptian style.");
+      } else if (cat === "sneakers") {
+        parts.push("Built for comfort and style, reflecting the modern Egyptian aesthetic.");
+      }
+
+      if (descArea) {
+        descArea.value = parts.join(" ");
+        descArea.focus();
+      }
     });
   }
 
@@ -286,6 +368,7 @@
               .then(function (response) { return response.ok ? response.json() : Promise.reject(); })
               .then(function (body) {
                 var products = body && body.data ? body.data : [];
+                _allProducts = products;
                 var product = products.find(function (p) { return p.id === productId; });
                 if (product) {
                   fillForm(product);
@@ -299,6 +382,7 @@
               });
           } else {
             setMode("create");
+            autoFillId("perfumes");
           }
         })
         .catch(function () {

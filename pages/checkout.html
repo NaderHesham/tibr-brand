@@ -67,23 +67,25 @@
   </aside>
 
   <main id="main" class="store-container">
-    <nav class="breadcrumb" aria-label="Breadcrumb">
-      <a href="/cart">Cart</a>
-      <span class="breadcrumb__sep" aria-hidden="true">/</span>
-      <span aria-current="page">Checkout</span>
-    </nav>
 
-    <header class="page-head">
-      <h1 class="page-head__title">Checkout</h1>
-    </header>
-
-    <!-- Empty-cart notice -->
-    <div class="rb-empty" id="checkout-empty" hidden>
-      <span class="rb-empty__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8" stroke-linecap="round"/></svg></span>
-      <h2 class="rb-empty__title">Nothing to order yet</h2>
-      <p class="rb-empty__text">Add products to your cart first.</p>
-      <a class="btn btn--primary" href="/shop/perfumes">Browse perfumes</a>
+    <!-- Progress steps -->
+    <div class="co-steps" aria-label="Checkout progress">
+      <a href="/cart" class="co-step co-step--done" aria-label="Go back to cart">
+        <span class="co-step__dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="co-step__label">Cart</span>
+      </a>
+      <span class="co-steps__line" aria-hidden="true"></span>
+      <span class="co-step co-step--active" aria-current="step">
+        <span class="co-step__dot">2</span>
+        <span class="co-step__label">Delivery</span>
+      </span>
+      <span class="co-steps__line" aria-hidden="true"></span>
+      <span class="co-step">
+        <span class="co-step__dot">3</span>
+        <span class="co-step__label">Confirm</span>
+      </span>
     </div>
+
 
     <!-- Success -->
     <div class="checkout-success" id="checkout-success" hidden>
@@ -99,9 +101,12 @@
 
     <!-- Checkout form -->
     <form class="checkout" id="checkout-form" novalidate hidden>
-      <div>
-        <section class="form-section">
-          <h2 class="form-section__title">Contact</h2>
+
+      <div class="co-sections">
+
+        <!-- 01 Contact -->
+        <div class="co-card">
+          <h2 class="co-card__title"><span class="co-card__num">01</span>Contact</h2>
           <div class="form-grid">
             <div class="field field--full">
               <label class="field__label" for="co-name">Full name<span class="field__req">*</span></label>
@@ -114,10 +119,11 @@
               <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg>Enter a valid Egyptian mobile number (11 digits).</p>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="form-section">
-          <h2 class="form-section__title">Delivery address</h2>
+        <!-- 02 Delivery address -->
+        <div class="co-card">
+          <h2 class="co-card__title"><span class="co-card__num">02</span>Delivery address</h2>
           <div class="form-grid">
             <div class="field">
               <label class="field__label" for="co-gov">Governorate<span class="field__req">*</span></label>
@@ -148,10 +154,11 @@
               <p class="field__error"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4m0 4h.01" stroke-linecap="round"/></svg>Enter your delivery address.</p>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="form-section">
-          <h2 class="form-section__title">Payment method</h2>
+        <!-- 03 Payment -->
+        <div class="co-card">
+          <h2 class="co-card__title"><span class="co-card__num">03</span>Payment method</h2>
           <div class="pay-options">
             <label class="pay-option">
               <input type="radio" name="payment" value="cash_on_delivery" checked>
@@ -169,8 +176,9 @@
               <span class="pay-option__desc">Instant transfer via InstaPay.</span></span>
             </label>
           </div>
-        </section>
-      </div>
+        </div>
+
+      </div><!-- /co-sections -->
 
       <aside class="summary" aria-label="Order summary" id="checkout-summary"></aside>
     </form>
