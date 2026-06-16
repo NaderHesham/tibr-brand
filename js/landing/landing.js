@@ -34,6 +34,39 @@
   /* ---------- GSAP scroll reveals ----------------------------- */
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof gsap === 'undefined') return;
+    if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+
+    /* ── Hero video scroll-scrub ─────────────────────────────── */
+    const heroVideo = document.querySelector('.lp-hero__video');
+    if (heroVideo && typeof ScrollTrigger !== 'undefined') {
+      const initScrub = () => {
+        const dur = heroVideo.duration;
+        if (!dur || isNaN(dur)) return;
+
+        heroVideo.pause();
+        heroVideo.currentTime = 0;
+        gsap.set(heroVideo, { scale: 1.18 });
+
+        ScrollTrigger.create({
+          trigger: '.lp-hero',
+          start: 'top top',
+          end: '+=280%',
+          pin: true,
+          scrub: 1,
+          onUpdate(self) {
+            heroVideo.currentTime = self.progress * dur;
+            /* zoom out as you scroll in, zoom back as you scroll out */
+            gsap.set(heroVideo, { scale: 1.18 - self.progress * 0.18 });
+          },
+        });
+      };
+
+      if (heroVideo.readyState >= 1) {
+        initScrub();
+      } else {
+        heroVideo.addEventListener('loadedmetadata', initScrub, { once: true });
+      }
+    }
 
     /* Scroll-triggered section reveals */
     if (typeof ScrollTrigger !== 'undefined') {

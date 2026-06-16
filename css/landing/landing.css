@@ -282,11 +282,14 @@ button { font: inherit; cursor: pointer; border: none; background: none; }
   inset: 0;
   z-index: 0;
 }
-.lp-hero__bg img {
+.lp-hero__bg img,
+.lp-hero__video {
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
   object-position: center;
+  transform-origin: center center;
+  will-change: transform;
 }
 .lp-hero__overlay {
   position: absolute;

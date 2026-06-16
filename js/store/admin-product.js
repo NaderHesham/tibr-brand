@@ -19,6 +19,184 @@
     sneakers: 3
   };
 
+  /* ── Cascading taxonomy tree ─────────────────────────────── */
+  var TAXONOMY = {
+    perfumes: { children: {
+      men:    { label: "Men — رجالي",     children: {
+        oud:      { label: "Oud — عود" },
+        oriental: { label: "Oriental — شرقي" },
+        woody:    { label: "Woody — خشبي" },
+        fresh:    { label: "Fresh — منعش" },
+        aquatic:  { label: "Aquatic — مائي" },
+        citrus:   { label: "Citrus — حمضي" }
+      }},
+      women:  { label: "Women — نسائي",   children: {
+        floral:   { label: "Floral — زهري" },
+        oriental: { label: "Oriental — شرقي" },
+        oud:      { label: "Oud — عود" },
+        fresh:    { label: "Fresh — منعش" },
+        powdery:  { label: "Powdery — بودري" },
+        citrus:   { label: "Citrus — حمضي" }
+      }},
+      unisex: { label: "Unisex — للجنسين", children: {
+        oud:      { label: "Oud — عود" },
+        oriental: { label: "Oriental — شرقي" },
+        woody:    { label: "Woody — خشبي" },
+        fresh:    { label: "Fresh — منعش" },
+        aquatic:  { label: "Aquatic — مائي" }
+      }}
+    }},
+    clothing: { children: {
+      men:    { label: "Men — رجالي",     children: {
+        tshirts:    { label: "T-Shirts — تيشيرتات" },
+        shirts:     { label: "Shirts — قمصان" },
+        pants:      { label: "Pants — بناطيل" },
+        jackets:    { label: "Jackets — جاكيتات" },
+        sportswear: { label: "Sportswear — رياضي" },
+        galabiya:   { label: "Galabiya — جلابية" }
+      }},
+      women:  { label: "Women — نسائي",   children: {
+        dresses:    { label: "Dresses — فساتين" },
+        tops:       { label: "Tops — توبات" },
+        pants:      { label: "Pants — بناطيل" },
+        abayas:     { label: "Abayas — عبايات" },
+        sportswear: { label: "Sportswear — رياضي" },
+        galabiya:   { label: "Galabiya — جلابية" }
+      }},
+      kids:   { label: "Kids — أطفال",    children: {
+        boys:   { label: "Boys — أولاد",   children: {
+          tshirts:  { label: "T-Shirts — تيشيرتات" },
+          pants:    { label: "Pants — بناطيل" },
+          jackets:  { label: "Jackets — جاكيتات" }
+        }},
+        girls:  { label: "Girls — بنات",   children: {
+          dresses:  { label: "Dresses — فساتين" },
+          tops:     { label: "Tops — توبات" },
+          pants:    { label: "Pants — بناطيل" }
+        }},
+        unisex: { label: "Unisex — للجنسين", children: {
+          tshirts:  { label: "T-Shirts — تيشيرتات" },
+          pants:    { label: "Pants — بناطيل" }
+        }}
+      }},
+      unisex: { label: "Unisex — للجنسين", children: {
+        tshirts:    { label: "T-Shirts — تيشيرتات" },
+        hoodies:    { label: "Hoodies — هودي" },
+        sweatpants: { label: "Sweatpants — سويت بانت" },
+        sportswear: { label: "Sportswear — رياضي" }
+      }}
+    }},
+    sneakers: { children: {
+      men:    { label: "Men — رجالي",     children: {
+        running:  { label: "Running — جري" },
+        casual:   { label: "Casual — كاجوال" },
+        classic:  { label: "Classic — كلاسيك" },
+        hightop:  { label: "High-top — هاي توب" },
+        athletic: { label: "Athletic — رياضي" }
+      }},
+      women:  { label: "Women — نسائي",   children: {
+        running:  { label: "Running — جري" },
+        casual:   { label: "Casual — كاجوال" },
+        platform: { label: "Platform — بلاتفورم" },
+        classic:  { label: "Classic — كلاسيك" },
+        athletic: { label: "Athletic — رياضي" }
+      }},
+      kids:   { label: "Kids — أطفال",    children: {
+        boys:   { label: "Boys — أولاد",   children: {
+          running: { label: "Running — جري" },
+          casual:  { label: "Casual — كاجوال" },
+          classic: { label: "Classic — كلاسيك" }
+        }},
+        girls:  { label: "Girls — بنات",   children: {
+          running: { label: "Running — جري" },
+          casual:  { label: "Casual — كاجوال" },
+          classic: { label: "Classic — كلاسيك" }
+        }},
+        unisex: { label: "Unisex — للجنسين", children: {
+          running: { label: "Running — جري" },
+          casual:  { label: "Casual — كاجوال" }
+        }}
+      }},
+      unisex: { label: "Unisex — للجنسين", children: {
+        running:  { label: "Running — جري" },
+        casual:   { label: "Casual — كاجوال" },
+        classic:  { label: "Classic — كلاسيك" },
+        athletic: { label: "Athletic — رياضي" }
+      }}
+    }}
+  };
+
+  var LEVEL_LABELS = ["Gender", "Type", "Style"];
+
+  function renderChainLevel(container, children, path, depth) {
+    var keys = Object.keys(children);
+    if (!keys.length) return;
+
+    var wrap = document.createElement("div");
+    wrap.setAttribute("data-chain-depth", depth);
+    wrap.style.cssText = "display:flex;flex-direction:column;gap:var(--sp-1);min-width:180px;flex:1;max-width:260px;";
+
+    var lbl = document.createElement("label");
+    lbl.className = "ap-label ap-label-ar";
+    lbl.setAttribute("for", "subcat-level-" + depth);
+    lbl.innerHTML = (LEVEL_LABELS[depth] || "Detail") + '<span class="ap-req">*</span>';
+
+    var sel = document.createElement("select");
+    sel.className = "ap-select";
+    sel.id = "subcat-level-" + depth;
+    sel.setAttribute("data-chain-depth", depth);
+
+    keys.forEach(function (key) {
+      var opt = document.createElement("option");
+      opt.value = key;
+      opt.textContent = children[key].label || key;
+      if (path[depth] === key) opt.selected = true;
+      sel.appendChild(opt);
+    });
+
+    wrap.appendChild(lbl);
+    wrap.appendChild(sel);
+    container.appendChild(wrap);
+
+    /* render next level for the currently selected value */
+    var activeKey = path[depth] || keys[0];
+    var activeNode = children[activeKey];
+    if (activeNode && activeNode.children && Object.keys(activeNode.children).length) {
+      renderChainLevel(container, activeNode.children, path, depth + 1);
+    }
+
+    sel.addEventListener("change", function () {
+      /* remove all levels deeper than this one */
+      Array.from(container.children).forEach(function (el) {
+        if (parseInt(el.getAttribute("data-chain-depth"), 10) > depth) container.removeChild(el);
+      });
+      var chosen = children[sel.value];
+      if (chosen && chosen.children && Object.keys(chosen.children).length) {
+        renderChainLevel(container, chosen.children, [], depth + 1);
+      }
+    });
+  }
+
+  function buildChain(category, savedPath) {
+    var wrap = document.getElementById("subcategory-chain-wrap");
+    var container = document.getElementById("subcategory-chain");
+    if (!container) return;
+    container.innerHTML = "";
+    var root = TAXONOMY[category];
+    if (!root || !root.children || !Object.keys(root.children).length) {
+      if (wrap) wrap.style.display = "none";
+      return;
+    }
+    if (wrap) wrap.style.display = "";
+    renderChainLevel(container, root.children, savedPath || [], 0);
+  }
+
+  function getChainPath() {
+    var container = document.getElementById("subcategory-chain");
+    if (!container) return [];
+    return Array.from(container.querySelectorAll("select")).map(function (s) { return s.value; });
+  }
+
   function generateNextId(category, products) {
     var pad = ID_CONFIG[category] || 1;
     var catProducts = products.filter(function (p) { return p.category === category; });
@@ -118,6 +296,8 @@
     var enDesc = $("#product-en-desc");
     if (enDesc) enDesc.value = product.en_desc || product.ar_desc || "";
     syncColorRow(cat);
+    var savedPath = [product.sub_category, product.sub_category_2, product.sub_category_3].filter(Boolean);
+    buildChain(cat, savedPath);
     var catLbl = $("#ap-cat-label");
     var catEl = $("#product-category");
     if (catLbl && catEl) catLbl.textContent = catEl.options[catEl.selectedIndex] ? catEl.options[catEl.selectedIndex].textContent : cat;
@@ -139,8 +319,11 @@
     var color = hasColor ? (($("#product-en-color") || {}).value || "").trim() : null;
     var desc  = (($("#product-en-desc") || {}).value || "").trim();
     return {
-      id:           (($("#product-id") || {}).value || "").trim(),
-      category:     cat,
+      id:             (($("#product-id") || {}).value || "").trim(),
+      category:       cat,
+      sub_category:   (getChainPath()[0] || ""),
+      sub_category_2: (getChainPath()[1] || ""),
+      sub_category_3: (getChainPath()[2] || ""),
       image:        (($("#product-image") || {}).value || "").trim(),
       ar_name:      name,
       en_name:      name,
@@ -202,6 +385,7 @@
   if (catSelect) {
     catSelect.addEventListener("change", function () {
       syncColorRow(catSelect.value);
+      buildChain(catSelect.value);
       var lbl = $("#ap-cat-label");
       if (lbl) lbl.textContent = catSelect.options[catSelect.selectedIndex].textContent;
       if (!_editingProductId) autoFillId(catSelect.value);
@@ -362,6 +546,7 @@
           }
 
           syncColorRow("perfumes");
+          buildChain("perfumes");
 
           if (productId) {
             fetch("/api/admin/products", { headers: { Authorization: "Bearer " + _token } })

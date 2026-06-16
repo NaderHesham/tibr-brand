@@ -105,10 +105,14 @@
       <!-- HERO -->
       <section class="lp-hero" id="home" aria-label="Hero">
         <div class="lp-hero__bg" aria-hidden="true">
-          <img src="assets/images/hero_bg.webp"
-               alt=""
-               fetchpriority="high"
-               decoding="async">
+          <video class="lp-hero__video"
+                 muted playsinline
+                 poster="assets/images/hero_bg.webp"
+                 preload="auto">
+            <source src="assets/videos/hero.mp4" type="video/mp4">
+            <!-- fallback for no-video browsers -->
+            <img src="assets/images/hero_bg.webp" alt="" fetchpriority="high" decoding="async">
+          </video>
           <div class="lp-hero__overlay"></div>
         </div>
 
