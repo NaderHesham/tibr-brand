@@ -1,24 +1,28 @@
 import { create } from "zustand";
 import { supabase } from "@/lib/supabase";
 
-export const useAuth = create((set, get) => ({
+// `token` is stored as plain state (not a getter): Zustand's set() does
+// Object.assign({}, state, partial), which would evaluate a getter once and
+// freeze its value — silently breaking every authenticated request.
+export const useAuth = create((set) => ({
   user: null,
   session: null,
+  token: null,
   loading: true,
 
   init: async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    set({ session, user: session?.user ?? null, loading: false });
+    set({ session, user: session?.user ?? null, token: session?.access_token ?? null, loading: false });
 
     supabase.auth.onAuthStateChange((_event, session) => {
-      set({ session, user: session?.user ?? null });
+      set({ session, user: session?.user ?? null, token: session?.access_token ?? null });
     });
   },
 
   signIn: async (email, password) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    set({ session: data.session, user: data.user });
+    set({ session: data.session, user: data.user, token: data.session?.access_token ?? null });
     return data;
   },
 
@@ -34,10 +38,6 @@ export const useAuth = create((set, get) => ({
 
   signOut: async () => {
     await supabase.auth.signOut();
-    set({ session: null, user: null });
-  },
-
-  get token() {
-    return get().session?.access_token ?? null;
+    set({ session: null, user: null, token: null });
   },
 }));

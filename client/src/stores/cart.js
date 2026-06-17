@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 
 export const useCart = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       items: [],
 
       addItem: (product, size = null, qty = 1) =>
@@ -32,17 +32,6 @@ export const useCart = create(
         })),
 
       clear: () => set({ items: [] }),
-
-      get total() {
-        return get().items.reduce(
-          (sum, i) => sum + (i.product.price ?? i.product.ar_price ?? 0) * i.qty,
-          0
-        );
-      },
-
-      get count() {
-        return get().items.reduce((sum, i) => sum + i.qty, 0);
-      },
     }),
     { name: "rb-cart" }
   )
