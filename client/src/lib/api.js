@@ -1,0 +1,56 @@
+const req = async (method, path, body, token) => {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(path, {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.error || "Request failed");
+  return json;
+};
+
+export const api = {
+  get: (path, token) => req("GET", path, null, token),
+  post: (path, body, token) => req("POST", path, body, token),
+  put: (path, body, token) => req("PUT", path, body, token),
+  patch: (path, body, token) => req("PATCH", path, body, token),
+  delete: (path, token) => req("DELETE", path, null, token),
+};
+
+// Products
+export const getProducts = (category) =>
+  api.get(`/api/products${category ? `?category=${category}` : ""}`);
+export const getProduct = (id) => api.get(`/api/products/${id}`);
+export const getProductReviews = (id) => api.get(`/api/products/${id}/reviews`);
+export const postReview = (id, body, token) =>
+  api.post(`/api/products/${id}/reviews`, body, token);
+
+// Profile
+export const getProfile = (token) => api.get("/api/profile", token);
+export const updateProfile = (body, token) => api.put("/api/profile", body, token);
+
+// Addresses
+export const getAddresses = (token) => api.get("/api/profile/addresses", token);
+export const addAddress = (body, token) => api.post("/api/profile/addresses", body, token);
+export const updateAddress = (id, body, token) => api.put(`/api/profile/addresses/${id}`, body, token);
+export const deleteAddress = (id, token) => api.delete(`/api/profile/addresses/${id}`, token);
+export const setDefaultAddress = (id, token) =>
+  api.put(`/api/profile/addresses/${id}/default`, {}, token);
+
+// Orders
+export const getOrders = (token) => api.get("/api/orders", token);
+export const checkout = (body, token) => api.post("/api/checkout", body, token);
+
+// Admin
+export const adminGetProducts = (token) => api.get("/api/admin/products", token);
+export const adminGetOrders = (token) => api.get("/api/admin/orders", token);
+export const adminUpdateOrderStatus = (id, status, token) =>
+  api.patch(`/api/admin/orders/${id}`, { status }, token);
+export const adminCreateProduct = (body, token) =>
+  api.post("/api/admin/products", body, token);
+export const adminUpdateProduct = (id, body, token) =>
+  api.patch(`/api/admin/products/${id}`, body, token);
+export const adminDeleteProduct = (id, token) =>
+  api.delete(`/api/admin/products/${id}`, token);

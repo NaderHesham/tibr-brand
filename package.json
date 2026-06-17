@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "dev": "node server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "client:dev": "cd client && npm run dev",
+    "client:build": "cd client && npm run build",
+    "dev:all": "concurrently \"npm run dev\" \"npm run client:dev\""
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.53.0",
@@ -25,6 +28,7 @@
   "author": "Robabikia Perfumes",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^9.2.1",
     "puppeteer-core": "^25.1.0"
   }
 }

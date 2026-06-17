@@ -871,27 +871,49 @@ app.post("/api/admin/upload", requireUser, requireAdmin, upload.single("file"), 
   res.json({ url: publicUrl });
 });
 
-// Store pages — served from pages/ subdirectory
-const PAGE_ROUTES = ['account', 'admin', 'cart', 'checkout', 'login', 'product', 'signup'];
-PAGE_ROUTES.forEach(name => {
-  app.get(`/${name}`, (_req, res) =>
-    res.sendFile(path.join(rootDir, 'pages', `${name}.html`))
+// ── React client (production build) ──────────────────────────────────────────
+// In production (`npm run build` was run), serve the Vite output for all store
+// routes.  In dev, Vite runs on :5173 and proxies /api back here — these routes
+// are never reached from Vite's dev server.
+const clientDist = path.join(rootDir, "dist", "client");
+const clientDistExists = fs.existsSync(path.join(clientDist, "index.html"));
+
+// Store routes — all handled by the React SPA
+const STORE_ROUTES = [
+  '/shop/perfumes', '/shop/clothing', '/shop/sneakers',
+  '/product', '/cart', '/checkout',
+  '/login', '/signup',
+  '/account', '/admin', '/admin/product', '/wishlist',
+];
+
+if (clientDistExists) {
+  // Serve Vite build assets with long-lived cache.
+  // index:false so the build's index.html never auto-serves at "/" — the root
+  // must stay the locked vanilla Egyptian landing (served by the "*" fallback).
+  app.use(express.static(clientDist, {
+    index: false,
+    setHeaders: (res, filePath) => {
+      const ext = path.extname(filePath);
+      if (/\.(js|css|mjs)$/i.test(ext)) {
+        res.setHeader("Cache-Control", "no-cache");
+      } else if (/\.(png|jpg|jpeg|gif|ico|svg|webp|avif|woff2?|ttf)$/i.test(ext)) {
+        res.setHeader("Cache-Control", CACHE_IMMUTABLE);
+      }
+    }
+  }));
+
+  STORE_ROUTES.forEach(route => {
+    app.get(route, (_req, res) =>
+      res.sendFile(path.join(clientDist, "index.html"))
+    );
+  });
+} else {
+  // No build present. In dev, Vite serves the store on :5173 (`npm run client:dev`).
+  // For a production server the build is required — run `npm run client:build`.
+  console.warn(
+    "[store] dist/client not found — store routes are unavailable until you run `npm run client:build`."
   );
-});
-
-app.get('/admin/product', (_req, res) =>
-  res.sendFile(path.join(rootDir, 'pages', 'admin-product.html'))
-);
-
-// Shop category pages
-['perfumes', 'clothing', 'sneakers'].forEach(name => {
-  app.get(`/shop/${name}`, (_req, res) =>
-    res.sendFile(path.join(rootDir, 'shop', `${name}.html`))
-  );
-});
-
-// Wishlist is a tab on the account page
-app.get('/wishlist', (_req, res) => res.redirect(301, '/account?tab=wishlist'));
+}
 
 const staticOpts = { extensions: ["html"], setHeaders: (res, filePath) => {
   const ext = path.extname(filePath);
@@ -909,7 +931,6 @@ app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api/")) {
     return next();
   }
-
   res.sendFile(path.join(rootDir, "index.html"));
 });
 
