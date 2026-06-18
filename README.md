@@ -1,69 +1,101 @@
-# Robabikia Perfumes
+# Robabikia — روبابيكيا
 
-Landing page for **روبابيكيا للعطور**, a luxury perfume brand concept inspired by Egyptian nostalgia, warm storytelling, and modern premium branding.
+A luxury fragrance and lifestyle brand rooted in Egyptian nostalgia. Two surfaces, two registers.
 
-## What’s Included
+## Architecture
 
-- Intro curtain animation with a skip action
-- RTL Arabic-first hero section
-- Featured scents area populated by JavaScript
-- Brand story section with parallax-style background treatment
-- Simple ordering steps and footer contact area
-- Custom visuals, CSS split by section, and lightweight vanilla JS interactions
+### Landing (`/`) — vanilla, Egyptian-heritage
+Static landing page served directly from `index.html`. Arabic-first RTL, gold-on-near-black, Rakkas + Cinzel Decorative display type, GSAP scroll reveals.
+
+### Store (`/shop/*`, `/product`, `/cart`, `/checkout`, `/account`, `/admin`) — React SPA
+Dark-boutique store built in React, served from `dist/client/` (Vite build). Charcoal/ink surfaces, cinematic product photography, single desaturated-gold accent.
+
+**Stack:** Vite + React 19 + React Router 7 (BrowserRouter) + Zustand + TanStack Query + Framer Motion  
+**Backend:** Express + Supabase (auth, products, orders, profiles)  
+**CSS:** shared design system in `css/store/`; client imports from there — do not duplicate styles in `client/`
 
 ## Project Structure
 
-- `index.html` - main single-page experience
-- `css/` - styling, variables, animations, and section-specific layout files
-- `js/` - intro, gallery, products, and scroll behavior
-- `assets/images/` - hero and product imagery
-- `robabikia_plan.md` - original design and implementation notes
-
-## Run Locally
-
-This project now includes:
-
-- A static frontend served by Express
-- A backend API for products, orders, and profile/admin checks
-- Supabase as the database and auth provider
-
-1. Create an environment file:
-
-```bash
-cp .env.example .env
+```
+index.html              # Vanilla landing page
+css/
+  landing/              # Landing-only styles
+  layout/               # Hero, story, footer layouts
+  store/                # Shared store design system (tokens, components)
+js/
+  core/                 # translations.js, lang.js
+  landing/              # landing.js (GSAP scroll reveals)
+client/                 # React SPA (store)
+  src/
+    App.jsx             # Routes
+    main.jsx            # Providers (QueryClient, Router)
+    components/
+      layout/           # AppShell, Header, Footer, MobileDrawer
+      catalog/          # ProductCard
+      ui/               # Toast
+    pages/              # Product, Cart, Checkout, Login, Signup, Account, Admin
+    pages/shop/         # Category catalog pages
+    stores/             # Zustand: cart, auth, lang
+    lib/
+      api.js            # Fetch wrapper + typed endpoint helpers
+      supabase.js       # Supabase client
+server.js               # Express — serves landing at /, proxies /api, serves dist/client for store routes
 ```
 
-2. Fill in these values in `.env`:
+## Routes
 
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-
-If your project already uses Vite-style names, the backend also accepts:
-
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-
-3. Install dependencies and start the app:
-
-```bash
-npm install
-npm run dev
-```
-
-The app runs on [http://localhost:3000](http://localhost:3000).
+| Path | Page |
+|------|------|
+| `/` | Landing |
+| `/shop/perfumes` | Perfumes catalog |
+| `/shop/clothing` | Clothing catalog |
+| `/shop/sneakers` | Sneakers catalog |
+| `/product?id=` | Product detail |
+| `/cart` | Cart |
+| `/checkout` | Checkout |
+| `/login` | Login |
+| `/signup` | Sign up |
+| `/account?tab=` | Account (orders, addresses, wishlist) |
+| `/admin` | Admin dashboard |
+| `/admin/product` | Admin product editor |
 
 ## API Endpoints
 
-- `GET /api/health` - health check
-- `GET /api/products` - public product catalog
-- `GET /api/profile` - authenticated user profile
-- `POST /api/orders` - create an order for the logged-in user
-- `POST /api/products` - admin-only product creation
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/health` | Health check |
+| GET | `/api/products` | Product catalog |
+| GET | `/api/products/:id` | Single product |
+| GET | `/api/profile` | Authenticated user profile |
+| GET | `/api/orders` | User orders |
+| POST | `/api/orders` | Create order |
+| POST | `/api/products` | Admin — create product |
+| PATCH | `/api/products/:id` | Admin — update product |
+| DELETE | `/api/products/:id` | Admin — delete product |
+
+## Local Development
+
+```bash
+cp .env.example .env
+# Fill in SUPABASE_URL and SUPABASE_ANON_KEY
+npm install
+npm run dev:all
+```
+
+- Express API + landing: [http://localhost:3000](http://localhost:3000)
+- Vite dev server (store, with `/api` proxy): [http://localhost:5173](http://localhost:5173)
+
+## Building the Store
+
+```bash
+npm run client:build
+```
+
+Outputs to `dist/client/`. The Express server serves this build for all store routes. If `dist/client/` is missing, store routes return 404 until a build is run.
 
 ## Notes
 
-- The WhatsApp contact link in `index.html` currently uses a placeholder phone number.
-- Frontend auth still uses Supabase in the browser for login/session management.
-- Product, profile, and order data access now goes through the backend API.
-- Fonts are loaded from Google Fonts.
-- The site is designed for Arabic RTL layout.
+- Bilingual (AR/EN): lang store drives `<html lang/dir>`; AR is the default.
+- Auth is dedicated full pages (no modals).
+- Cart persists client-side via Zustand.
+- WhatsApp contact link in `index.html` uses a placeholder number.
