@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useAuth } from "@/stores/auth";
@@ -12,7 +12,6 @@ import {
   getAddresses, addAddress, updateAddress, deleteAddress, setDefaultAddress,
 } from "@/lib/api";
 
-// Fix Leaflet's broken default icon paths when bundled with Vite
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -28,102 +27,14 @@ const GOVERNORATES = [
   "Matrouh", "North Sinai", "South Sinai",
 ];
 
-const STATUS_LABELS = {
-  pending: "pending", confirmed: "confirmed",
-  shipped: "shipped", delivered: "delivered", cancelled: "cancelled",
+const STATUS_META = {
+  pending:   { label: "Pending",   dot: "var(--warning)",  bg: "oklch(0.808 0.105 72 / 0.12)", text: "var(--warning)" },
+  confirmed: { label: "Confirmed", dot: "var(--info)",     bg: "oklch(0.760 0.060 232 / 0.12)", text: "var(--info)" },
+  shipped:   { label: "Shipped",   dot: "var(--gold)",     bg: "var(--gold-ghost)",              text: "var(--gold)" },
+  delivered: { label: "Delivered", dot: "var(--success)",  bg: "var(--success-fill)",            text: "var(--success)" },
+  cancelled: { label: "Cancelled", dot: "var(--danger)",   bg: "var(--danger-fill)",             text: "var(--danger)" },
 };
 
-const tabs = [
-  {
-    id: "orders", label: "Orders",
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>,
-  },
-  {
-    id: "profile", label: "Profile",
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-  },
-  {
-    id: "addresses", label: "Addresses",
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" strokeLinejoin="round"/><circle cx="12" cy="10" r="3"/></svg>,
-  },
-  {
-    id: "wishlist", label: "Wishlist",
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>,
-  },
-];
-
-// Group flat order-item rows by checkout_reference (or id as fallback)
-function groupOrders(rows) {
-  const map = new Map();
-  for (const row of rows) {
-    const key = row.checkout_reference || row.id;
-    if (!map.has(key)) map.set(key, { key, items: [], ref: row.checkout_reference, created_at: row.created_at, status: row.status, order_total: row.order_total });
-    map.get(key).items.push(row);
-  }
-  return [...map.values()];
-}
-
-function OrderCard({ group }) {
-  const [open, setOpen] = useState(false);
-  const ref = group.ref?.slice(0, 8).toUpperCase() || group.key?.slice(0, 8).toUpperCase();
-  return (
-    <div className={`order-card${open ? " order-card--open" : ""}`}>
-      <button type="button" className="order-card__head" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-        <div className="order-card__thumbs">
-          {group.items.map((item) =>
-            item.products?.image ? (
-              <img key={item.id} className="order-card__thumb" src={item.products.image} alt={item.products?.en_name || item.products?.ar_name || ""} />
-            ) : (
-              <div key={item.id} className="order-card__thumb order-card__thumb--empty" />
-            )
-          )}
-        </div>
-        <div className="order-card__info">
-          <p className="order-card__ref">#{ref}</p>
-          <p className="order-card__meta">{new Date(group.created_at).toLocaleDateString()}</p>
-          <p className="order-card__meta" style={{ color: "var(--muted-faint)" }}>{group.items.length} item{group.items.length !== 1 ? "s" : ""}</p>
-        </div>
-        <div className="order-card__side">
-          <span className={`badge badge--${group.status || "pending"}`}>
-            {STATUS_LABELS[group.status] || group.status}
-          </span>
-          {group.order_total && (
-            <span className="order-card__price">{group.order_total} EGP</span>
-          )}
-          <svg className={`order-card__chevron${open ? " order-card__chevron--up" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-        </div>
-      </button>
-
-      {open && (
-        <div className="order-card__items">
-          {group.items.map((item) => {
-            const name = item.products?.en_name || item.products?.ar_name || "Product";
-            const price = item.unit_price ?? item.products?.en_price ?? item.products?.ar_price ?? "";
-            return (
-              <div key={item.id} className="order-item">
-                {item.products?.image ? (
-                  <img className="order-item__img" src={item.products.image} alt={name} />
-                ) : (
-                  <div className="order-item__img order-item__img--empty" />
-                )}
-                <div className="order-item__info">
-                  <p className="order-item__name">{name}</p>
-                  <div className="order-item__meta">
-                    {item.size && <span className="order-item__pill">{item.size}</span>}
-                    {item.qty > 1 && <span className="order-item__pill">×{item.qty}</span>}
-                  </div>
-                </div>
-                {price && <span className="order-item__price">{price} EGP</span>}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
-const EMPTY_ADDR = { label: "Home", phone: "", governorate: "", street: "", is_default: false };
 const GOV_SLUG_MAP = {
   "cairo": "Cairo", "giza": "Giza", "alexandria": "Alexandria",
   "qalyubia": "Qalyubia", "dakahlia": "Dakahlia", "sharqia": "Sharqia",
@@ -135,6 +46,165 @@ const GOV_SLUG_MAP = {
   "aswan": "Aswan", "red-sea": "Red Sea", "new-valley": "New Valley",
   "matrouh": "Matrouh", "north-sinai": "North Sinai", "south-sinai": "South Sinai",
 };
+
+const TABS = [
+  {
+    id: "orders", label: "Orders",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        <rect x="4" y="2" width="12" height="16" rx="1.5" strokeLinejoin="round" />
+        <path d="M7 7h6M7 10h6M7 13h4" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    id: "profile", label: "Profile",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        <circle cx="10" cy="6" r="3.5" />
+        <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" strokeLinecap="round" />
+      </svg>
+    ),
+  },
+  {
+    id: "addresses", label: "Addresses",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        <path d="M10 18s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10z" strokeLinejoin="round" />
+        <circle cx="10" cy="8" r="2.5" />
+      </svg>
+    ),
+  },
+  {
+    id: "wishlist", label: "Wishlist",
+    icon: (
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+        <path d="M10 17s-8-4.8-8-9.5A4.5 4.5 0 0 1 10 4.2 4.5 4.5 0 0 1 18 7.5C18 12.2 10 17 10 17z" strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+];
+
+function StatusPill({ status }) {
+  const meta = STATUS_META[status] ?? STATUS_META.pending;
+  return (
+    <span
+      className="order-status-pill"
+      style={{ "--sb-bg": meta.bg, "--sb-text": meta.text, "--sb-dot": meta.dot }}
+    >
+      <span className="order-status-pill__dot" aria-hidden="true" />
+      {meta.label}
+    </span>
+  );
+}
+
+function groupOrders(rows) {
+  const map = new Map();
+  for (const row of rows) {
+    const key = row.checkout_reference || row.id;
+    if (!map.has(key)) {
+      map.set(key, {
+        key, items: [],
+        ref: row.checkout_reference,
+        created_at: row.created_at,
+        status: row.status,
+        order_total: row.order_total,
+      });
+    }
+    map.get(key).items.push(row);
+  }
+  return [...map.values()];
+}
+
+function OrderCard({ group }) {
+  const [open, setOpen] = useState(false);
+  const ref = (group.ref || group.key || "").slice(0, 8).toUpperCase();
+  const dateStr = new Date(group.created_at).toLocaleDateString("en-GB", {
+    day: "numeric", month: "short", year: "numeric",
+  });
+
+  return (
+    <div className={`order-card${open ? " is-open" : ""}`}>
+      <button
+        type="button"
+        className="order-card__trigger"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+      >
+        <div className="order-card__thumbs">
+          {group.items.slice(0, 3).map((item, i) =>
+            item.products?.image ? (
+              <img
+                key={item.id}
+                className="order-card__thumb"
+                src={item.products.image}
+                alt={item.products?.en_name || ""}
+                style={{ zIndex: 3 - i }}
+              />
+            ) : (
+              <div key={item.id} className="order-card__thumb order-card__thumb--empty" style={{ zIndex: 3 - i }} />
+            )
+          )}
+          {group.items.length > 3 && (
+            <div className="order-card__thumb order-card__thumb--more">+{group.items.length - 3}</div>
+          )}
+        </div>
+
+        <div className="order-card__meta">
+          <span className="order-card__ref">#{ref}</span>
+          <span className="order-card__sub">
+            {dateStr}
+            <span className="order-card__dot-sep" aria-hidden="true" />
+            {group.items.length} item{group.items.length !== 1 ? "s" : ""}
+          </span>
+        </div>
+
+        <div className="order-card__aside">
+          <StatusPill status={group.status || "pending"} />
+          {group.order_total != null && (
+            <span className="order-card__total">{Number(group.order_total).toLocaleString()} EGP</span>
+          )}
+        </div>
+
+        <svg
+          className={`order-card__chevron${open ? " is-open" : ""}`}
+          width="16" height="16" viewBox="0 0 16 16" fill="none"
+          aria-hidden="true"
+        >
+          <path d="M4 6L8 10L12 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="order-card__body">
+          {group.items.map((item) => {
+            const name = item.products?.en_name || item.products?.ar_name || "Product";
+            const price = item.unit_price ?? item.products?.en_price ?? "";
+            return (
+              <div key={item.id} className="order-line">
+                {item.products?.image ? (
+                  <img className="order-line__img" src={item.products.image} alt={name} />
+                ) : (
+                  <div className="order-line__img order-line__img--empty" />
+                )}
+                <div className="order-line__info">
+                  <span className="order-line__name">{name}</span>
+                  <div className="order-line__tags">
+                    {item.size && <span className="order-line__tag">{item.size}</span>}
+                    {item.qty > 1 && <span className="order-line__tag">×{item.qty}</span>}
+                  </div>
+                </div>
+                {price && <span className="order-line__price">{price} EGP</span>}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const EMPTY_ADDR = { label: "Home", phone: "", governorate: "", street: "", is_default: false };
 
 function AddrCardMap({ lat, lon }) {
   const ref = useRef(null);
@@ -162,19 +232,16 @@ export default function Account() {
   const toast = useToast();
   const qc = useQueryClient();
 
-  // Password modal
   const [pwOpen, setPwOpen] = useState(false);
   const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
   const [pwError, setPwError] = useState(null);
   const [pwLoading, setPwLoading] = useState(false);
 
-  // Address form
   const [addrFormOpen, setAddrFormOpen] = useState(false);
   const [addrForm, setAddrForm] = useState(EMPTY_ADDR);
   const [addrSaving, setAddrSaving] = useState(false);
   const [editingAddrId, setEditingAddrId] = useState(null);
 
-  // GPS + map
   const [gpsLoading, setGpsLoading] = useState(false);
   const [gpsCoords, setGpsCoords] = useState(null);
   const [addrLat, setAddrLat] = useState(null);
@@ -183,7 +250,6 @@ export default function Account() {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
 
-  // Location search
   const [locSearch, setLocSearch] = useState("");
   const [locResults, setLocResults] = useState([]);
   const [locSearching, setLocSearching] = useState(false);
@@ -202,17 +268,6 @@ export default function Account() {
         .then((results) => { setLocResults(results); setLocSearching(false); })
         .catch(() => setLocSearching(false));
     }, 400);
-  };
-
-  const pickSearchResult = (result) => {
-    const lat = parseFloat(result.lat);
-    const lon = parseFloat(result.lon);
-    setAddrLat(lat);
-    setAddrLon(lon);
-    setGpsCoords({ lat, lon });
-    setLocSearch("");
-    setLocResults([]);
-    reverseGeocode(lat, lon);
   };
 
   const reverseGeocode = (lat, lon) => {
@@ -234,6 +289,15 @@ export default function Account() {
       .catch(() => {});
   };
 
+  const pickSearchResult = (result) => {
+    const lat = parseFloat(result.lat);
+    const lon = parseFloat(result.lon);
+    setAddrLat(lat); setAddrLon(lon);
+    setGpsCoords({ lat, lon });
+    setLocSearch(""); setLocResults([]);
+    reverseGeocode(lat, lon);
+  };
+
   const locateForAddress = () => {
     if (!navigator.geolocation) { toast("Geolocation not supported."); return; }
     setGpsLoading(true);
@@ -241,8 +305,7 @@ export default function Account() {
       (pos) => {
         const { latitude: lat, longitude: lon } = pos.coords;
         setGpsLoading(false);
-        setAddrLat(lat);
-        setAddrLon(lon);
+        setAddrLat(lat); setAddrLon(lon);
         setGpsCoords({ lat, lon });
         reverseGeocode(lat, lon);
         toast("Location pinned — drag the marker to adjust");
@@ -255,7 +318,6 @@ export default function Account() {
     );
   };
 
-  // Init / update Leaflet map after addrLat/addrLon state is set and container is in DOM
   useEffect(() => {
     if (addrLat == null || addrLon == null || !mapContainerRef.current) return;
     if (!mapRef.current) {
@@ -268,14 +330,12 @@ export default function Account() {
       markerRef.current = L.marker([addrLat, addrLon], { draggable: true }).addTo(m);
       markerRef.current.on("dragend", (e) => {
         const p = e.target.getLatLng();
-        setAddrLat(p.lat);
-        setAddrLon(p.lng);
+        setAddrLat(p.lat); setAddrLon(p.lng);
         setGpsCoords({ lat: p.lat, lon: p.lng });
         reverseGeocode(p.lat, p.lng);
       });
       m.on("click", (e) => {
-        setAddrLat(e.latlng.lat);
-        setAddrLon(e.latlng.lng);
+        setAddrLat(e.latlng.lat); setAddrLon(e.latlng.lng);
         setGpsCoords({ lat: e.latlng.lat, lon: e.latlng.lng });
         reverseGeocode(e.latlng.lat, e.latlng.lng);
       });
@@ -286,7 +346,6 @@ export default function Account() {
     }
   }, [addrLat, addrLon]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Destroy map when form closes
   useEffect(() => {
     if (!addrFormOpen && mapRef.current) {
       mapRef.current.remove();
@@ -320,7 +379,6 @@ export default function Account() {
     enabled: !!token && tab === "addresses",
   });
 
-  // Profile edit form state (synced from server data)
   const [profileForm, setProfileForm] = useState({ full_name: "", phone: "", gender: "", date_of_birth: "" });
   useEffect(() => {
     if (profileData?.data) {
@@ -421,61 +479,114 @@ export default function Account() {
   const setTab = (id) => setParams({ tab: id });
   const addresses = addressesData?.data ?? [];
 
+  const firstName = profileData?.data?.full_name?.split(/\s+/)[0] || null;
+  const initials = (() => {
+    const name = profileData?.data?.full_name;
+    if (name) return name.split(/\s+/).slice(0, 2).map((n) => n[0]?.toUpperCase()).join("");
+    return (user.email?.[0] || "?").toUpperCase();
+  })();
+
   return (
     <div className="store-container">
-      <header className="page-head">
-        <h1 className="page-head__title">My account</h1>
-      </header>
+
+      {/* ── Greeting header ── */}
+      <div className="acct-greeting">
+        <div className="acct-avatar">
+          <span>{initials}</span>
+        </div>
+        <div className="acct-greeting__text">
+          <h1 className="acct-greeting__name">
+            {firstName ? `Welcome back, ${firstName}` : "My Account"}
+          </h1>
+          <p className="acct-greeting__email">{user.email}</p>
+        </div>
+      </div>
 
       <div className="dashboard">
+        {/* ── Sidebar nav ── */}
         <nav className="dash-nav" aria-label="Account sections">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              className="dash-nav__item"
-              aria-current={tab === t.id ? "true" : undefined}
-              type="button"
-              onClick={() => setTab(t.id)}
-            >
-              {t.icon}
-              {t.label}
-            </button>
-          ))}
+          <div className="dash-nav__group">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                className="dash-nav__item"
+                aria-current={tab === t.id ? "true" : undefined}
+                type="button"
+                onClick={() => setTab(t.id)}
+              >
+                {t.icon}
+                <span>{t.label}</span>
+              </button>
+            ))}
+          </div>
+
           {isAdmin && (
-            <Link className="dash-nav__item dash-nav__item--admin" to="/admin">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z" strokeLinejoin="round"/></svg>
-              Control panel
-            </Link>
+            <div className="dash-nav__admin">
+              <Link className="dash-nav__item dash-nav__item--admin" to="/admin">
+                <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                  <path d="M10 2l2.5 6H18l-4.5 3.3 1.7 5.7L10 13.5 4.8 17 6.5 11.3 2 8h5.5z" strokeLinejoin="round" />
+                </svg>
+                <span>Control panel</span>
+              </Link>
+            </div>
           )}
-          <button
-            className="dash-nav__item dash-nav__item--danger"
-            type="button"
-            onClick={async () => { await signOut(); navigate("/"); }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M15 12H6m0 0l3-3m-3 3l3 3" strokeLinecap="round" strokeLinejoin="round"/><path d="M13 4h5a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-5" strokeLinecap="round"/></svg>
-            Sign out
-          </button>
+
+          <div className="dash-nav__footer">
+            <button
+              className="dash-nav__item dash-nav__item--danger"
+              type="button"
+              onClick={async () => { await signOut(); navigate("/"); }}
+            >
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                <path d="M13 3h4a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-4" strokeLinecap="round" />
+                <path d="M9 14l-4-4 4-4M5 10h9" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span>Sign out</span>
+            </button>
+          </div>
         </nav>
 
+        {/* ── Tab content ── */}
         <motion.div
           key={tab}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.28 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
         >
+
           {/* ── Orders ── */}
           {tab === "orders" && (
             <div className="dash-panel is-active">
               <div className="dash-panel__head">
                 <h2 className="dash-panel__title">Orders</h2>
               </div>
+
               {ordersLoading ? (
-                <p style={{ color: "var(--muted)" }}>Loading orders…</p>
+                <div className="dash-orders">
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} className="order-card-skel">
+                      <div className="order-card-skel__thumbs">
+                        <span className="skel skel--thumb" />
+                        <span className="skel skel--thumb" />
+                      </div>
+                      <div className="order-card-skel__meta">
+                        <span className="skel skel--ref" />
+                        <span className="skel skel--date" />
+                      </div>
+                      <span className="skel skel--badge" />
+                    </div>
+                  ))}
+                </div>
               ) : !ordersData?.data?.length ? (
-                <p style={{ color: "var(--muted)" }}>
-                  No orders yet.{" "}
-                  <Link to="/shop/perfumes" style={{ color: "var(--gold)" }}>Start shopping.</Link>
-                </p>
+                <div className="dash-empty">
+                  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                    <rect x="8" y="4" width="24" height="32" rx="2" stroke="currentColor" strokeWidth="1.4" />
+                    <path d="M14 13h12M14 19h12M14 25h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                  <p className="dash-empty__title">No orders yet</p>
+                  <p className="dash-empty__sub">Your orders will appear here once you start shopping</p>
+                  <Link className="btn btn--primary" to="/shop/perfumes">Start shopping</Link>
+                </div>
               ) : (
                 <div className="dash-orders">
                   {groupOrders(ordersData.data).map((g) => <OrderCard key={g.key} group={g} />)}
@@ -487,23 +598,34 @@ export default function Account() {
           {/* ── Profile ── */}
           {tab === "profile" && (
             <div className="dash-panel is-active">
-              <div className="dash-panel__head">
-                <h2 className="dash-panel__title">Profile</h2>
+              {/* Profile header */}
+              <div className="profile-head">
+                <div className="acct-avatar acct-avatar--lg">
+                  <span>{initials}</span>
+                </div>
+                <div>
+                  <p className="profile-head__name">{profileForm.full_name || user.email?.split("@")[0]}</p>
+                  <p className="profile-head__email">{user.email}</p>
+                </div>
               </div>
-              <div className="dash-card">
+
+              {/* Personal info */}
+              <div className="dash-section">
+                <h3 className="dash-section__title">Personal info</h3>
                 <form
                   className="dash-form"
                   noValidate
                   onSubmit={(e) => { e.preventDefault(); saveProfile(profileForm); }}
                 >
                   <div className="field">
-                    <label className="field__label" htmlFor="pf-name">Name</label>
+                    <label className="field__label" htmlFor="pf-name">Full name</label>
                     <input
                       id="pf-name"
                       className="input"
                       value={profileForm.full_name}
                       onChange={(e) => setProfileForm((f) => ({ ...f, full_name: e.target.value }))}
                       autoComplete="name"
+                      placeholder="Your name"
                     />
                   </div>
                   <div className="field">
@@ -519,17 +641,6 @@ export default function Account() {
                       placeholder="01XXXXXXXXX"
                     />
                   </div>
-                  <div className="field field--full">
-                    <label className="field__label" htmlFor="pf-email">Email</label>
-                    <input
-                      id="pf-email"
-                      className="input"
-                      type="email"
-                      value={user.email}
-                      readOnly
-                    />
-                    <p className="field__hint">Email can't be changed here.</p>
-                  </div>
                   <div className="field">
                     <label className="field__label" htmlFor="pf-gender">Gender</label>
                     <div className="select-field">
@@ -543,7 +654,7 @@ export default function Account() {
                         <option value="male">Male</option>
                         <option value="female">Female</option>
                       </select>
-                      <svg className="select-field__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                      <svg className="select-field__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
                     </div>
                   </div>
                   <div className="field">
@@ -556,7 +667,7 @@ export default function Account() {
                       onChange={(e) => setProfileForm((f) => ({ ...f, date_of_birth: e.target.value }))}
                     />
                   </div>
-                  <div className="field--full" style={{ display: "flex", gap: "var(--sp-3)", flexWrap: "wrap", alignItems: "center" }}>
+                  <div className="field--full dash-form__actions">
                     <button
                       className={`btn btn--primary${profileSaving ? " is-loading" : ""}`}
                       type="submit"
@@ -564,16 +675,40 @@ export default function Account() {
                     >
                       {profileSaving ? "" : "Save changes"}
                     </button>
-                    <button
-                      className="btn btn--secondary"
-                      type="button"
-                      onClick={() => setPwOpen(true)}
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" style={{ width: "1rem", height: "1rem" }}><rect x="5" y="11" width="14" height="10" rx="2" strokeLinejoin="round"/><path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round"/></svg>
+                  </div>
+                </form>
+              </div>
+
+              {/* Account / security */}
+              <div className="dash-section">
+                <div className="dash-section__row">
+                  <div>
+                    <h3 className="dash-section__title">Account</h3>
+                    <p className="dash-section__sub">Email and password settings</p>
+                  </div>
+                </div>
+                <div className="dash-section__fields">
+                  <div className="field">
+                    <label className="field__label" htmlFor="pf-email">Email</label>
+                    <input
+                      id="pf-email"
+                      className="input"
+                      type="email"
+                      value={user.email}
+                      readOnly
+                    />
+                    <p className="field__hint">Email can&apos;t be changed here.</p>
+                  </div>
+                  <div className="dash-security-row">
+                    <div>
+                      <p className="dash-security-row__label">Password</p>
+                      <p className="dash-security-row__sub">Last changed: unknown</p>
+                    </div>
+                    <button className="btn btn--secondary" type="button" onClick={() => setPwOpen(true)}>
                       Change password
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             </div>
           )}
@@ -584,20 +719,26 @@ export default function Account() {
               <div className="dash-panel__head">
                 <h2 className="dash-panel__title">Addresses</h2>
                 {!addrFormOpen && (
-                  <button
-                    className="btn btn--secondary"
-                    type="button"
-                    onClick={() => setAddrFormOpen(true)}
-                  >
+                  <button className="btn btn--secondary" type="button" onClick={() => setAddrFormOpen(true)}>
                     + Add address
                   </button>
                 )}
               </div>
 
               {addrLoading ? (
-                <p style={{ color: "var(--muted)" }}>Loading addresses…</p>
-              ) : addresses.length === 0 ? (
-                <p className="addr-empty">No saved addresses yet.</p>
+                <p style={{ color: "var(--muted)", fontSize: "var(--fs-sm)" }}>Loading addresses…</p>
+              ) : addresses.length === 0 && !addrFormOpen ? (
+                <div className="dash-empty">
+                  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+                    <path d="M18 32s-13-8-13-18a13 13 0 0 1 26 0c0 10-13 18-13 18z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+                    <circle cx="18" cy="14" r="4" stroke="currentColor" strokeWidth="1.4" />
+                  </svg>
+                  <p className="dash-empty__title">No saved addresses</p>
+                  <p className="dash-empty__sub">Add a delivery address for faster checkout</p>
+                  <button className="btn btn--secondary" type="button" onClick={() => setAddrFormOpen(true)}>
+                    Add address
+                  </button>
+                </div>
               ) : (
                 <div className="addr-grid">
                   {addresses.map((addr) => (
@@ -611,7 +752,9 @@ export default function Account() {
                           {addr.is_default && <span className="addr-badge">Default</span>}
                         </div>
                         <div className="addr-card__body">
-                          {addr.governorate && <span>{addr.governorate.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}</span>}
+                          {addr.governorate && (
+                            <span>{addr.governorate.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}</span>
+                          )}
                           {addr.street && <span>{addr.street}</span>}
                           {addr.phone && <span className="addr-card__phone">{addr.phone}</span>}
                         </div>
@@ -621,7 +764,6 @@ export default function Account() {
                               className="btn btn--ghost addr-card__icon-btn"
                               type="button"
                               onClick={() => makeDefault(addr.id)}
-                              title="Set as default"
                             >
                               Set default
                             </button>
@@ -630,17 +772,21 @@ export default function Account() {
                             className="btn btn--ghost addr-card__icon-btn"
                             type="button"
                             onClick={() => openEditAddr(addr)}
-                            title="Edit address"
+                            aria-label="Edit address"
                           >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" style={{ width: "1rem", height: "1rem" }}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: "1rem", height: "1rem" }} aria-hidden="true">
+                              <path d="M14.5 2.5a2 2 0 0 1 2.83 2.83L7 15.67 3 17l1.33-4L14.5 2.5z" strokeLinejoin="round" />
+                            </svg>
                           </button>
                           <button
                             className="btn btn--ghost addr-card__icon-btn addr-card__del"
                             type="button"
                             onClick={() => { if (confirm("Delete this address?")) removeAddress(addr.id); }}
-                            title="Delete address"
+                            aria-label="Delete address"
                           >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true" style={{ width: "1rem", height: "1rem" }}><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+                            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ width: "1rem", height: "1rem" }} aria-hidden="true">
+                              <path d="M3 5h14M8 5V3h4v2M6 5l1 12h6l1-12" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
                           </button>
                         </div>
                       </div>
@@ -692,7 +838,7 @@ export default function Account() {
                             <option key={g} value={g.toLowerCase().replace(/\s+/g, "-")}>{g}</option>
                           ))}
                         </select>
-                        <svg className="select-field__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                        <svg className="select-field__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
                       </div>
                     </div>
                     <div className="field field--full">
@@ -708,16 +854,14 @@ export default function Account() {
                         required
                       />
                     </div>
-                    {/* ── Pin on map: two options ── */}
-                    <div className="field--full loc-options-wrap">
 
-                      {/* Option A: Search */}
+                    <div className="field--full loc-options-wrap">
                       <div className="loc-panel">
                         <p className="loc-panel__title">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></svg>
                           Search any location
                         </p>
-                        <p className="loc-panel__hint">Type a landmark, street, or area — pick from the results</p>
+                        <p className="loc-panel__hint">Type a landmark, street, or area</p>
                         <input
                           id="loc-search"
                           className="input"
@@ -735,7 +879,7 @@ export default function Account() {
                             {locResults.map((r) => (
                               <li key={r.place_id}>
                                 <button type="button" className="loc-result-btn" onClick={() => pickSearchResult(r)}>
-                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, color: "var(--gold)" }}><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flexShrink: 0, color: "var(--gold)" }}><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" /><circle cx="12" cy="10" r="3" /></svg>
                                   <span>{r.display_name}</span>
                                 </button>
                               </li>
@@ -743,40 +887,38 @@ export default function Account() {
                           </ul>
                         )}
                       </div>
-
                       <div className="loc-or-divider"><span>or</span></div>
-
-                      {/* Option B: GPS */}
                       <div className="loc-panel">
                         <p className="loc-panel__title">
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="9" strokeDasharray="2 4"/></svg>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3m0 14v3M2 12h3m14 0h3" /><circle cx="12" cy="12" r="9" strokeDasharray="2 4" /></svg>
                           Use my current location
                         </p>
-                        <p className="loc-panel__hint">Let the browser detect where you are now</p>
+                        <p className="loc-panel__hint">Let the browser detect where you are</p>
                         <button
                           type="button"
                           className={`btn btn--ghost locate-btn${gpsLoading ? " is-loading" : ""}`}
                           onClick={locateForAddress}
                           disabled={gpsLoading}
                         >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3m0 14v3M2 12h3m14 0h3"/><circle cx="12" cy="12" r="9" strokeDasharray="2 4"/></svg>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3" /><path d="M12 2v3m0 14v3M2 12h3m14 0h3" /><circle cx="12" cy="12" r="9" strokeDasharray="2 4" /></svg>
                           {gpsLoading ? "Detecting…" : "Detect my location"}
                         </button>
                         {gpsCoords && (
                           <div className="gps-pin">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z" /><circle cx="12" cy="10" r="3" /></svg>
                             <span>{gpsCoords.lat.toFixed(6)}°, {gpsCoords.lon.toFixed(6)}°</span>
                             <a className="gps-pin__link" href={`https://www.openstreetmap.org/?mlat=${gpsCoords.lat}&mlon=${gpsCoords.lon}&zoom=16`} target="_blank" rel="noopener noreferrer">View on map</a>
                           </div>
                         )}
                       </div>
-
                     </div>
+
                     <div className="field--full" style={{ display: addrLat != null ? "block" : "none" }}>
                       <div className="addr-map-wrap">
                         <div ref={mapContainerRef} style={{ height: "100%", width: "100%" }} />
                       </div>
                     </div>
+
                     <div className="field--full addr-form__check">
                       <label>
                         <input
@@ -795,11 +937,7 @@ export default function Account() {
                       >
                         {addrSaving ? "" : editingAddrId ? "Update address" : "Save address"}
                       </button>
-                      <button
-                        className="btn btn--secondary"
-                        type="button"
-                        onClick={closeAddrForm}
-                      >
+                      <button className="btn btn--secondary" type="button" onClick={closeAddrForm}>
                         Cancel
                       </button>
                     </div>
@@ -815,16 +953,24 @@ export default function Account() {
               <div className="dash-panel__head">
                 <h2 className="dash-panel__title">Wishlist</h2>
               </div>
-              <p style={{ color: "var(--muted)" }}>
-                Your wishlist is empty.{" "}
-                <Link to="/shop/perfumes" style={{ color: "var(--gold)" }}>Browse fragrances.</Link>
-              </p>
+              <div className="dash-empty">
+                <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+                  <path d="M22 38s-18-10.5-18-21A10 10 0 0 1 22 9.4 10 10 0 0 1 40 17c0 10.5-18 21-18 21z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+                </svg>
+                <p className="dash-empty__title">Nothing saved yet</p>
+                <p className="dash-empty__sub">Browse our collections and save the pieces that speak to you</p>
+                <div className="dash-empty__actions">
+                  <Link className="btn btn--primary" to="/shop/perfumes">Fragrances</Link>
+                  <Link className="btn btn--secondary" to="/shop/clothing">Clothing</Link>
+                </div>
+              </div>
             </div>
           )}
+
         </motion.div>
       </div>
 
-      {/* ── Change password modal ── */}
+      {/* ── Password modal ── */}
       <div
         className={`pw-modal-backdrop${pwOpen ? " is-open" : ""}`}
         role="dialog"
@@ -835,11 +981,11 @@ export default function Account() {
         <div className="pw-modal__card">
           <div className="pw-modal__head">
             <h2 className="pw-modal__title" id="pw-modal-title">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" strokeLinejoin="round"/><path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" strokeLinejoin="round" /><path d="M8 11V7a4 4 0 0 1 8 0v4" strokeLinecap="round" /></svg>
               Change password
             </h2>
             <button className="btn btn--ghost" type="button" onClick={() => setPwOpen(false)} aria-label="Close">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: "1.2rem", height: "1.2rem" }}><path d="M6 6l12 12M18 6L6 18" strokeLinecap="round"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" style={{ width: "1.2rem", height: "1.2rem" }}><path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" /></svg>
             </button>
           </div>
           <form className="pw-modal__form" onSubmit={handleChangePassword} noValidate>
