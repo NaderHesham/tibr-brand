@@ -1,8 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AppShell from "@/components/layout/AppShell";
 import Perfumes from "@/pages/shop/Perfumes";
-import Clothing from "@/pages/shop/Clothing";
-import Sneakers from "@/pages/shop/Sneakers";
 import Product from "@/pages/Product";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
@@ -19,9 +17,6 @@ export default function App() {
         <Route element={<AppShell />}>
           {/* Catalog */}
           <Route path="/shop/perfumes" element={<Perfumes />} />
-          {/* Clothing & Sneakers on hold — pages kept, redirect until ready */}
-          <Route path="/shop/clothing" element={<Navigate to="/shop/perfumes" replace />} />
-          <Route path="/shop/sneakers" element={<Navigate to="/shop/perfumes" replace />} />
 
           {/* Product detail */}
           <Route path="/product" element={<Product />} />

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/stores/auth";
 import { useToast } from "@/components/ui/Toast";
+import AnimatedCharacters from "@/components/ui/AnimatedCharacters";
 
 const stagger = {
   hidden: {},
@@ -49,6 +50,7 @@ export default function Login() {
   const [showPw, setShowPw]     = useState(false);
   const [error, setError]       = useState(null);
   const [loading, setLoading]   = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const signIn   = useAuth((s) => s.signIn);
   const navigate = useNavigate();
   const toast    = useToast();
@@ -73,11 +75,7 @@ export default function Login() {
 
       {/* ── Left: brand panel ── */}
       <div className="auth-brand" aria-hidden="true">
-        <div className="auth-brand__orb auth-brand__orb--a" />
-        <div className="auth-brand__orb auth-brand__orb--b" />
-        <div className="auth-brand__orb auth-brand__orb--c" />
-        <div className="auth-brand__grid" />
-        <div className="auth-brand__content">
+        <div className="auth-brand__content auth-brand__content--chars">
           <motion.span
             className="auth-brand__mark"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -87,14 +85,6 @@ export default function Login() {
             TIBR<span className="dot">.</span>
           </motion.span>
           <motion.p
-            className="auth-brand__ar"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-          >
-            الأصالة والحنين والفخامة
-          </motion.p>
-          <motion.p
             className="auth-brand__en"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -102,6 +92,11 @@ export default function Login() {
           >
             Authenticity · Nostalgia · Luxury
           </motion.p>
+          <AnimatedCharacters
+            isTyping={isTyping}
+            passwordLength={password.length}
+            showPassword={showPw}
+          />
         </div>
       </div>
 
@@ -130,6 +125,8 @@ export default function Login() {
                 placeholder=" "
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                onFocus={() => setIsTyping(true)}
+                onBlur={() => setIsTyping(false)}
                 autoComplete="email"
                 required
               />
@@ -206,3 +203,4 @@ export default function Login() {
     </div>
   );
 }
+

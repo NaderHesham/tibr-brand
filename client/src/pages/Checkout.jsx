@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCart } from "@/stores/cart";
 import { useAuth } from "@/stores/auth";
-import { useLang } from "@/stores/lang";
 import { checkout as apiCheckout } from "@/lib/api";
 
 const PAYMENT_METHODS = [
@@ -43,7 +42,6 @@ const PAYMENT_METHODS = [
 ];
 
 export default function Checkout() {
-  const { lang } = useLang();
   const items = useCart((s) => s.items);
   const clearCart = useCart((s) => s.clear);
   const token = useAuth((s) => s.token);
@@ -255,9 +253,7 @@ export default function Checkout() {
           <h2 className="summary__title">Order summary</h2>
           <div className="summary__items">
             {items.map((item) => {
-              const name = lang === "ar"
-                ? (item.product.ar_name || item.product.en_name)
-                : (item.product.en_name || item.product.ar_name);
+              const name = item.product.en_name || item.product.ar_name;
               const price = item.product.price ?? item.product.ar_price ?? 0;
               return (
                 <div key={item.key} className="summary__item">

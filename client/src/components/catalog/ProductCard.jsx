@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCart } from "@/stores/cart";
-import { useLang } from "@/stores/lang";
 import { useToast } from "@/components/ui/Toast";
 
 const HeartIcon = () => (
@@ -25,11 +24,10 @@ function Stars({ avg, count }) {
 }
 
 export default function ProductCard({ product, index = 0 }) {
-  const { lang } = useLang();
   const addItem = useCart((s) => s.addItem);
   const toast = useToast();
 
-  const name = lang === "ar" ? (product.ar_name || product.en_name) : (product.en_name || product.ar_name);
+  const name = product.en_name || product.ar_name;
   const price = product.price ?? product.ar_price ?? product.en_price ?? 0;
 
   const handleAddToCart = (e) => {

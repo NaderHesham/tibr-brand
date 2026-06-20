@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { getProduct, getProductReviews } from "@/lib/api";
 import { useCart } from "@/stores/cart";
-import { useLang } from "@/stores/lang";
 import { useToast } from "@/components/ui/Toast";
 
 const HeartIcon = () => (
@@ -25,7 +24,6 @@ export default function Product() {
   const [params] = useSearchParams();
   const id = params.get("id");
   const navigate = useNavigate();
-  const { lang } = useLang();
   const addItem = useCart((s) => s.addItem);
   const toast = useToast();
   const [selectedSize, setSelectedSize] = useState(null);
@@ -74,8 +72,8 @@ export default function Product() {
   }
 
   const p = productData.data;
-  const name = lang === "ar" ? (p.ar_name || p.en_name) : (p.en_name || p.ar_name);
-  const desc = lang === "ar" ? (p.ar_desc || p.en_desc) : (p.en_desc || p.ar_desc);
+  const name = p.en_name || p.ar_name;
+  const desc = p.en_desc || p.ar_desc;
   const price = p.price ?? p.ar_price ?? p.en_price ?? 0;
   const sizes = Array.isArray(p.sizes) ? p.sizes : [];
   const catPath = `/shop/${p.category || "perfumes"}`;

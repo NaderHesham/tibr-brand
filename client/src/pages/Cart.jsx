@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/stores/cart";
-import { useLang } from "@/stores/lang";
 
 const TrashIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -25,7 +24,6 @@ const BagIcon = () => (
 );
 
 export default function Cart() {
-  const { lang } = useLang();
   const items = useCart((s) => s.items);
   const removeItem = useCart((s) => s.removeItem);
   const updateQty = useCart((s) => s.updateQty);
@@ -67,9 +65,7 @@ export default function Cart() {
         <div className="cart-lines">
           <AnimatePresence initial={false}>
             {items.map((item) => {
-              const name = lang === "ar"
-                ? (item.product.ar_name || item.product.en_name)
-                : (item.product.en_name || item.product.ar_name);
+              const name = item.product.en_name || item.product.ar_name;
               const price = item.product.price ?? item.product.ar_price ?? 0;
 
               return (
@@ -133,9 +129,7 @@ export default function Cart() {
           <h2 className="summary__title">Order summary</h2>
           <div className="summary__items">
             {items.map((item) => {
-              const name = lang === "ar"
-                ? (item.product.ar_name || item.product.en_name)
-                : (item.product.en_name || item.product.ar_name);
+              const name = item.product.en_name || item.product.ar_name;
               const price = item.product.price ?? item.product.ar_price ?? 0;
               return (
                 <div key={item.key} className="summary__item">

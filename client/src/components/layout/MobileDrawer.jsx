@@ -15,8 +15,6 @@ const WhatsAppIcon = () => (
 
 const NAV_LINKS = [
   { to: "/shop/perfumes", label: "Perfumes" },
-  // { to: "/shop/clothing", label: "Clothing" },  // coming soon
-  // { to: "/shop/sneakers", label: "Sneakers" },  // coming soon
   { to: "/account?tab=wishlist", label: "Wishlist" },
   { to: "/account", label: "Account" },
 ];

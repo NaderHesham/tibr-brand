@@ -37,11 +37,7 @@ export default function CatalogPage({ category, title, breadcrumb, intro }) {
     let list = (data?.data ?? []).filter((p) => p.category === category);
     if (search.trim()) {
       const q = search.trim().toLowerCase();
-      list = list.filter(
-        (p) =>
-          (p.en_name || "").toLowerCase().includes(q) ||
-          (p.ar_name || "").includes(q)
-      );
+      list = list.filter((p) => (p.en_name || "").toLowerCase().includes(q));
     }
     if (sort === "price-asc") list = [...list].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     if (sort === "price-desc") list = [...list].sort((a, b) => (b.price ?? 0) - (a.price ?? 0));

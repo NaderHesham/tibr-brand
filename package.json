@@ -1,7 +1,7 @@
 {
-  "name": "robabikia-perfumes",
+  "name": "tibr-perfumes",
   "version": "1.0.0",
-  "description": "روبابيكيا للعطور - عطور مصرية معاصرة تجمع تراث الماضي وفخامة الحاضر.",
+  "description": "تبر للعطور - عطور مصرية معاصرة تجمع تراث الماضي وفخامة الحاضر.",
   "main": "server.js",
   "scripts": {
     "dev": "node server.js",
@@ -25,7 +25,7 @@
     "gsap",
     "luxury"
   ],
-  "author": "Robabikia Perfumes",
+  "author": "TIBR",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.2.1",

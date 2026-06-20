@@ -62,7 +62,7 @@ const normalizeProduct = (product) => ({
   sizes: normalizeSizes(product.sizes)
 });
 
-const PRODUCT_CATEGORIES = new Set(["perfumes", "clothing", "sneakers"]);
+const PRODUCT_CATEGORIES = new Set(["perfumes"]);
 
 const trimValue = (value) => (typeof value === "string" ? value.trim() : value);
 
@@ -96,7 +96,6 @@ const parseSizesInput = (sizes) => {
 const sanitizeProductPayload = (payload) => {
   const sizes = parseSizesInput(payload.sizes);
   const cat = trimValue(payload.category);
-  const hasColor = cat === "clothing" || cat === "sneakers";
   const arPrice = payload.ar_price ?? payload.arPrice;
   const enPrice = payload.en_price ?? payload.enPrice;
 
@@ -109,8 +108,6 @@ const sanitizeProductPayload = (payload) => {
     ar_price: parsePrice(arPrice),
     en_price: parsePrice(enPrice),
     quantity: parseInt(payload.quantity, 10) || 0,
-    ar_color: hasColor ? (trimValue(payload.ar_color) || null) : null,
-    en_color: hasColor ? (trimValue(payload.en_color) || null) : null,
     sizes,
     review_avg: Math.min(5, Math.max(0, parseFloat(payload.review_avg) || 0)),
     review_count: parseInt(payload.review_count, 10) || 0,
@@ -122,7 +119,7 @@ const sanitizeProductPayload = (payload) => {
 const validateProductPayload = (payload, requireId = true) => {
   if (requireId && !payload.id) return "id is required.";
   if (!payload.category || !PRODUCT_CATEGORIES.has(payload.category)) return "category is required.";
-  if (!payload.ar_name || !payload.en_name) return "Arabic and English names are required.";
+  if (!payload.en_name) return "Product name is required.";
   if (!(Number.isFinite(payload.ar_price) && payload.ar_price > 0) || !(Number.isFinite(payload.en_price) && payload.en_price > 0)) return "Arabic/English prices are required.";
   if (!payload.image) return "image is required.";
   return null;
@@ -880,7 +877,7 @@ const clientDistExists = fs.existsSync(path.join(clientDist, "index.html"));
 
 // Store routes — all handled by the React SPA
 const STORE_ROUTES = [
-  '/shop/perfumes', '/shop/clothing', '/shop/sneakers',
+  '/shop/perfumes',
   '/product', '/cart', '/checkout',
   '/login', '/signup',
   '/account', '/admin', '/admin/product', '/wishlist',

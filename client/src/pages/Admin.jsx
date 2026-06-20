@@ -405,7 +405,6 @@ export default function Admin() {
                       <td>
                         <div className="admin-product-meta">
                           <span className="admin-product-meta__name">{p.en_name}</span>
-                          <span className="admin-product-meta__sub">{p.ar_name}</span>
                         </div>
                       </td>
                       <td>{p.category}</td>

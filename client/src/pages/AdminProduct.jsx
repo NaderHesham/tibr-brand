@@ -31,90 +31,12 @@ const TAXONOMY = {
       aquatic:  { label: "Aquatic — مائي" },
     }},
   }},
-  clothing: { children: {
-    men:    { label: "Men — رجالي", children: {
-      tshirts:    { label: "T-Shirts — تيشيرتات" },
-      shirts:     { label: "Shirts — قمصان" },
-      pants:      { label: "Pants — بناطيل" },
-      jackets:    { label: "Jackets — جاكيتات" },
-      sportswear: { label: "Sportswear — رياضي" },
-      galabiya:   { label: "Galabiya — جلابية" },
-    }},
-    women:  { label: "Women — نسائي", children: {
-      dresses:    { label: "Dresses — فساتين" },
-      tops:       { label: "Tops — توبات" },
-      pants:      { label: "Pants — بناطيل" },
-      abayas:     { label: "Abayas — عبايات" },
-      sportswear: { label: "Sportswear — رياضي" },
-      galabiya:   { label: "Galabiya — جلابية" },
-    }},
-    kids:   { label: "Kids — أطفال", children: {
-      boys:   { label: "Boys — أولاد", children: {
-        tshirts: { label: "T-Shirts — تيشيرتات" },
-        pants:   { label: "Pants — بناطيل" },
-        jackets: { label: "Jackets — جاكيتات" },
-      }},
-      girls:  { label: "Girls — بنات", children: {
-        dresses: { label: "Dresses — فساتين" },
-        tops:    { label: "Tops — توبات" },
-        pants:   { label: "Pants — بناطيل" },
-      }},
-      unisex: { label: "Unisex — للجنسين", children: {
-        tshirts: { label: "T-Shirts — تيشيرتات" },
-        pants:   { label: "Pants — بناطيل" },
-      }},
-    }},
-    unisex: { label: "Unisex — للجنسين", children: {
-      tshirts:    { label: "T-Shirts — تيشيرتات" },
-      hoodies:    { label: "Hoodies — هودي" },
-      sweatpants: { label: "Sweatpants — سويت بانت" },
-      sportswear: { label: "Sportswear — رياضي" },
-    }},
-  }},
-  sneakers: { children: {
-    men:    { label: "Men — رجالي", children: {
-      running:  { label: "Running — جري" },
-      casual:   { label: "Casual — كاجوال" },
-      classic:  { label: "Classic — كلاسيك" },
-      hightop:  { label: "High-top — هاي توب" },
-      athletic: { label: "Athletic — رياضي" },
-    }},
-    women:  { label: "Women — نسائي", children: {
-      running:  { label: "Running — جري" },
-      casual:   { label: "Casual — كاجوال" },
-      platform: { label: "Platform — بلاتفورم" },
-      classic:  { label: "Classic — كلاسيك" },
-      athletic: { label: "Athletic — رياضي" },
-    }},
-    kids:   { label: "Kids — أطفال", children: {
-      boys:   { label: "Boys — أولاد", children: {
-        running: { label: "Running — جري" },
-        casual:  { label: "Casual — كاجوال" },
-        classic: { label: "Classic — كلاسيك" },
-      }},
-      girls:  { label: "Girls — بنات", children: {
-        running: { label: "Running — جري" },
-        casual:  { label: "Casual — كاجوال" },
-        classic: { label: "Classic — كلاسيك" },
-      }},
-      unisex: { label: "Unisex — للجنسين", children: {
-        running: { label: "Running — جري" },
-        casual:  { label: "Casual — كاجوال" },
-      }},
-    }},
-    unisex: { label: "Unisex — للجنسين", children: {
-      running:  { label: "Running — جري" },
-      casual:   { label: "Casual — كاجوال" },
-      classic:  { label: "Classic — كلاسيك" },
-      athletic: { label: "Athletic — رياضي" },
-    }},
-  }},
 };
 
 const LEVEL_LABELS = ["Gender", "Type", "Style"];
-const ID_PAD = { perfumes: 1, clothing: 2, sneakers: 3 };
-const CATEGORIES = ["perfumes", "clothing", "sneakers"];
-const HAS_COLOR = new Set(["clothing", "sneakers"]);
+const ID_PAD = { perfumes: 1 };
+const CATEGORIES = ["perfumes"];
+const HAS_COLOR = new Set();
 
 function generateNextId(category, products) {
   const pad = ID_PAD[category] || 1;
@@ -307,17 +229,12 @@ export default function AdminProduct() {
   };
 
   const handleAutoDesc = () => {
-    const catLabels = { perfumes: "perfume", clothing: "clothing piece", sneakers: "sneaker" };
-    const catLabel = catLabels[form.category] || form.category;
     const parts = [];
-    if (form.name) parts.push(`${form.name} is a premium ${catLabel} by Tibr.`);
-    else parts.push(`A premium ${catLabel} by Tibr.`);
-    if (form.color) parts.push(`Available in ${form.color}.`);
+    if (form.name) parts.push(`${form.name} is a premium perfume by TIBR.`);
+    else parts.push(`A premium perfume by TIBR.`);
     if (form.sizes) parts.push(`Comes in ${form.sizes}.`);
     if (form.price) parts.push(`Priced at ${form.price} EGP.`);
-    if (form.category === "perfumes") parts.push("A luxurious scent crafted from the finest ingredients, inspired by the heritage and spirit of Egypt.");
-    else if (form.category === "clothing") parts.push("Designed for those who appreciate quality craftsmanship and timeless Egyptian style.");
-    else if (form.category === "sneakers") parts.push("Built for comfort and style, reflecting the modern Egyptian aesthetic.");
+    parts.push("A luxurious scent crafted from the finest ingredients, inspired by the heritage and spirit of Egypt.");
     setForm((f) => ({ ...f, desc: parts.join(" ") }));
   };
 

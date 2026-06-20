@@ -262,7 +262,7 @@ export default function Account() {
     searchTimerRef.current = setTimeout(() => {
       setLocSearching(true);
       fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&accept-language=en`, {
-        headers: { "User-Agent": "Robabikia/1.0 (nadeerysin@gmail.com)" },
+        headers: { "User-Agent": "TIBR/1.0 (nadeerysin@gmail.com)" },
       })
         .then((r) => r.json())
         .then((results) => { setLocResults(results); setLocSearching(false); })
@@ -272,7 +272,7 @@ export default function Account() {
 
   const reverseGeocode = (lat, lon) => {
     fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en`, {
-      headers: { "User-Agent": "Robabikia/1.0 (nadeerysin@gmail.com)" },
+      headers: { "User-Agent": "TIBR/1.0 (nadeerysin@gmail.com)" },
     })
       .then((r) => r.json())
       .then((data) => {
@@ -961,7 +961,6 @@ export default function Account() {
                 <p className="dash-empty__sub">Browse our collections and save the pieces that speak to you</p>
                 <div className="dash-empty__actions">
                   <Link className="btn btn--primary" to="/shop/perfumes">Fragrances</Link>
-                  <Link className="btn btn--secondary" to="/shop/clothing">Clothing</Link>
                 </div>
               </div>
             </div>
