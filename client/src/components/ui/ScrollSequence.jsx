@@ -41,7 +41,7 @@ export default function ScrollSequence({
 
     const ctx = canvas.getContext("2d");
     const images = new Array(frameCount);
-    let current = 0;
+    let currentFloat = 0;
     let raf = 0;
     let disposed = false;
 
@@ -58,7 +58,16 @@ export default function ScrollSequence({
     updateDimensions();
 
     // ── Painting ──────────────────────────────────────────
-    const drawCover = (img) => {
+    const drawImageCover = (img) => {
+      const iw = img.naturalWidth;
+      const ih = img.naturalHeight;
+      const scale = Math.max(cw / iw, ch / ih) * zoom;
+      const dw = iw * scale;
+      const dh = ih * scale;
+      ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+    };
+
+    const drawCoverCrossfade = (img1, img2, alpha) => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const targetWidth = Math.round(cw * dpr);
       const targetHeight = Math.round(ch * dpr);
@@ -68,18 +77,32 @@ export default function ScrollSequence({
         canvas.height = targetHeight;
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const iw = img.naturalWidth;
-      const ih = img.naturalHeight;
-      const scale = Math.max(cw / iw, ch / ih) * zoom;
-      const dw = iw * scale;
-      const dh = ih * scale;
       ctx.clearRect(0, 0, cw, ch);
-      ctx.drawImage(img, (cw - dw) / 2, (ch - dh) / 2, dw, dh);
+
+      // Draw background frame at full opacity
+      if (img1) {
+        ctx.globalAlpha = 1.0;
+        drawImageCover(img1);
+      }
+
+      // Draw overlay frame with crossfade opacity
+      if (img2 && alpha > 0.01) {
+        ctx.globalAlpha = alpha;
+        drawImageCover(img2);
+      }
+
+      // Reset globalAlpha to default
+      ctx.globalAlpha = 1.0;
     };
 
     // Nearest already-decoded frame, so a fast scrub never paints blank.
     const resolve = (idx) => {
-      for (let d = 0; d < frameCount; d++) {
+      if (idx < 0 || idx >= frameCount) return null;
+      const img = images[idx];
+      if (img && img.complete && img.naturalWidth) return img;
+
+      // Search outward for the nearest loaded frame
+      for (let d = 1; d < frameCount; d++) {
         const a = images[idx - d];
         if (a && a.complete && a.naturalWidth) return a;
         const b = images[idx + d];
@@ -90,9 +113,17 @@ export default function ScrollSequence({
 
     const render = () => {
       raf = 0;
-      const img = resolve(current);
-      if (img) drawCover(img);
+      
+      const f1 = Math.floor(currentFloat);
+      const f2 = Math.min(Math.ceil(currentFloat), frameCount - 1);
+      const alpha = currentFloat - f1;
+
+      const img1 = resolve(f1);
+      const img2 = f1 === f2 ? null : resolve(f2);
+
+      drawCoverCrossfade(img1, img2, alpha);
     };
+
     const schedule = () => {
       if (raf || disposed) return;
       raf = requestAnimationFrame(render);
@@ -105,7 +136,7 @@ export default function ScrollSequence({
       img.src = frameSrc(i);
       img.onload = () => {
         // Repaint if this frame is the one currently on screen (or the poster).
-        if (Math.abs(i - current) <= 1) schedule();
+        if (Math.abs(i - currentFloat) <= 1) schedule();
       };
       images[i] = img;
     }
@@ -122,7 +153,7 @@ export default function ScrollSequence({
 
     if (reduceMotion) {
       // No pin / no scrub — just show a settled frame near the end.
-      current = frameCount - 1;
+      currentFloat = frameCount - 1;
       schedule();
     } else {
       const state = { frame: 0 };
@@ -141,11 +172,8 @@ export default function ScrollSequence({
         frame: frameCount - 1,
         ease: "none",
         onUpdate: () => {
-          const f = Math.round(state.frame);
-          if (f !== current) {
-            current = f;
-            schedule();
-          }
+          currentFloat = state.frame;
+          schedule();
           onProgressRef.current?.(state.frame / (frameCount - 1));
         },
       });
