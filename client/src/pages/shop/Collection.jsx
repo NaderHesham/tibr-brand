@@ -162,13 +162,87 @@ export default function Collection() {
   });
 
   const reduceMotionRef = useRef(false);
+  const masterTimelineRef = useRef(null);
+
   useEffect(() => {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     reduceMotionRef.current = reduceMotion;
+
     if (reduceMotion) {
       gsap.set(".col-hero-scene", { display: "none" });
       gsap.set(".scene-4", { display: "flex", opacity: 1, y: 0 });
+      return;
     }
+
+    // Set initial states for all scenes
+    gsap.set(".col-hero-scene", { opacity: 0, y: 30, pointerEvents: "none" });
+    gsap.set(".scene-1", { opacity: 1, y: 0, pointerEvents: "none" });
+
+    // Create the master timeline that maps 1-to-1 with scroll progress (0 to 1)
+    const master = gsap.timeline({ paused: true });
+
+    // Scene 1 Exit: fades out and translates up slightly (0.10 to 0.15)
+    master.to(".scene-1", { opacity: 0, y: -30, duration: 0.05, ease: "power2.in" }, 0.10);
+
+    // Scene 2 (Craft) Entrance: fades/translates in (0.15 to 0.22)
+    master.fromTo(".scene-craft",
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.07, ease: "power2.out" },
+      0.15
+    );
+    master.fromTo(".scene-craft .col-scene-word",
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.05, stagger: 0.015, ease: "power2.out" },
+      0.16
+    );
+    // Scene 2 (Craft) Exit: fades out and translates up (0.27 to 0.32)
+    master.to(".scene-craft", { opacity: 0, y: -30, duration: 0.05, ease: "power2.in" }, 0.27);
+
+    // Scene 3 (s2) Entrance: fades in with blur removal (0.32 to 0.40)
+    master.fromTo(".scene-2",
+      { opacity: 0, y: 30, filter: "blur(14px)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.08, ease: "power2.out" },
+      0.32
+    );
+    // Scene 3 (s2) Exit: (0.45 to 0.50)
+    master.to(".scene-2", { opacity: 0, y: -30, duration: 0.05, ease: "power2.in" }, 0.45);
+
+    // Scene 4 (Ingredients) Entrance: scales/fades/glows in (0.50 to 0.58)
+    master.fromTo(".scene-ingredients",
+      { opacity: 0, scale: 0.8 },
+      { opacity: 1, scale: 1, duration: 0.08, ease: "power2.out" },
+      0.50
+    );
+    master.fromTo(".scene-ingredients .col-scene-title",
+      { textShadow: "0 0 0px rgba(212,175,55,0)" },
+      { textShadow: "0 0 24px rgba(212,175,55,0.75)", duration: 0.08, ease: "power2.out" },
+      0.50
+    );
+    // Scene 4 (Ingredients) Exit: (0.63 to 0.68)
+    master.to(".scene-ingredients", { opacity: 0, scale: 0.8, duration: 0.05, ease: "power2.in" }, 0.63);
+
+    // Scene 5 (s3) Entrance: clipPath horizontal wipe (0.68 to 0.76)
+    master.fromTo(".scene-3",
+      { opacity: 0, clipPath: "inset(0% 100% 0% 0%)" },
+      { opacity: 1, clipPath: "inset(0% 0% 0% 0%)", duration: 0.08, ease: "power3.inOut" },
+      0.68
+    );
+    // Scene 5 (s3) Exit: (0.80 to 0.85)
+    master.to(".scene-3", { opacity: 0, y: -30, duration: 0.05, ease: "power2.in" }, 0.80);
+
+    // Scene 6 (s4) Entrance: scales/fades in, pointer events enabled (0.85 to 0.95)
+    master.fromTo(".scene-4",
+      { opacity: 0, y: 30, scale: 0.94, pointerEvents: "none" },
+      { opacity: 1, y: 0, scale: 1, pointerEvents: "auto", duration: 0.10, ease: "power2.out" },
+      0.85
+    );
+
+    masterTimelineRef.current = master;
+
+    return () => {
+      master.kill();
+      masterTimelineRef.current = null;
+    };
   }, []);
 
   // Driven directly from ScrollSequence's own scrub tick (see onHeroProgress
@@ -177,63 +251,10 @@ export default function Collection() {
   // inconsistently depending on creation/refresh order, which desyncs them.
   const handleHeroProgress = useCallback((p) => {
     if (reduceMotionRef.current) return;
-
-    const clamp01 = (v) => Math.min(1, Math.max(0, v));
-    const range = (start, end) => clamp01((p - start) / (end - start));
-    // opacity/offset for a scene that fades in over [inStart,inEnd] then
-    // fades out over [outStart,outEnd] (ranges must not overlap)
-    const inOut = (inStart, inEnd, outStart, outEnd, distance = 35) => {
-      const inT = range(inStart, inEnd);
-      const outT = range(outStart, outEnd);
-      return { opacity: inT * (1 - outT), y: distance * (1 - inT) - distance * outT };
-    };
-
-    // Scene 1: Intro — simple fade + slide, starts visible
-    const s1Out = range(0.08, 0.14);
-    gsap.set(".scene-1", { opacity: 1 - s1Out, y: -35 * s1Out });
-
-    // Scene: Craftsmanship — words split and stagger in
-    const craft = inOut(0.14, 0.19, 0.24, 0.30);
-    gsap.set(".scene-craft", craft);
-    const words = document.querySelectorAll(".scene-craft .col-scene-word");
-    const wordStart = 0.14, wordGap = 0.015, wordDur = 0.02;
-    words.forEach((word, i) => {
-      const t = range(wordStart + i * wordGap, wordStart + i * wordGap + wordDur);
-      gsap.set(word, { opacity: t, y: 20 * (1 - t) });
-    });
-
-    // Scene 2: Heritage — blur-to-sharp focus pull
-    const s2In = range(0.32, 0.38);
-    const s2Out = range(0.44, 0.50);
-    gsap.set(".scene-2", {
-      opacity: s2In * (1 - s2Out),
-      y: 35 * (1 - s2In) - 35 * s2Out,
-      filter: `blur(${14 * (1 - s2In) + 14 * s2Out}px)`,
-    });
-
-    // Scene: Ingredients — scales up from small with a gold glow bloom
-    const ingIn = range(0.52, 0.58);
-    const ingOut = range(0.64, 0.68);
-    gsap.set(".scene-ingredients", {
-      opacity: ingIn * (1 - ingOut),
-      scale: 0.75 + 0.25 * ingIn - 0.15 * ingOut,
-    });
-    gsap.set(".scene-ingredients .col-scene-title", {
-      textShadow: `0 0 ${24 * ingIn}px rgba(212,175,55,${0.75 * ingIn})`,
-    });
-
-    // Scene 3: Profile — horizontal wipe reveal via clip-path
-    const wipeT = range(0.70, 0.78);
-    const s3Out = range(0.84, 0.90);
-    gsap.set(".scene-3", {
-      clipPath: `inset(0% ${100 * (1 - wipeT)}% 0% 0%)`,
-      opacity: 1 - s3Out,
-      y: -35 * s3Out,
-    });
-
-    // Scene 4: Finale / CTA — scale + fade arrival
-    const s4In = range(0.92, 1.0);
-    gsap.set(".scene-4", { opacity: s4In, y: 35 * (1 - s4In), scale: 0.94 + 0.06 * s4In });
+    const master = masterTimelineRef.current;
+    if (master) {
+      master.progress(p);
+    }
   }, []);
 
   return (

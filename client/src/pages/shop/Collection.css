@@ -167,6 +167,7 @@
   text-align: left;
   padding: 2rem;
   box-sizing: border-box;
+  will-change: opacity, transform;
 }
 
 .frontier-cinematic .scene-1 {

@@ -19,6 +19,7 @@ export default function ScrollSequence({
   frameSrc,               // (index0Based) => url
   scrollLength = 2600,    // px of scroll consumed by the scrub
   zoom = 1,               // <1 pulls the subject farther back (edges blend into bg)
+  scrub = 1.2,            // scrub momentum/smoothing (higher values add more inertia)
   onProgress,              // optional: (progress 0..1) => void, called every scrub tick
   className,
   children,
@@ -44,15 +45,27 @@ export default function ScrollSequence({
     let raf = 0;
     let disposed = false;
 
+    // Cache container dimensions to avoid layout thrashing (getBoundingClientRect)
+    // inside the high-frequency requestAnimationFrame render loop.
+    let cw = 0;
+    let ch = 0;
+
+    const updateDimensions = () => {
+      const rect = container.getBoundingClientRect();
+      cw = rect.width;
+      ch = rect.height;
+    };
+    updateDimensions();
+
     // ── Painting ──────────────────────────────────────────
     const drawCover = (img) => {
-      const rect = container.getBoundingClientRect();
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cw = rect.width;
-      const ch = rect.height;
-      if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) {
-        canvas.width = Math.round(cw * dpr);
-        canvas.height = Math.round(ch * dpr);
+      const targetWidth = Math.round(cw * dpr);
+      const targetHeight = Math.round(ch * dpr);
+
+      if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const iw = img.naturalWidth;
@@ -101,7 +114,10 @@ export default function ScrollSequence({
 
     // ── Scroll wiring ─────────────────────────────────────
     let tl;
-    const onResize = () => schedule();
+    const onResize = () => {
+      updateDimensions();
+      schedule();
+    };
     window.addEventListener("resize", onResize);
 
     if (reduceMotion) {
@@ -115,7 +131,7 @@ export default function ScrollSequence({
           trigger: container,
           start: "top top",
           end: `+=${scrollLength}`,
-          scrub: 0.5,
+          scrub: scrub,
           pin: true,
           pinSpacing: true,
           invalidateOnRefresh: true,
@@ -124,7 +140,6 @@ export default function ScrollSequence({
       tl.to(state, {
         frame: frameCount - 1,
         ease: "none",
-        snap: "frame",
         onUpdate: () => {
           const f = Math.round(state.frame);
           if (f !== current) {
@@ -135,7 +150,11 @@ export default function ScrollSequence({
         },
       });
       schedule(); // paint the poster frame right away
-      onProgressRef.current?.(0);
+      // Reflects wherever the page actually is on mount (GSAP snaps the
+      // scrub's initial playhead to current scroll position) rather than
+      // assuming 0 — a page that mounts already scrolled into the hero
+      // (bfcache, scroll restoration) must still get a correct first read.
+      onProgressRef.current?.(state.frame / (frameCount - 1));
     }
 
     return () => {
